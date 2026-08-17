@@ -783,9 +783,40 @@
         }
     }
 
+    function processarInputParaTags(inputId, items, updateFn, containerId) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+
+        const rawValue = input.value;
+        if (!rawValue || rawValue.trim() === "") return;
+
+        const partes = rawValue.split(",").map(s => s.trim()).filter(s => s.length > 0);
+        let alterou = false;
+
+        partes.forEach(val => {
+            if (!items.includes(val)) {
+                items.push(val);
+                alterou = true;
+            }
+        });
+
+        if (alterou) {
+            updateFn(items);
+            input.value = "";
+            renderTags(containerId, inputId, items, updateFn);
+        }
+    }
+
+    function capturarInputsPendentes() {
+        processarInputParaTags("inputCargoForte", state.cargos_fortes, (newArr) => state.cargos_fortes = newArr, "cargosFortesContainer");
+        processarInputParaTags("inputFerramenta", state.ferramentas, (newArr) => state.ferramentas = newArr, "ferramentasContainer");
+        processarInputParaTags("inputCidade", state.cidades, (newArr) => state.cidades = newArr, "cidadesContainer");
+    }
+
     function renderTags(containerId, inputId, items, updateFn) {
         const container = document.getElementById(containerId);
         const input = document.getElementById(inputId);
+        if (!container || !input) return;
 
         container.querySelectorAll(".tag").forEach(t => t.remove());
 
@@ -797,15 +828,19 @@
         });
 
         input.onkeydown = (e) => {
-            if (e.key === "Enter" && input.value.trim() !== "") {
+            if (e.key === "Enter" || e.key === ",") {
                 e.preventDefault();
-                const val = input.value.trim();
-                if (!items.includes(val)) {
-                    items.push(val);
-                    updateFn(items);
-                    input.value = "";
-                    renderTags(containerId, inputId, items, updateFn);
-                }
+                processarInputParaTags(inputId, items, updateFn, containerId);
+            }
+        };
+
+        input.onblur = () => {
+            processarInputParaTags(inputId, items, updateFn, containerId);
+        };
+
+        input.oninput = () => {
+            if (input.value.includes(",")) {
+                processarInputParaTags(inputId, items, updateFn, containerId);
             }
         };
     }
@@ -841,6 +876,7 @@
     }
 
     async function salvarConfiguracoes() {
+        capturarInputsPendentes();
         lerCanaisDaTela();
         try {
             const res = await fetch("/api/config", {
