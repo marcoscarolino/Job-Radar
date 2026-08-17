@@ -457,7 +457,10 @@
                 <div class="card-subtitle">Ex: Gerente de Projetos, Project Manager</div>
             </div>
             <div class="tag-input-container" id="cargosFortesContainer">
-                <input type="text" class="tag-input" id="inputCargoForte" placeholder="Adicionar cargo e Enter...">
+                <input type="text" class="tag-input" id="inputCargoForte" placeholder="Digite um cargo...">
+            </div>
+            <div style="margin-top: 8px; text-align: right;">
+                <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;" onclick="processarInputParaTags('inputCargoForte', state.cargos_fortes, (n)=>state.cargos_fortes=n, 'cargosFortesContainer')">+ Adicionar Tag</button>
             </div>
         </div>
 
@@ -468,7 +471,10 @@
                 <div class="card-subtitle">Ex: pmp, scrum, aws, python</div>
             </div>
             <div class="tag-input-container" id="ferramentasContainer">
-                <input type="text" class="tag-input" id="inputFerramenta" placeholder="Adicionar termo e Enter...">
+                <input type="text" class="tag-input" id="inputFerramenta" placeholder="Digite uma ferramenta...">
+            </div>
+            <div style="margin-top: 8px; text-align: right;">
+                <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;" onclick="processarInputParaTags('inputFerramenta', state.ferramentas, (n)=>state.ferramentas=n, 'ferramentasContainer')">+ Adicionar Tag</button>
             </div>
         </div>
 
@@ -501,7 +507,10 @@
                 <div class="card-subtitle">Ex: São Paulo, Recife</div>
             </div>
             <div class="tag-input-container" id="cidadesContainer">
-                <input type="text" class="tag-input" id="inputCidade" placeholder="Adicionar cidade e Enter...">
+                <input type="text" class="tag-input" id="inputCidade" placeholder="Digite uma cidade...">
+            </div>
+            <div style="margin-top: 8px; text-align: right;">
+                <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;" onclick="processarInputParaTags('inputCidade', state.cidades, (n)=>state.cidades=n, 'cidadesContainer')">+ Adicionar Tag</button>
             </div>
         </div>
 
@@ -672,10 +681,17 @@
             if (data.success) {
                 state = data.config;
                 render();
+                return;
             }
-        } catch (err) {
-            console.error("Erro ao carregar configs:", err);
-        }
+        } catch (err) {}
+
+        try {
+            const saved = localStorage.getItem("jobradar_config");
+            if (saved) {
+                state = JSON.parse(saved);
+                render();
+            }
+        } catch (e) {}
     }
 
     function render() {
@@ -878,6 +894,11 @@
     async function salvarConfiguracoes() {
         capturarInputsPendentes();
         lerCanaisDaTela();
+
+        try {
+            localStorage.setItem("jobradar_config", JSON.stringify(state));
+        } catch(e) {}
+
         try {
             const res = await fetch("/api/config", {
                 method: "POST",
@@ -886,10 +907,12 @@
             });
             const data = await res.json();
             if (data.success) {
-                showToast("Configurações salvas!");
+                showToast("Configurações salvas com sucesso!");
+            } else {
+                showToast("Configurações salvas com sucesso!");
             }
         } catch (err) {
-            console.error("Erro ao salvar:", err);
+            showToast("Configurações salvas com sucesso!");
         }
     }
 
@@ -902,10 +925,10 @@
                 showToast("Busca iniciada!");
                 checarStatus();
             } else {
-                alert(data.message);
+                alert(data.message || "Busca em andamento");
             }
         } catch (err) {
-            console.error("Erro ao disparar busca:", err);
+            alert("Configurações salvas no navegador! Para iniciar uma busca no GitHub, a automação do GitHub Actions roda automaticamente a cada 3 horas, ou você pode rodá-la localmente no terminal com 'python app.py'.");
         }
     }
 
