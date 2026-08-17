@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobRadar — Painel de Vagas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --border-hover: #cbd5e1;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
+            
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+            
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-primary);
+            padding: 32px 24px;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1080px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .brand h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+
+        .brand p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--text-muted);
+        }
+
+        .dot.active {
+            background-color: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        /* Layout Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            transition: border-color 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: var(--border-hover);
+        }
+
+        .card-header {
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .card-subtitle {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        /* Input Controls & Tags */
+        .tag-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            background-color: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px;
+            min-height: 48px;
+            align-items: center;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .tag-input-container:focus-within {
+            border-color: var(--primary);
+            background-color: var(--surface);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: var(--primary-light);
+            border: 1px solid #bfdbfe;
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+        }
+
+        .tag .remove-btn {
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .tag .remove-btn:hover {
+            color: var(--danger);
+        }
+
+        .tag-input {
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            outline: none;
+            font-size: 0.875rem;
+            flex-grow: 1;
+            min-width: 140px;
+        }
+
+        /* Checkboxes & Selects */
+        .options-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            background: #f8fafc;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-container:hover {
+            border-color: var(--border-hover);
+            background: #f1f5f9;
+        }
+
+        .checkbox-container input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .input-text {
+            width: 100%;
+            background-color: #f8fafc;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            padding: 9px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-text:focus {
+            border-color: var(--primary);
+            background-color: var(--surface);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Toggles */
+        .scrapers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 10px;
+        }
+
+        .scraper-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 36px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .2s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .2s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(16px);
+        }
+
+        /* Actions Bar */
+        .actions-bar {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary {
+            background-color: var(--surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            background-color: #f8fafc;
+            border-color: var(--border-hover);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8fafc;
+            padding: 12px 16px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        a.job-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a.job-link:hover { text-decoration: underline; }
+
+        .score-pill {
+            display: inline-flex;
+            align-items: center;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.8125rem;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background-color: var(--text-primary);
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-md);
+            display: none;
+            z-index: 100;
+        }
+
+        .log-box {
+            background-color: #0f172a;
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            font-family: ui-monospace, monospace;
+            font-size: 0.8125rem;
+            color: #38bdf8;
+            max-height: 160px;
+            overflow-y: auto;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="brand">
+            <h1>JobRadar</h1>
+            <p>Varredura inteligente de vagas com score de relevância</p>
+        </div>
+        <div class="status-badge">
+            <span class="dot" id="statusDot"></span>
+            <span id="statusText">Pronto</span>
+        </div>
+    </header>
+
+    <div class="grid grid-2">
+        <!-- Cargos -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Cargos Principais</div>
+                <div class="card-subtitle">Ex: Gerente de Projetos, Project Manager</div>
+            </div>
+            <div class="tag-input-container" id="cargosFortesContainer">
+                <input type="text" class="tag-input" id="inputCargoForte" placeholder="Adicionar cargo e Enter...">
+            </div>
+        </div>
+
+        <!-- Tecnologias, Stacks e Certificações -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Stacks & Certificações</div>
+                <div class="card-subtitle">Ex: pmp, scrum, aws, python</div>
+            </div>
+            <div class="tag-input-container" id="ferramentasContainer">
+                <input type="text" class="tag-input" id="inputFerramenta" placeholder="Adicionar termo e Enter...">
+            </div>
+        </div>
+
+        <!-- Modalidade & Prioridade -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Modalidades Aceitas</div>
+            </div>
+            <div class="options-group">
+                <label class="checkbox-container"><input type="checkbox" id="checkModRemoto" checked> Remoto</label>
+                <label class="checkbox-container"><input type="checkbox" id="checkModHibrido" checked> Híbrido</label>
+                <label class="checkbox-container"><input type="checkbox" id="checkModPresencial" checked> Presencial</label>
+            </div>
+            
+            <div style="margin-top: 16px;">
+                <label style="font-size: 0.8125rem; color: var(--text-secondary); display: block; margin-bottom: 6px; font-weight: 500;">Prioridade no Score (+3 pts):</label>
+                <select id="selectPreferencia" class="input-text">
+                    <option value="remoto">Priorizar Remoto (+3 pts)</option>
+                    <option value="hibrido">Priorizar Híbrido (+3 pts)</option>
+                    <option value="presencial">Priorizar Presencial (+3 pts)</option>
+                    <option value="sem_preferencia">Sem Preferência</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Cidades -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Cidades & Regiões</div>
+                <div class="card-subtitle">Ex: São Paulo, Recife</div>
+            </div>
+            <div class="tag-input-container" id="cidadesContainer">
+                <input type="text" class="tag-input" id="inputCidade" placeholder="Adicionar cidade e Enter...">
+            </div>
+        </div>
+
+        <!-- Senioridades Alvo -->
+        <div class="card" style="grid-column: 1 / -1;">
+            <div class="card-header">
+                <div class="card-title">Senioridades Alvo (+2 pts bônus no foco)</div>
+            </div>
+            <div class="options-group">
+                <label class="checkbox-container"><input type="checkbox" value="Estágio/Trainee" class="check-senioridade"> Estágio / Trainee</label>
+                <label class="checkbox-container"><input type="checkbox" value="Júnior" class="check-senioridade" checked> Júnior</label>
+                <label class="checkbox-container"><input type="checkbox" value="Pleno" class="check-senioridade" checked> Pleno</label>
+                <label class="checkbox-container"><input type="checkbox" value="Sênior" class="check-senioridade" checked> Sênior</label>
+                <label class="checkbox-container"><input type="checkbox" value="Especialista/Liderança" class="check-senioridade"> Especialista / Liderança</label>
+            </div>
+        </div>
+
+        <!-- Canais de Notificação -->
+        <div class="card" style="grid-column: 1 / -1;">
+            <div class="card-header">
+                <div class="card-title">Canais de Notificação</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                <!-- Telegram -->
+                <div style="background: #f8fafc; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-weight: 600; font-size: 0.875rem;">Telegram</span>
+                        <label class="switch"><input type="checkbox" id="checkTgAtivo" checked><span class="slider"></span></label>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <input type="text" id="inputTgBotToken" class="input-text" placeholder="Bot Token (.env)">
+                        <input type="text" id="inputTgChatId" class="input-text" placeholder="Chat ID">
+                        <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem; justify-content: center; margin-top: 4px;" onclick="testarNotificacao('telegram')">Testar</button>
+                    </div>
+                </div>
+
+                <!-- E-mail -->
+                <div style="background: #f8fafc; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-weight: 600; font-size: 0.875rem;">E-mail (SMTP)</span>
+                        <label class="switch"><input type="checkbox" id="checkEmailAtivo"><span class="slider"></span></label>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <input type="email" id="inputEmailDestinatario" class="input-text" placeholder="Seu E-mail">
+                        <input type="text" id="inputEmailSmtpHost" class="input-text" placeholder="smtp.gmail.com">
+                        <input type="text" id="inputEmailSmtpUser" class="input-text" placeholder="Usuário SMTP">
+                        <input type="password" id="inputEmailSmtpPass" class="input-text" placeholder="Senha SMTP">
+                        <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem; justify-content: center; margin-top: 4px;" onclick="testarNotificacao('email')">Testar</button>
+                    </div>
+                </div>
+
+                <!-- WhatsApp -->
+                <div style="background: #f8fafc; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-weight: 600; font-size: 0.875rem;">WhatsApp</span>
+                        <label class="switch"><input type="checkbox" id="checkWaAtivo"><span class="slider"></span></label>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <input type="text" id="inputWaNumero" class="input-text" placeholder="+5511999998888">
+                        <input type="text" id="inputWaApiKey" class="input-text" placeholder="API Key CallMeBot">
+                        <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem; justify-content: center; margin-top: 4px;" onclick="testarNotificacao('whatsapp')">Testar</button>
+                    </div>
+                </div>
+
+                <!-- Webhook -->
+                <div style="background: #f8fafc; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-weight: 600; font-size: 0.875rem;">Webhook</span>
+                        <label class="switch"><input type="checkbox" id="checkWhAtivo"><span class="slider"></span></label>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <input type="url" id="inputWhUrl" class="input-text" placeholder="URL Webhook Discord/Slack">
+                        <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem; justify-content: center; margin-top: 4px;" onclick="testarNotificacao('webhook')">Testar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Portais de Vagas -->
+        <div class="card" style="grid-column: 1 / -1;">
+            <div class="card-header">
+                <div class="card-title">Portais Monitorados</div>
+            </div>
+            <div class="scrapers-grid" id="scrapersGrid">
+                <!-- Preenchido via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions-bar">
+        <button class="btn btn-secondary" onclick="salvarConfiguracoes()">Salvar Alterações</button>
+        <button class="btn btn-primary" onclick="salvarERodar()">Salvar & Buscar Vagas</button>
+    </div>
+
+    <!-- Console Logs -->
+    <div class="card" style="margin-top: 24px;" id="logsCard">
+        <div class="card-title" style="font-size: 0.875rem;">Console de Execução</div>
+        <div class="log-box" id="logBox">Pronto para buscar vagas...</div>
+    </div>
+
+    <!-- Jobs Table -->
+    <div class="card" style="margin-top: 24px; padding: 0; overflow: hidden;">
+        <div style="padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
+            <div>
+                <div class="card-title">Vagas Encontradas</div>
+                <div class="card-subtitle">Ordenadas do maior para o menor score</div>
+            </div>
+            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.75rem;" onclick="carregarVagas()">Atualizar</button>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Score</th>
+                        <th>Título da Vaga</th>
+                        <th>Empresa</th>
+                        <th>Local</th>
+                        <th>Fonte</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="vagasTableBody">
+                    <tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--text-muted);">Carregando vagas...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast">Salvo com sucesso!</div>
+
+<script>
+    let state = {
+        cargos_fortes: [],
+        ferramentas: [],
+        cidades: [],
+        modalidades_aceitas: { remoto: true, hibrido: true, presencial: true },
+        preferencia_modalidade: "remoto",
+        senioridades_alvo: ["Júnior", "Pleno", "Sênior"],
+        canais_notificacao: {},
+        scrapers_ativos: {}
+    };
+
+    const scrapersNomes = {
+        linkedin: "LinkedIn",
+        gupy: "Gupy",
+        indeed: "Indeed",
+        solides: "Sólides",
+        catho: "Catho",
+        geekhunter: "GeekHunter",
+        trampos: "Trampos",
+        jobs99: "99Jobs",
+        weworkremotely: "WeWorkRemotely"
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+        carregarConfiguracoes();
+        carregarVagas();
+        setInterval(checarStatus, 3000);
+    });
+
+    async function carregarConfiguracoes() {
+        try {
+            const res = await fetch("/api/config");
+            const data = await res.json();
+            if (data.success) {
+                state = data.config;
+                render();
+            }
+        } catch (err) {
+            console.error("Erro ao carregar configs:", err);
+        }
+    }
+
+    function render() {
+        renderTags("cargosFortesContainer", "inputCargoForte", state.cargos_fortes, (newArr) => state.cargos_fortes = newArr);
+        renderTags("ferramentasContainer", "inputFerramenta", state.ferramentas, (newArr) => state.ferramentas = newArr);
+        renderTags("cidadesContainer", "inputCidade", state.cidades, (newArr) => state.cidades = newArr);
+
+        if (!state.modalidades_aceitas) state.modalidades_aceitas = { remoto: true, hibrido: true, presencial: true };
+        document.getElementById("checkModRemoto").checked = state.modalidades_aceitas.remoto !== false;
+        document.getElementById("checkModHibrido").checked = state.modalidades_aceitas.hibrido !== false;
+        document.getElementById("checkModPresencial").checked = state.modalidades_aceitas.presencial !== false;
+
+        document.getElementById("checkModRemoto").onchange = (e) => state.modalidades_aceitas.remoto = e.target.checked;
+        document.getElementById("checkModHibrido").onchange = (e) => state.modalidades_aceitas.hibrido = e.target.checked;
+        document.getElementById("checkModPresencial").onchange = (e) => state.modalidades_aceitas.presencial = e.target.checked;
+
+        document.getElementById("selectPreferencia").value = state.preferencia_modalidade || "remoto";
+        document.getElementById("selectPreferencia").onchange = (e) => state.preferencia_modalidade = e.target.value;
+
+        if (!state.senioridades_alvo) state.senioridades_alvo = ["Júnior", "Pleno", "Sênior"];
+        document.querySelectorAll(".check-senioridade").forEach(chk => {
+            chk.checked = state.senioridades_alvo.some(s => s.toLowerCase().includes(chk.value.toLowerCase()) || chk.value.toLowerCase().includes(s.toLowerCase()));
+            chk.onchange = () => {
+                state.senioridades_alvo = Array.from(document.querySelectorAll(".check-senioridade:checked")).map(c => c.value);
+            };
+        });
+
+        if (!state.canais_notificacao) {
+            state.canais_notificacao = {
+                telegram: { ativo: true, bot_token: "", chat_id: "" },
+                email: { ativo: false, destinatario: "", smtp_host: "smtp.gmail.com", smtp_port: 587, smtp_user: "", smtp_pass: "" },
+                whatsapp: { ativo: false, numero: "", api_key: "" },
+                webhook: { ativo: false, url: "" }
+            };
+        }
+
+        const tg = state.canais_notificacao.telegram || {};
+        document.getElementById("checkTgAtivo").checked = tg.ativo !== false;
+        document.getElementById("inputTgBotToken").value = tg.bot_token || "";
+        document.getElementById("inputTgChatId").value = tg.chat_id || "";
+
+        const em = state.canais_notificacao.email || {};
+        document.getElementById("checkEmailAtivo").checked = !!em.ativo;
+        document.getElementById("inputEmailDestinatario").value = em.destinatario || "";
+        document.getElementById("inputEmailSmtpHost").value = em.smtp_host || "smtp.gmail.com";
+        document.getElementById("inputEmailSmtpUser").value = em.smtp_user || "";
+        document.getElementById("inputEmailSmtpPass").value = em.smtp_pass || "";
+
+        const wa = state.canais_notificacao.whatsapp || {};
+        document.getElementById("checkWaAtivo").checked = !!wa.ativo;
+        document.getElementById("inputWaNumero").value = wa.numero || "";
+        document.getElementById("inputWaApiKey").value = wa.api_key || "";
+
+        const wh = state.canais_notificacao.webhook || {};
+        document.getElementById("checkWhAtivo").checked = !!wh.ativo;
+        document.getElementById("inputWhUrl").value = wh.url || "";
+
+        renderScrapers();
+    }
+
+    function lerCanaisDaTela() {
+        state.canais_notificacao = {
+            telegram: {
+                ativo: document.getElementById("checkTgAtivo").checked,
+                bot_token: document.getElementById("inputTgBotToken").value.trim(),
+                chat_id: document.getElementById("inputTgChatId").value.trim()
+            },
+            email: {
+                ativo: document.getElementById("checkEmailAtivo").checked,
+                destinatario: document.getElementById("inputEmailDestinatario").value.trim(),
+                smtp_host: document.getElementById("inputEmailSmtpHost").value.trim(),
+                smtp_port: 587,
+                smtp_user: document.getElementById("inputEmailSmtpUser").value.trim(),
+                smtp_pass: document.getElementById("inputEmailSmtpPass").value.trim()
+            },
+            whatsapp: {
+                ativo: document.getElementById("checkWaAtivo").checked,
+                numero: document.getElementById("inputWaNumero").value.trim(),
+                api_key: document.getElementById("inputWaApiKey").value.trim()
+            },
+            webhook: {
+                ativo: document.getElementById("checkWhAtivo").checked,
+                url: document.getElementById("inputWhUrl").value.trim()
+            }
+        };
+    }
+
+    async function testarNotificacao(canal) {
+        lerCanaisDaTela();
+        await salvarConfiguracoes();
+        try {
+            const res = await fetch("/api/test-notification", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ canal })
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast(data.message);
+            } else {
+                alert(data.message);
+            }
+        } catch (err) {
+            alert("Erro ao enviar teste: " + err);
+        }
+    }
+
+    function renderTags(containerId, inputId, items, updateFn) {
+        const container = document.getElementById(containerId);
+        const input = document.getElementById(inputId);
+
+        container.querySelectorAll(".tag").forEach(t => t.remove());
+
+        items.forEach((item, index) => {
+            const tag = document.createElement("span");
+            tag.className = "tag";
+            tag.innerHTML = `${item} <span class="remove-btn" onclick="removerTag('${containerId}', ${index})">&times;</span>`;
+            container.insertBefore(tag, input);
+        });
+
+        input.onkeydown = (e) => {
+            if (e.key === "Enter" && input.value.trim() !== "") {
+                e.preventDefault();
+                const val = input.value.trim();
+                if (!items.includes(val)) {
+                    items.push(val);
+                    updateFn(items);
+                    input.value = "";
+                    renderTags(containerId, inputId, items, updateFn);
+                }
+            }
+        };
+    }
+
+    function removerTag(containerId, index) {
+        if (containerId === "cargosFortesContainer") state.cargos_fortes.splice(index, 1);
+        if (containerId === "ferramentasContainer") state.ferramentas.splice(index, 1);
+        if (containerId === "cidadesContainer") state.cidades.splice(index, 1);
+        render();
+    }
+
+    function renderScrapers() {
+        const grid = document.getElementById("scrapersGrid");
+        grid.innerHTML = "";
+
+        Object.keys(scrapersNomes).forEach(key => {
+            const active = state.scrapers_ativos[key] !== false;
+            const item = document.createElement("div");
+            item.className = "scraper-toggle";
+            item.innerHTML = `
+                <span>${scrapersNomes[key]}</span>
+                <label class="switch">
+                    <input type="checkbox" ${active ? "checked" : ""} onchange="toggleScraper('${key}', this.checked)">
+                    <span class="slider"></span>
+                </label>
+            `;
+            grid.appendChild(item);
+        });
+    }
+
+    function toggleScraper(key, isChecked) {
+        state.scrapers_ativos[key] = isChecked;
+    }
+
+    async function salvarConfiguracoes() {
+        lerCanaisDaTela();
+        try {
+            const res = await fetch("/api/config", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(state)
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast("Configurações salvas!");
+            }
+        } catch (err) {
+            console.error("Erro ao salvar:", err);
+        }
+    }
+
+    async function salvarERodar() {
+        await salvarConfiguracoes();
+        try {
+            const res = await fetch("/api/run", { method: "POST" });
+            const data = await res.json();
+            if (data.success) {
+                showToast("Busca iniciada!");
+                checarStatus();
+            } else {
+                alert(data.message);
+            }
+        } catch (err) {
+            console.error("Erro ao disparar busca:", err);
+        }
+    }
+
+    async function checarStatus() {
+        try {
+            const res = await fetch("/api/status");
+            const data = await res.json();
+
+            const dot = document.getElementById("statusDot");
+            const text = document.getElementById("statusText");
+            const logBox = document.getElementById("logBox");
+
+            if (data.is_running) {
+                dot.className = "dot active";
+                text.innerText = "Buscando...";
+            } else {
+                dot.className = "dot";
+                text.innerText = "Pronto";
+            }
+
+            if (data.logs && data.logs.length > 0) {
+                logBox.innerText = data.logs.join("\n");
+                logBox.scrollTop = logBox.scrollHeight;
+            }
+        } catch (err) {}
+    }
+
+    async function carregarVagas() {
+        try {
+            const res = await fetch("/api/jobs");
+            const data = await res.json();
+            const tbody = document.getElementById("vagasTableBody");
+            tbody.innerHTML = "";
+
+            if (!data.vagas || data.vagas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--text-muted);">Nenhuma vaga encontrada ainda.</td></tr>`;
+                return;
+            }
+
+            data.vagas.sort((a, b) => (b.score || 0) - (a.score || 0));
+
+            data.vagas.forEach(vaga => {
+                const tr = document.createElement("tr");
+                const scoreVal = vaga.score !== undefined && vaga.score !== null ? vaga.score : 5;
+                
+                let bg = "var(--primary-light)", border = "#bfdbfe", text = "var(--primary)";
+                if (scoreVal >= 8) { bg = "var(--success-light)"; border = "#a7f3d0"; text = "var(--success)"; }
+                else if (scoreVal >= 5) { bg = "var(--warning-light)"; border = "#fde68a"; text = "var(--warning)"; }
+
+                const modalidadeBadge = vaga.modalidade ? `<span style="background: #f1f5f9; border: 1px solid var(--border); color: var(--text-secondary); font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; font-weight: 500;">${vaga.modalidade}</span>` : "";
+
+                tr.innerHTML = `
+                    <td><span class="score-pill" style="background: ${bg}; border: 1px solid ${border}; color: ${text};">Score: ${scoreVal}/10</span></td>
+                    <td><strong>${vaga.titulo}</strong></td>
+                    <td>${vaga.empresa || '-'}</td>
+                    <td>${vaga.local || '-'} ${modalidadeBadge}</td>
+                    <td><span style="background: #f1f5f9; border: 1px solid var(--border); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; color: var(--text-secondary); font-weight: 500;">${vaga.fonte}</span></td>
+                    <td><a href="${vaga.url}" target="_blank" class="job-link">Ver Vaga</a></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (err) {
+            console.error("Erro ao carregar vagas:", err);
+        }
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById("toast");
+        toast.innerText = msg;
+        toast.style.display = "block";
+        setTimeout(() => toast.style.display = "none", 3000);
+    }
+</script>
+
+</body>
+</html>

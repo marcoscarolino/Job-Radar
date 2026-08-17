@@ -1,0 +1,50 @@
+{
+  "modalidades_aceitas": {
+    "remoto": true,
+    "hibrido": true,
+    "presencial": true
+  },
+  "preferencia_modalidade": "remoto",
+  "senioridades_alvo": [
+    "Júnior",
+    "Pleno",
+    "Sênior"
+  ],
+  "cargos_fortes": [
+    "Gerente de Projetos",
+    "Project Manager"
+  ],
+  "cargos_ambiguos": [
+    "Coordenador de Projetos",
+    "Scrum Master"
+  ],
+  "ferramentas": [
+    "pmp",
+    "scrum"
+  ],
+  "qualificadores_dados": [
+    "pmp",
+    "scrum",
+    "agile",
+    "gestão",
+    "projetos",
+    "certificação",
+    "curso"
+  ],
+  "cidades": [
+    "São Paulo",
+    "Recife"
+  ],
+  "aceitar_remoto": true,
+  "scrapers_ativos": {
+    "linkedin": true,
+    "gupy": true,
+    "indeed": true,
+    "solides": true,
+    "catho": true,
+    "geekhunter": true,
+    "trampos": true,
+    "jobs99": true,
+    "weworkremotely": true
+  }
+}

@@ -1,0 +1,97 @@
+name: JobRadar
+
+on:
+  schedule:
+    - cron: "0 */3 * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: jobradar-cycle
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  buscar-vagas:
+    runs-on: ubuntu-latest
+    # Sem isso, o padrão do GitHub Actions é 6h (360min) — uma fonte travada
+    # (ex: Catho com timeout de anti-bot, ou LinkedIn rate-limitado)
+    # consumiria até 6h de cada vez. Com concurrency.cancel-in-progress:
+    # false, um run travado também bloqueia o próximo ciclo inteiro, porque
+    # o run seguinte fica na fila esperando o anterior liberar o grupo. 150
+    # min dá folga real sobre a duração medida do ciclo (~1h30-2h com toda a
+    # paginação e a passada dupla do LinkedIn) e ainda fica abaixo do
+    # intervalo do cron (3h), então um run truncado nunca empilha em cima
+    # do próximo agendado.
+    timeout-minutes: 150
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependências
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Rodar JobRadar (um ciclo de cada perfil)
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        # Antes disso só o perfil Brasil rodava aqui — main_intl.py existia
+        # no repositório mas nunca foi chamado pelo workflow, então o
+        # pipeline internacional nunca rodou de verdade em produção. Agora é
+        # um projeto só com dois perfis selecionáveis (ver perfis.py); os
+        # dois rodam na mesma execução/commit, um após o outro.
+        run: python main.py --perfil brasil internacional --once
+
+      - name: Salvar vagas já vistas (evita notificação duplicada)
+        run: |
+          git config user.name "jobradar-bot"
+          git config user.email "jobradar-bot@users.noreply.github.com"
+
+          git add data/jobs.db
+          if git diff --cached --quiet; then
+            echo "Nada novo pra commitar."
+            exit 0
+          fi
+          git commit -m "chore: atualiza vagas vistas [skip ci]"
+
+          # Se outro push (execução concorrente, ou push manual) chegou
+          # primeiro, o push abaixo é rejeitado. Em vez de falhar o run
+          # (o que faria a vaga ser notificada de novo no próximo ciclo),
+          # sincroniza e tenta de novo. data/jobs.db é binário (SQLite):
+          # em caso de conflito, quem deve vencer é a versão deste run
+          # (base + vagas encontradas agora), não a de origin/main.
+          #
+          # MEDIDO: estava "-X ours", que em `git merge` de fato mantém o
+          # lado local — mas em `git rebase` a semântica é invertida: o
+          # rebase reaplica os commits deste run EM CIMA de origin/main, e
+          # nesse processo "ours" passa a se referir à branch de destino
+          # (origin/main), "theirs" ao commit sendo reaplicado (este run).
+          # Confirmado com um repositório de teste isolado: rebase com
+          # "-X ours" manteve o conteúdo do upstream, descartando o local.
+          # Resultado real: toda vez que o push colidia, o jobs.db commitado
+          # voltava a ser o de origin/main — vaga encontrada e notificada
+          # neste run desaparecia do banco (reaparecia como "nova" no ciclo
+          # seguinte) e qualquer backfill de coluna (ex: chave_secundaria)
+          # também era descartado, mesmo rodando com sucesso a cada
+          # iniciar_db(). Corrigido para "-X theirs" — mesmo teste isolado,
+          # resultado contrário: manteve a versão deste run.
+          n=0
+          until git push; do
+            n=$((n + 1))
+            if [ "$n" -ge 5 ]; then
+              echo "Push falhou depois de 5 tentativas."
+              exit 1
+            fi
+            echo "Push rejeitado, sincronizando (tentativa $n)..."
+            git fetch origin main
+            git rebase origin/main -X theirs || git rebase --abort
+            sleep $((RANDOM % 5 + 1))
+          done
