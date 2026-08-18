@@ -97,6 +97,21 @@ def carregar_config() -> dict:
                 config_completa[k] = subdict
             else:
                 config_completa[k] = v
+
+        # Suporte a variáveis de ambiente para execução em nuvem / GitHub Actions (Gmail/SMTP)
+        em_cfg = config_completa.get("canais_notificacao", {}).get("email", {})
+        env_dest = os.environ.get("EMAIL_DESTINATARIO")
+        env_user = os.environ.get("EMAIL_SMTP_USER")
+        env_pass = os.environ.get("EMAIL_SMTP_PASS")
+        if env_dest and env_user and env_pass:
+            em_cfg["ativo"] = True
+            em_cfg["destinatario"] = env_dest
+            em_cfg["smtp_user"] = env_user
+            em_cfg["smtp_pass"] = env_pass
+            em_cfg["smtp_host"] = os.environ.get("EMAIL_SMTP_HOST", "smtp.gmail.com")
+            em_cfg["smtp_port"] = int(os.environ.get("EMAIL_SMTP_PORT", 587))
+            config_completa["canais_notificacao"]["email"] = em_cfg
+
         return config_completa
     except Exception:
         return copy.deepcopy(DEFAULT_CONFIG)
