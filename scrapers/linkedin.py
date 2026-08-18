@@ -181,7 +181,7 @@ class LinkedInScraper(BaseScraper):
                                 empresa=empresa,
                                 local=local,
                                 link=link,
-                                site="LinkedIn",
+                                site="LinkedIn BR",
                                 publicado_em=publicado_em,
                                 modalidade=modalidade,
                             ))

@@ -318,3 +318,9 @@ def marcar_digest_enviado(perfil_chave: str):
             "UPDATE vagas_vistas SET digest_pendente = 0 WHERE perfil = ? AND digest_pendente = 1",
             (perfil_chave,),
         )
+
+
+def limpar_banco_vagas():
+    """Apaga todas as vagas registradas no banco para reiniciar do zero."""
+    with _conectar() as conn:
+        conn.execute("DELETE FROM vagas_vistas")

@@ -164,6 +164,7 @@ _scrapers_act = _usr_cfg_perfis.get("scrapers_ativos", {})
 _TODOS_SCRAPERS_MAP = {
     "gupy": DefinicaoScraper(GupyScraper, FREQUENCIA_ALTA),
     "linkedin": DefinicaoScraper(LinkedInScraper, FREQUENCIA_ALTA),
+    "linkedin_intl": DefinicaoScraper(LinkedInIntlScraper, FREQUENCIA_ALTA, {"locations": LOCATIONS_INTL}),
     "solides": DefinicaoScraper(SolidesScraper, FREQUENCIA_ALTA),
     "indeed": DefinicaoScraper(IndeedScraper, FREQUENCIA_ALTA),
     "catho": DefinicaoScraper(CathoScraper, FREQUENCIA_BAIXA),

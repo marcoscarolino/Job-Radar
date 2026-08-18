@@ -866,30 +866,24 @@ class Job:
 
     @property
     def publicacao_antiga(self) -> bool:
-        """True quando publicado_em bate um formato relativo em MESES ou
-        ANOS (nunca dias/semanas) — ver _PADRAO_DATA_RELATIVA.
-
-        MEDIDO: vaga real capturada no jobs.db (Solides, "ANALISTA DE
-        DADOS / MIGRAÇÃO - PLENO") com publicado_em = "há 7 meses" —
-        confirmado ao vivo que o Sólides ordena por "Data de postagem"
-        (página 1 de "analista de dados" mostrando "há 1 dia" até "há 5
-        dias" em sequência), então um resultado de meses só sobe pra
-        página visível quando o TERMO de busca tem pouco volume — poucas
-        vagas novas concorrendo, a antiga nunca é empurrada pra baixo.
-        Mês inteiro sem a vaga sumir (nem o site atualizar a data) é sinal
-        forte de vaga estagnada — pode já estar preenchida, ou a empresa
-        esqueceu de tirar o anúncio do ar.
-
-        Escopo deliberadamente limitado ao formato RELATIVO: "" (fonte não
-        expõe data) e formato ABSOLUTO sem ano (ex: "Publicada em 11/08",
-        ver _PADRAO_DATA_ABSOLUTA) sempre voltam False — não dá pra
-        calcular idade de uma data absoluta sem saber o ano, então não
-        arrisca falso positivo/negativo adivinhando. dia(s)/semana(s)
-        também sempre False — só sinal INEQUÍVOCO de "há muito tempo"
-        conta, não estimativa por ausência de dado.
-        """
+        """True quando a vaga foi publicada há mais de 7 dias (ex: mais de 7 dias, semanas, meses ou anos)."""
         texto = _normalizar(self.publicado_em)
-        return "mes" in texto or "ano" in texto
+        if not texto:
+            return False
+        if "mes" in texto or "ano" in texto:
+            return True
+        m = re.search(r"ha\s+(\d+)\s+dia", texto)
+        if m:
+            dias = int(m.group(1))
+            return dias > 7
+        m_sem = re.search(r"ha\s+(\d+)\s+semana", texto)
+        if m_sem:
+            semanas = int(m_sem.group(1))
+            return semanas > 1
+        if "semana" in texto and "1" not in texto:
+            return True
+        return False
+
 
     @property
     def escopo_remoto(self) -> set[str]:

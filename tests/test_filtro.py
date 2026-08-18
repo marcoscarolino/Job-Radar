@@ -186,9 +186,9 @@ CASOS_PUBLICACAO_ANTIGA = [
     ("mes-singular", "há 1 mês", True),
     ("anos-plural", "há 2 anos", True),
     ("ano-singular", "há 1 ano", True),
-    # Dias/semanas continuam "fresca" -- só mês/ano é sinal inequívoco.
     ("dias-nao-e-antiga", "há 3 dias", False),
-    ("semanas-nao-e-antiga", "há 2 semanas", False),
+    ("dias-mais-7-antiga", "há 10 dias", True),
+    ("semanas-antiga", "há 2 semanas", True),
     ("hoje-nao-e-antiga", "hoje", False),
     ("ontem-nao-e-antiga", "ontem", False),
     # Sem dado nenhum (fonte não expõe) -- não dá pra afirmar "antiga" por

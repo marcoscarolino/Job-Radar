@@ -83,3 +83,31 @@ def enviar_notificacao_multicanal(
             resultados["whatsapp"] = False
 
     return resultados
+
+
+def enviar_digest_email_multicanal(vagas: list[dict]) -> bool:
+    """Envia um ÚNICO e-mail contendo a lista completa de todas as vagas categorizadas pelo score."""
+    if not vagas:
+        return False
+
+    config = carregar_config()
+    canais = config.get("canais_notificacao", {})
+    email_cfg = canais.get("email", {})
+
+    if not email_cfg.get("ativo", False):
+        return False
+
+    from notifier.email_notifier import construir_digest_html, enviar_email
+    corpo_html = construir_digest_html(vagas)
+    assunto = f"📡 JobRadar — Resumo de {len(vagas)} Vaga(s) Encontrada(s)"
+
+    return enviar_email(
+        destinatario=email_cfg.get("destinatario", ""),
+        assunto=assunto,
+        corpo_html=corpo_html,
+        smtp_host=email_cfg.get("smtp_host", "smtp.gmail.com"),
+        smtp_port=email_cfg.get("smtp_port", 587),
+        smtp_user=email_cfg.get("smtp_user", ""),
+        smtp_pass=email_cfg.get("smtp_pass", ""),
+    )
+

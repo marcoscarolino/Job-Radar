@@ -28,7 +28,8 @@ def obter_vagas_recientes(limit: int = 100) -> list[dict]:
         cursor.execute(
             """
             SELECT id, titulo, empresa, local, link AS url, site AS fonte,
-                   encontrada_em AS criado_em, modalidade, relevancia AS score
+                   encontrada_em AS criado_em, modalidade, relevancia AS score,
+                   publicado_em
             FROM vagas_vistas
             ORDER BY encontrada_em DESC, ROWID DESC
             LIMIT ?
@@ -41,6 +42,8 @@ def obter_vagas_recientes(limit: int = 100) -> list[dict]:
             row_dict = dict(zip(colunas, row))
             if row_dict.get("score") is None:
                 row_dict["score"] = 5  # Score padrão se não gravado
+            if not row_dict.get("publicado_em"):
+                row_dict["publicado_em"] = "Recente"
             vagas.append(row_dict)
         conn.close()
         return vagas
@@ -79,9 +82,18 @@ def get_jobs():
 def run_scraper():
     global RUNNING_PROCESS, LAST_RUN_LOGS
 
+    dados = request.get_json(silent=True) or {}
+    force = dados.get("force", False)
+
     with RUNNING_LOCK:
         if RUNNING_PROCESS is not None and RUNNING_PROCESS.poll() is None:
-            return jsonify({"success": False, "message": "Já existe uma busca em andamento!"}), 400
+            if force:
+                try:
+                    RUNNING_PROCESS.terminate()
+                except Exception:
+                    pass
+            else:
+                return jsonify({"success": False, "message": "Já existe uma busca em andamento!", "is_running": True}), 400
 
         # Dispara a busca em thread separada
         def executor():
@@ -91,26 +103,63 @@ def run_scraper():
             if not python_bin.exists():
                 python_bin = "python3"
 
-            proc = subprocess.Popen(
-                [str(python_bin), "main.py", "--perfil", "brasil", "--once"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                text=True,
-                bufsize=1,
-            )
-            RUNNING_PROCESS = proc
+            try:
+                proc = subprocess.Popen(
+                    [str(python_bin), "main.py", "--perfil", "brasil", "--once"],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    text=True,
+                    bufsize=1,
+                )
+                RUNNING_PROCESS = proc
 
-            for line in proc.stdout:
-                LAST_RUN_LOGS.append(line.strip())
-                if len(LAST_RUN_LOGS) > 200:
-                    LAST_RUN_LOGS.pop(0)
+                for line in proc.stdout:
+                    LAST_RUN_LOGS.append(line.strip())
+                    if len(LAST_RUN_LOGS) > 200:
+                        LAST_RUN_LOGS.pop(0)
 
-            proc.wait()
+                proc.wait()
+                vagas = obter_vagas_recientes(limit=100)
+                if vagas:
+                    try:
+                        from notifier.dispatcher import enviar_digest_email_multicanal
+                        enviar_digest_email_multicanal(vagas)
+                    except Exception as e:
+                        pass
+            except Exception as e:
+                LAST_RUN_LOGS.append(f"Erro na execução: {e}")
+
 
         t = threading.Thread(target=executor, daemon=True)
         t.start()
 
     return jsonify({"success": True, "message": "Varredura iniciada em segundo plano!"})
+
+
+@app.route("/api/cancel", methods=["POST"])
+def cancel_scraper():
+    global RUNNING_PROCESS, LAST_RUN_LOGS
+    with RUNNING_LOCK:
+        if RUNNING_PROCESS is not None and RUNNING_PROCESS.poll() is None:
+            try:
+                RUNNING_PROCESS.terminate()
+                RUNNING_PROCESS = None
+                LAST_RUN_LOGS.append("Busca cancelada pelo usuário.")
+                return jsonify({"success": True, "message": "Busca cancelada com sucesso!"})
+            except Exception as e:
+                return jsonify({"success": False, "message": f"Erro ao cancelar: {e}"}), 500
+        return jsonify({"success": True, "message": "Nenhuma busca em andamento."})
+
+
+
+@app.route("/api/clear-jobs", methods=["POST"])
+def clear_jobs():
+    from database.database import limpar_banco_vagas
+    try:
+        limpar_banco_vagas()
+        return jsonify({"success": True, "message": "Lista de vagas limpa com sucesso!"})
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Erro ao limpar banco de vagas: {e}"}), 500
 
 
 @app.route("/api/status", methods=["GET"])

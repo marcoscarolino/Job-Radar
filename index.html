@@ -6,48 +6,59 @@
     <title>JobRadar — Painel de Vagas</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #f8fafc;
+            --bg: #f4f6f9;
             --surface: #ffffff;
+            --surface-subtle: #f8fafc;
             --border: #e2e8f0;
             --border-hover: #cbd5e1;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
+            
+            --text-main: #0f172a;
+            --text-sub: #475569;
             --text-muted: #94a3b8;
             
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
-            --primary-light: #eff6ff;
+            --primary-subtle: #eff6ff;
+            --primary-border: #bfdbfe;
             
-            --success: #10b981;
-            --success-light: #ecfdf5;
-            --warning: #f59e0b;
-            --warning-light: #fffbeb;
-            --danger: #ef4444;
-            --danger-light: #fef2f2;
+            --success: #059669;
+            --success-bg: #ecfdf5;
+            --success-border: #a7f3d0;
             
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+            --warning: #d97706;
+            --warning-bg: #fffbeb;
+            --warning-border: #fde68a;
             
+            --danger: #dc2626;
+            --danger-bg: #fef2f2;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+            --shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.04), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 10px 15px -3px rgba(15, 23, 42, 0.05), 0 4px 6px -4px rgba(15, 23, 42, 0.03);
+            
+            --radius-lg: 16px;
             --radius: 12px;
             --radius-sm: 8px;
+            --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+            --font-body: 'Inter', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: var(--font-body);
             -webkit-font-smoothing: antialiased;
         }
 
         body {
             background-color: var(--bg);
-            color: var(--text-primary);
-            padding: 32px 24px;
+            color: var(--text-main);
+            padding: 40px 24px;
             min-height: 100vh;
             line-height: 1.5;
         }
@@ -57,57 +68,105 @@
             margin: 0 auto;
         }
 
-        /* Header */
+        /* Header Layout & Navigation Tabs */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .brand h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            color: var(--text-primary);
+        .brand-title {
+            font-family: var(--font-display);
+            font-size: 1.625rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text-main);
+            line-height: 1.1;
         }
 
-        .brand p {
+        .brand-subtitle {
             font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-top: 2px;
+            color: var(--text-sub);
+            margin-top: 4px;
+            font-weight: 400;
         }
 
-        .status-badge {
+        .nav-tabs {
             display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--surface);
+            background-color: var(--surface-subtle);
             border: 1px solid var(--border);
-            padding: 6px 14px;
-            border-radius: 999px;
-            font-size: 0.8125rem;
-            font-weight: 500;
+            border-radius: var(--radius-sm);
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn.active {
+            background-color: var(--surface);
+            color: var(--primary);
             box-shadow: var(--shadow-sm);
         }
 
-        .dot {
-            width: 8px;
+        /* Progress Bar Container */
+        .progress-container {
+            background-color: var(--surface);
+            border: 1px solid var(--primary-border);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .progress-track {
+            width: 100%;
             height: 8px;
-            border-radius: 50%;
-            background-color: var(--text-muted);
+            background-color: var(--primary-subtle);
+            border-radius: 999px;
+            overflow: hidden;
         }
 
-        .dot.active {
-            background-color: var(--success);
-            box-shadow: 0 0 8px var(--success);
+        .progress-bar-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, #60a5fa 50%, var(--primary) 100%);
+            background-size: 200% 100%;
+            animation: progressPulse 1.5s infinite linear;
+            border-radius: 999px;
         }
 
-        /* Layout Grid */
+        @keyframes progressPulse {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Grid */
         .grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 20px;
+            gap: 24px;
         }
 
         @media (min-width: 768px) {
@@ -123,7 +182,7 @@
             border-radius: var(--radius);
             padding: 24px;
             box-shadow: var(--shadow);
-            transition: border-color 0.2s ease;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .card:hover {
@@ -135,29 +194,32 @@
         }
 
         .card-title {
+            font-family: var(--font-display);
             font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-primary);
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: var(--text-main);
         }
 
         .card-subtitle {
             font-size: 0.8125rem;
-            color: var(--text-secondary);
+            color: var(--text-sub);
             margin-top: 2px;
         }
 
-        /* Input Controls & Tags */
+        /* Inline Tag Input Box */
         .tag-input-container {
             display: flex;
             flex-wrap: wrap;
+            align-items: center;
             gap: 8px;
-            background-color: #f8fafc;
+            background-color: var(--surface-subtle);
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
-            padding: 10px;
+            padding: 10px 12px;
             min-height: 48px;
-            align-items: center;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            cursor: text;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
         }
 
         .tag-input-container:focus-within {
@@ -166,12 +228,19 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
+        .tag-list {
+            display: inline-flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
         .tag {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background-color: var(--primary-light);
-            border: 1px solid #bfdbfe;
+            background-color: var(--primary-subtle);
+            border: 1px solid var(--primary-border);
             color: var(--primary);
             padding: 4px 10px;
             border-radius: 6px;
@@ -179,28 +248,31 @@
             font-weight: 500;
         }
 
-        .tag .remove-btn {
+        .tag-remove {
             cursor: pointer;
             color: var(--text-muted);
-            font-size: 1rem;
+            font-size: 1.1rem;
             line-height: 1;
+            font-weight: 700;
+            transition: color 0.15s ease;
         }
 
-        .tag .remove-btn:hover {
+        .tag-remove:hover {
             color: var(--danger);
         }
 
-        .tag-input {
+        .tag-inline-input {
             border: none;
-            background: transparent;
-            color: var(--text-primary);
             outline: none;
+            background: transparent;
             font-size: 0.875rem;
-            flex-grow: 1;
-            min-width: 140px;
+            color: var(--text-main);
+            flex: 1 1 120px;
+            min-width: 120px;
+            padding: 4px 0;
         }
 
-        /* Checkboxes & Selects */
+        /* Controls */
         .options-group {
             display: flex;
             gap: 12px;
@@ -213,8 +285,8 @@
             gap: 8px;
             cursor: pointer;
             font-size: 0.875rem;
-            color: var(--text-primary);
-            background: #f8fafc;
+            color: var(--text-main);
+            background: var(--surface-subtle);
             padding: 8px 14px;
             border-radius: var(--radius-sm);
             border: 1px solid var(--border);
@@ -236,14 +308,14 @@
 
         .input-text {
             width: 100%;
-            background-color: #f8fafc;
-            color: var(--text-primary);
+            background-color: var(--surface-subtle);
+            color: var(--text-main);
             border: 1px solid var(--border);
             padding: 9px 12px;
             border-radius: var(--radius-sm);
             font-size: 0.875rem;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, background-color 0.2s;
         }
 
         .input-text:focus {
@@ -252,30 +324,31 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        /* Toggles */
+        /* Portais Monitorados - Auto-fit Width Pills */
         .scrapers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 10px;
         }
 
         .scraper-toggle {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: space-between;
-            background: #f8fafc;
+            gap: 10px;
+            background: var(--surface-subtle);
             border: 1px solid var(--border);
-            padding: 10px 14px;
+            padding: 8px 14px;
             border-radius: var(--radius-sm);
-            font-size: 0.875rem;
+            font-size: 0.8125rem;
             font-weight: 500;
+            width: max-content;
         }
 
         .switch {
             position: relative;
             display: inline-block;
-            width: 36px;
-            height: 20px;
+            width: 34px;
+            height: 18px;
         }
 
         .switch input {
@@ -296,8 +369,8 @@
         .slider:before {
             position: absolute;
             content: "";
-            height: 14px;
-            width: 14px;
+            height: 12px;
+            width: 12px;
             left: 3px;
             bottom: 3px;
             background-color: white;
@@ -336,13 +409,13 @@
 
         .btn-secondary {
             background-color: var(--surface);
-            color: var(--text-primary);
+            color: var(--text-main);
             border: 1px solid var(--border);
             box-shadow: var(--shadow-sm);
         }
 
         .btn-secondary:hover {
-            background-color: #f8fafc;
+            background-color: var(--surface-subtle);
             border-color: var(--border-hover);
         }
 
@@ -359,7 +432,6 @@
         /* Table */
         .table-container {
             overflow-x: auto;
-            margin-top: 8px;
         }
 
         table {
@@ -370,10 +442,11 @@
         }
 
         th {
-            background-color: #f8fafc;
+            background-color: var(--surface-subtle);
             padding: 12px 16px;
-            color: var(--text-secondary);
-            font-weight: 600;
+            color: var(--text-sub);
+            font-family: var(--font-display);
+            font-weight: 700;
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -383,7 +456,7 @@
         td {
             padding: 14px 16px;
             border-bottom: 1px solid var(--border);
-            color: var(--text-primary);
+            color: var(--text-main);
         }
 
         tr:last-child td {
@@ -393,7 +466,7 @@
         a.job-link {
             color: var(--primary);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
         }
 
         a.job-link:hover { text-decoration: underline; }
@@ -401,6 +474,7 @@
         .score-pill {
             display: inline-flex;
             align-items: center;
+            font-family: var(--font-mono);
             font-weight: 600;
             padding: 3px 8px;
             border-radius: 6px;
@@ -411,7 +485,7 @@
             position: fixed;
             bottom: 24px;
             right: 24px;
-            background-color: var(--text-primary);
+            background-color: var(--text-main);
             color: white;
             padding: 12px 20px;
             border-radius: var(--radius-sm);
@@ -426,12 +500,140 @@
             background-color: #0f172a;
             border-radius: var(--radius-sm);
             padding: 14px;
-            font-family: ui-monospace, monospace;
+            font-family: var(--font-mono);
             font-size: 0.8125rem;
             color: #38bdf8;
             max-height: 160px;
             overflow-y: auto;
             margin-top: 12px;
+        }
+
+        /* Info Icon & Modal Dialog */
+        .btn-info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--primary-subtle);
+            border: 1px solid var(--primary-border);
+            color: var(--primary);
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            cursor: pointer;
+            margin-left: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-info-icon:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 580px;
+            box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+            overflow: hidden;
+            animation: modalFadeIn 0.2s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--text-main);
+        }
+
+        .modal-body {
+            padding: 24px;
+            max-height: 65vh;
+            overflow-y: auto;
+            font-size: 0.875rem;
+            color: var(--text-sub);
+            line-height: 1.6;
+        }
+
+        .modal-body ol, .modal-body ul {
+            margin-left: 20px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+        }
+
+        .modal-body a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .modal-body a:hover {
+            text-decoration: underline;
+        }
+
+        .modal-body code {
+            font-family: var(--font-mono);
+            background-color: var(--surface-subtle);
+            border: 1px solid var(--border);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8125rem;
+            color: var(--text-main);
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            background-color: var(--surface-subtle);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
         }
     </style>
 </head>
@@ -440,215 +642,300 @@
 <div class="container">
     <header>
         <div class="brand">
-            <h1>JobRadar</h1>
-            <p>Varredura inteligente de vagas com score de relevância</p>
+            <h1 class="brand-title">JobRadar</h1>
+            <p class="brand-subtitle">Varredura inteligente de vagas com score de relevância</p>
         </div>
-        <div class="status-badge">
-            <span class="dot" id="statusDot"></span>
-            <span id="statusText">Pronto</span>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <div class="nav-tabs">
+                <button class="nav-btn active" id="tabVagas" onclick="mostrarPagina('vagas')">Vagas Encontradas</button>
+                <button class="nav-btn" id="tabConfig" onclick="mostrarPagina('config')">Configurações</button>
+            </div>
+            <button class="btn btn-primary" id="btnBuscarVagas" onclick="salvarERodar()">Buscar Vagas</button>
         </div>
     </header>
 
-    <div class="grid grid-2">
-        <!-- Cargos -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">Cargos Principais</div>
-                <div class="card-subtitle">Ex: Gerente de Projetos, Project Manager</div>
-            </div>
-            <div class="tag-input-container" id="cargosFortesContainer">
-                <input type="text" class="tag-input" id="inputCargoForte" placeholder="Digite um cargo...">
-            </div>
-            <div style="margin-top: 8px; text-align: right;">
-                <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;" onclick="processarInputParaTags('inputCargoForte', state.cargos_fortes, (n)=>state.cargos_fortes=n, 'cargosFortesContainer')">+ Adicionar Tag</button>
-            </div>
+    <!-- Barra de Progresso de Busca -->
+    <div class="progress-container" id="searchProgressBar" style="display: none;">
+        <div class="progress-header">
+            <span>Varredura de vagas em andamento nos portais...</span>
+            <span id="progressText">Buscando...</span>
         </div>
-
-        <!-- Tecnologias, Stacks e Certificações -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">Stacks & Certificações</div>
-                <div class="card-subtitle">Ex: pmp, scrum, aws, python</div>
-            </div>
-            <div class="tag-input-container" id="ferramentasContainer">
-                <input type="text" class="tag-input" id="inputFerramenta" placeholder="Digite uma ferramenta...">
-            </div>
-            <div style="margin-top: 8px; text-align: right;">
-                <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;" onclick="processarInputParaTags('inputFerramenta', state.ferramentas, (n)=>state.ferramentas=n, 'ferramentasContainer')">+ Adicionar Tag</button>
-            </div>
+        <div class="progress-track">
+            <div class="progress-bar-fill"></div>
         </div>
+    </div>
 
-        <!-- Modalidade & Prioridade -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">Modalidades Aceitas</div>
-            </div>
-            <div class="options-group">
-                <label class="checkbox-container"><input type="checkbox" id="checkModRemoto" checked> Remoto</label>
-                <label class="checkbox-container"><input type="checkbox" id="checkModHibrido" checked> Híbrido</label>
-                <label class="checkbox-container"><input type="checkbox" id="checkModPresencial" checked> Presencial</label>
-            </div>
-            
-            <div style="margin-top: 16px;">
-                <label style="font-size: 0.8125rem; color: var(--text-secondary); display: block; margin-bottom: 6px; font-weight: 500;">Prioridade no Score (+3 pts):</label>
-                <select id="selectPreferencia" class="input-text">
-                    <option value="remoto">Priorizar Remoto (+3 pts)</option>
-                    <option value="hibrido">Priorizar Híbrido (+3 pts)</option>
-                    <option value="presencial">Priorizar Presencial (+3 pts)</option>
-                    <option value="sem_preferencia">Sem Preferência</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Cidades -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">Cidades & Regiões</div>
-                <div class="card-subtitle">Ex: São Paulo, Recife</div>
-            </div>
-            <div class="tag-input-container" id="cidadesContainer">
-                <input type="text" class="tag-input" id="inputCidade" placeholder="Digite uma cidade...">
-            </div>
-            <div style="margin-top: 8px; text-align: right;">
-                <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;" onclick="processarInputParaTags('inputCidade', state.cidades, (n)=>state.cidades=n, 'cidadesContainer')">+ Adicionar Tag</button>
-            </div>
-        </div>
-
-        <!-- Senioridades Alvo -->
-        <div class="card" style="grid-column: 1 / -1;">
-            <div class="card-header">
-                <div class="card-title">Senioridades Alvo (+2 pts bônus no foco)</div>
-            </div>
-            <div class="options-group">
-                <label class="checkbox-container"><input type="checkbox" value="Estágio/Trainee" class="check-senioridade"> Estágio / Trainee</label>
-                <label class="checkbox-container"><input type="checkbox" value="Júnior" class="check-senioridade" checked> Júnior</label>
-                <label class="checkbox-container"><input type="checkbox" value="Pleno" class="check-senioridade" checked> Pleno</label>
-                <label class="checkbox-container"><input type="checkbox" value="Sênior" class="check-senioridade" checked> Sênior</label>
-                <label class="checkbox-container"><input type="checkbox" value="Especialista/Liderança" class="check-senioridade"> Especialista / Liderança</label>
-            </div>
-        </div>
-
-        <!-- Canais de Notificação -->
-        <div class="card" style="grid-column: 1 / -1;">
-            <div class="card-header">
-                <div class="card-title">Canais de Notificação</div>
+    <!-- PÁGINA 1: Tabela de Vagas -->
+    <div id="pageVagas" class="page-view">
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <div style="padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
+                <div>
+                    <div class="card-title">Vagas Encontradas</div>
+                    <div class="card-subtitle">Exibindo vagas dos últimos 7 dias ordenadas por score</div>
+                </div>
+                <button class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.8125rem; color: var(--danger); border-color: #fecaca; background: #fef2f2;" onclick="limparListaVagas()">Limpar Lista</button>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
-                <!-- Telegram -->
-                <div style="background: #f8fafc; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span style="font-weight: 600; font-size: 0.875rem;">Telegram</span>
-                        <label class="switch"><input type="checkbox" id="checkTgAtivo" checked><span class="slider"></span></label>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <input type="text" id="inputTgBotToken" class="input-text" placeholder="Bot Token (.env)">
-                        <input type="text" id="inputTgChatId" class="input-text" placeholder="Chat ID">
-                        <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem; justify-content: center; margin-top: 4px;" onclick="testarNotificacao('telegram')">Testar</button>
-                    </div>
+            <!-- Barra de Filtros Interativos em Tempo Real -->
+            <div style="padding: 16px 24px; background: var(--surface-subtle); border-bottom: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+                <div style="flex: 1 1 140px; min-width: 140px;">
+                    <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-sub); display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Score Mínimo</label>
+                    <select id="filtroScore" class="input-text" style="padding: 6px 10px; font-size: 0.8125rem;" onchange="aplicarFiltrosTabela()">
+                        <option value="todos">Todos os Scores</option>
+                        <option value="8">8+ (Alta Relevância)</option>
+                        <option value="5">5+ (Média Relevância)</option>
+                    </select>
                 </div>
 
-                <!-- E-mail -->
-                <div style="background: #f8fafc; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span style="font-weight: 600; font-size: 0.875rem;">E-mail (SMTP)</span>
-                        <label class="switch"><input type="checkbox" id="checkEmailAtivo"><span class="slider"></span></label>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <input type="email" id="inputEmailDestinatario" class="input-text" placeholder="Seu E-mail">
-                        <input type="text" id="inputEmailSmtpHost" class="input-text" placeholder="smtp.gmail.com">
-                        <input type="text" id="inputEmailSmtpUser" class="input-text" placeholder="Usuário SMTP">
-                        <input type="password" id="inputEmailSmtpPass" class="input-text" placeholder="Senha SMTP">
-                        <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem; justify-content: center; margin-top: 4px;" onclick="testarNotificacao('email')">Testar</button>
-                    </div>
+                <div style="flex: 1 1 150px; min-width: 150px;">
+                    <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-sub); display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Modalidade</label>
+                    <select id="filtroModalidade" class="input-text" style="padding: 6px 10px; font-size: 0.8125rem;" onchange="aplicarFiltrosTabela()">
+                        <option value="todas">Todas as Modalidades</option>
+                        <option value="remoto">Remoto</option>
+                        <option value="hibrido">Híbrido</option>
+                        <option value="presencial">Presencial</option>
+                    </select>
                 </div>
 
-                <!-- WhatsApp -->
-                <div style="background: #f8fafc; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span style="font-weight: 600; font-size: 0.875rem;">WhatsApp</span>
-                        <label class="switch"><input type="checkbox" id="checkWaAtivo"><span class="slider"></span></label>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <input type="text" id="inputWaNumero" class="input-text" placeholder="+5511999998888">
-                        <input type="text" id="inputWaApiKey" class="input-text" placeholder="API Key CallMeBot">
-                        <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem; justify-content: center; margin-top: 4px;" onclick="testarNotificacao('whatsapp')">Testar</button>
-                    </div>
+                <div style="flex: 1 1 180px; min-width: 180px;">
+                    <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-sub); display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Local</label>
+                    <input type="text" id="filtroLocal" class="input-text" style="padding: 6px 10px; font-size: 0.8125rem;" placeholder="Filtrar por cidade..." oninput="aplicarFiltrosTabela()">
                 </div>
 
-                <!-- Webhook -->
-                <div style="background: #f8fafc; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span style="font-weight: 600; font-size: 0.875rem;">Webhook</span>
-                        <label class="switch"><input type="checkbox" id="checkWhAtivo"><span class="slider"></span></label>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <input type="url" id="inputWhUrl" class="input-text" placeholder="URL Webhook Discord/Slack">
-                        <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem; justify-content: center; margin-top: 4px;" onclick="testarNotificacao('webhook')">Testar</button>
-                    </div>
+                <div style="flex: 1 1 170px; min-width: 170px;">
+                    <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-sub); display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Fonte / Portal</label>
+                    <select id="filtroFonte" class="input-text" style="padding: 6px 10px; font-size: 0.8125rem;" onchange="aplicarFiltrosTabela()">
+                        <option value="todas">Todas as Fontes</option>
+                        <option value="linkedin br">LinkedIn BR</option>
+                        <option value="linkedin internacional">LinkedIn Internacional</option>
+                        <option value="gupy">Gupy</option>
+                        <option value="indeed">Indeed</option>
+                        <option value="solides">Sólides</option>
+                        <option value="catho">Catho</option>
+                        <option value="geekhunter">GeekHunter</option>
+                        <option value="trampos">Trampos</option>
+                        <option value="99jobs">99Jobs</option>
+                        <option value="weworkremotely">WeWorkRemotely</option>
+                    </select>
                 </div>
             </div>
-        </div>
 
-        <!-- Portais de Vagas -->
-        <div class="card" style="grid-column: 1 / -1;">
-            <div class="card-header">
-                <div class="card-title">Portais Monitorados</div>
-            </div>
-            <div class="scrapers-grid" id="scrapersGrid">
-                <!-- Preenchido via JS -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Score</th>
+                            <th>Título da Vaga</th>
+                            <th>Empresa</th>
+                            <th>Divulgada Em</th>
+                            <th>Modalidade</th>
+                            <th>Local</th>
+                            <th>Fonte</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vagasTableBody">
+                        <tr><td colspan="8" style="text-align: center; padding: 24px; color: var(--text-muted);">Carregando vagas...</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <!-- Actions -->
-    <div class="actions-bar">
-        <button class="btn btn-secondary" onclick="salvarConfiguracoes()">Salvar Alterações</button>
-        <button class="btn btn-primary" onclick="salvarERodar()">Salvar & Buscar Vagas</button>
-    </div>
-
-    <!-- Console Logs -->
-    <div class="card" style="margin-top: 24px;" id="logsCard">
-        <div class="card-title" style="font-size: 0.875rem;">Console de Execução</div>
-        <div class="log-box" id="logBox">Pronto para buscar vagas...</div>
-    </div>
-
-    <!-- Jobs Table -->
-    <div class="card" style="margin-top: 24px; padding: 0; overflow: hidden;">
-        <div style="padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
-            <div>
-                <div class="card-title">Vagas Encontradas</div>
-                <div class="card-subtitle">Ordenadas do maior para o menor score</div>
+    <!-- PÁGINA 2: Configurações -->
+    <div id="pageConfig" class="page-view" style="display: none;">
+        <div class="grid grid-2">
+            <!-- Cargos Principais -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Cargos Principais</div>
+                    <div class="card-subtitle">Ex: Gerente de Projetos, Project Manager</div>
+                </div>
+                <div class="tag-input-container" onclick="focarInput('inputCargoForte')">
+                    <span id="cargosFortesTagsList" class="tag-list"></span>
+                    <input type="text" class="tag-inline-input" id="inputCargoForte" placeholder="Digite um cargo...">
+                </div>
             </div>
-            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.75rem;" onclick="carregarVagas()">Atualizar</button>
+
+            <!-- Stacks & Certificações -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Stacks & Certificações</div>
+                    <div class="card-subtitle">Ex: pmp, scrum, aws, python</div>
+                </div>
+                <div class="tag-input-container" onclick="focarInput('inputFerramenta')">
+                    <span id="ferramentasTagsList" class="tag-list"></span>
+                    <input type="text" class="tag-inline-input" id="inputFerramenta" placeholder="Digite uma stack...">
+                </div>
+            </div>
+
+            <!-- Modalidades Aceitas -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Modalidades Aceitas</div>
+                </div>
+                <div class="options-group">
+                    <label class="checkbox-container"><input type="checkbox" id="checkModRemoto" checked> Remoto</label>
+                    <label class="checkbox-container"><input type="checkbox" id="checkModHibrido" checked> Híbrido</label>
+                    <label class="checkbox-container"><input type="checkbox" id="checkModPresencial" checked> Presencial</label>
+                </div>
+                
+                <div style="margin-top: 16px;">
+                    <label style="font-size: 0.8125rem; color: var(--text-sub); display: block; margin-bottom: 6px; font-weight: 500;">Prioridade no Score (+3 pts):</label>
+                    <select id="selectPreferencia" class="input-text">
+                        <option value="remoto">Priorizar Remoto (+3 pts)</option>
+                        <option value="hibrido">Priorizar Híbrido (+3 pts)</option>
+                        <option value="presencial">Priorizar Presencial (+3 pts)</option>
+                        <option value="sem_preferencia">Sem Preferência</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Cidades & Regiões -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Cidades & Regiões</div>
+                    <div class="card-subtitle">Ex: São Paulo, Recife</div>
+                </div>
+                <div class="tag-input-container" onclick="focarInput('inputCidade')">
+                    <span id="cidadesTagsList" class="tag-list"></span>
+                    <input type="text" class="tag-inline-input" id="inputCidade" placeholder="Digite uma cidade...">
+                </div>
+            </div>
+
+            <!-- Senioridades Alvo -->
+            <div class="card" style="grid-column: 1 / -1;">
+                <div class="card-header">
+                    <div class="card-title">Senioridades Alvo (+2 pts bônus no foco)</div>
+                </div>
+                <div class="options-group">
+                    <label class="checkbox-container"><input type="checkbox" value="Estágio/Trainee" class="check-senioridade"> Estágio / Trainee</label>
+                    <label class="checkbox-container"><input type="checkbox" value="Júnior" class="check-senioridade" checked> Júnior</label>
+                    <label class="checkbox-container"><input type="checkbox" value="Pleno" class="check-senioridade" checked> Pleno</label>
+                    <label class="checkbox-container"><input type="checkbox" value="Sênior" class="check-senioridade" checked> Sênior</label>
+                    <label class="checkbox-container"><input type="checkbox" value="Especialista/Liderança" class="check-senioridade"> Especialista / Liderança</label>
+                </div>
+            </div>
+
+            <!-- Canais de Notificação -->
+            <div class="card" style="grid-column: 1 / -1;">
+                <div class="card-header">
+                    <div class="card-title">Canais de Notificação</div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                    <!-- Telegram -->
+                    <div style="background: var(--surface-subtle); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center;">
+                                <span style="font-weight: 600; font-size: 0.875rem;">Telegram</span>
+                                <button type="button" class="btn-info-icon" onclick="abrirModalInfo('telegram')" title="Como configurar o Telegram">i</button>
+                            </div>
+                            <label class="switch"><input type="checkbox" id="checkTgAtivo" checked><span class="slider"></span></label>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <input type="text" id="inputTgBotToken" class="input-text" placeholder="Bot Token (.env)">
+                            <input type="text" id="inputTgChatId" class="input-text" placeholder="Chat ID">
+                            <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 0.75rem; justify-content: center; margin-top: 4px;" onclick="testarNotificacao('telegram')">Testar Canal</button>
+                        </div>
+                    </div>
+
+                    <!-- E-mail -->
+                    <div style="background: var(--surface-subtle); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center;">
+                                <span style="font-weight: 600; font-size: 0.875rem;">E-mail (SMTP - Digest Único)</span>
+                                <button type="button" class="btn-info-icon" onclick="abrirModalInfo('email')" title="Como configurar o E-mail">i</button>
+                            </div>
+                            <label class="switch"><input type="checkbox" id="checkEmailAtivo"><span class="slider"></span></label>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <input type="email" id="inputEmailDestinatario" class="input-text" placeholder="Seu E-mail">
+                            <input type="text" id="inputEmailSmtpHost" class="input-text" placeholder="smtp.gmail.com">
+                            <input type="text" id="inputEmailSmtpUser" class="input-text" placeholder="Usuário SMTP">
+                            <input type="password" id="inputEmailSmtpPass" class="input-text" placeholder="Senha SMTP">
+                            <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 0.75rem; justify-content: center; margin-top: 4px;" onclick="testarNotificacao('email')">Testar Canal</button>
+                        </div>
+                    </div>
+
+                    <!-- WhatsApp -->
+                    <div style="background: var(--surface-subtle); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center;">
+                                <span style="font-weight: 600; font-size: 0.875rem;">WhatsApp</span>
+                                <button type="button" class="btn-info-icon" onclick="abrirModalInfo('whatsapp')" title="Como configurar o WhatsApp">i</button>
+                            </div>
+                            <label class="switch"><input type="checkbox" id="checkWaAtivo"><span class="slider"></span></label>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <input type="text" id="inputWaNumero" class="input-text" placeholder="+5511999998888">
+                            <input type="text" id="inputWaApiKey" class="input-text" placeholder="API Key CallMeBot">
+                            <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 0.75rem; justify-content: center; margin-top: 4px;" onclick="testarNotificacao('whatsapp')">Testar Canal</button>
+                        </div>
+                    </div>
+
+                    <!-- Webhook -->
+                    <div style="background: var(--surface-subtle); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center;">
+                                <span style="font-weight: 600; font-size: 0.875rem;">Webhook</span>
+                                <button type="button" class="btn-info-icon" onclick="abrirModalInfo('webhook')" title="Como configurar Webhooks">i</button>
+                            </div>
+                            <label class="switch"><input type="checkbox" id="checkWhAtivo"><span class="slider"></span></label>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <input type="url" id="inputWhUrl" class="input-text" placeholder="URL Webhook Discord/Slack">
+                            <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 0.75rem; justify-content: center; margin-top: 4px;" onclick="testarNotificacao('webhook')">Testar Canal</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portais Monitorados - Pílulas Compactas Auto-fit -->
+            <div class="card" style="grid-column: 1 / -1;">
+                <div class="card-header">
+                    <div class="card-title">Portais Monitorados</div>
+                </div>
+                <div class="scrapers-grid" id="scrapersGrid">
+                    <!-- Preenchido via JS -->
+                </div>
+            </div>
         </div>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Score</th>
-                        <th>Título da Vaga</th>
-                        <th>Empresa</th>
-                        <th>Local</th>
-                        <th>Fonte</th>
-                        <th>Ação</th>
-                    </tr>
-                </thead>
-                <tbody id="vagasTableBody">
-                    <tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--text-muted);">Carregando vagas...</td></tr>
-                </tbody>
-            </table>
+
+        <!-- Console Logs -->
+        <div class="card" style="margin-top: 24px;" id="logsCard">
+            <div class="card-title" style="font-size: 0.875rem;">Console de Execução</div>
+            <div class="log-box" id="logBox">Pronto para buscar vagas...</div>
+        </div>
+
+        <div class="actions-bar">
+            <button class="btn btn-secondary" onclick="salvarConfiguracoes()">Salvar Configurações</button>
+            <button class="btn btn-primary" id="btnBuscarVagasConfig" onclick="salvarERodar()">Salvar & Buscar Vagas</button>
         </div>
     </div>
 </div>
 
 <div class="toast" id="toast">Salvo com sucesso!</div>
 
+<!-- Modal de Instruções -->
+<div class="modal-overlay" id="infoModalOverlay" onclick="fecharModalInfo(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalInfoTitulo">Instruções de Configuração</h3>
+            <button type="button" class="modal-close" onclick="fecharModalInfo()">&times;</button>
+        </div>
+        <div class="modal-body" id="modalInfoCorpo"></div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="fecharModalInfo()">Fechar</button>
+        </div>
+    </div>
+</div>
+
 <script>
     let state = {
-        cargos_fortes: [],
-        ferramentas: [],
-        cidades: [],
+        cargos_fortes: ["Gerente de Projetos", "Project Manager"],
+        ferramentas: ["pmp", "scrum"],
+        cidades: ["São Paulo", "Recife"],
         modalidades_aceitas: { remoto: true, hibrido: true, presencial: true },
         preferencia_modalidade: "remoto",
         senioridades_alvo: ["Júnior", "Pleno", "Sênior"],
@@ -656,8 +943,89 @@
         scrapers_ativos: {}
     };
 
+    let todasAsVagas = [];
+
+    const instrucoesCanais = {
+        telegram: {
+            titulo: "Como configurar os Alertas do Telegram",
+            corpo: `
+                <p>Siga o passo a passo para criar o seu Bot no Telegram e obter o Chat ID:</p>
+                <ol>
+                    <li>Abra o Telegram e pesquise pelo bot oficial <strong>@BotFather</strong> ou acesse diretamente: <a href="https://t.me/BotFather" target="_blank">Abrir @BotFather</a>.</li>
+                    <li>Envie a mensagem <code>/newbot</code> para o BotFather e siga as instruções para definir o nome e nome de usuário do seu bot.</li>
+                    <li>O BotFather enviará o seu <strong>Bot Token</strong> de API (ex: <code>123456789:ABCdefGhIJKlmNoPQ...</code>). Copie e cole este token no campo <strong>Bot Token</strong>.</li>
+                    <li>Para descobrir o seu <strong>Chat ID</strong>, abra o bot <strong>@userinfobot</strong> no Telegram: <a href="https://t.me/userinfobot" target="_blank">Abrir @userinfobot</a> e envie a mensagem <code>/start</code>. Ele responderá com o seu código numérico.</li>
+                    <li>Cole o seu <strong>Chat ID</strong> no campo correspondente, ative o canal e clique no botão <strong>Testar Canal</strong>.</li>
+                </ol>
+            `
+        },
+        email: {
+            titulo: "Como configurar os Alertas por E-mail (Gmail / SMTP)",
+            corpo: `
+                <p>O JobRadar enviará <strong>um único e-mail consolidado</strong> com todas as vagas organizadas por score:</p>
+                <ol>
+                    <li>Acesse a área de segurança da sua conta Google: <a href="https://myaccount.google.com/security" target="_blank">Segurança da Conta Google</a>.</li>
+                    <li>Certifique-se de que a <strong>Verificação em duas etapas</strong> esteja ativada na sua conta.</li>
+                    <li>Acesse o gerador de senhas de aplicativo: <a href="https://myaccount.google.com/apppasswords" target="_blank">Gerar Senha de App Google</a>.</li>
+                    <li>Digite o nome <code>JobRadar</code> e clique em <strong>Criar</strong>. O Google exibirá um código de 16 caracteres.</li>
+                    <li>Preencha os campos no JobRadar da seguinte forma:
+                        <ul>
+                            <li><strong>Seu E-mail:</strong> O seu e-mail de destino.</li>
+                            <li><strong>Servidor SMTP:</strong> <code>smtp.gmail.com</code> (para Gmail) ou <code>smtp.office365.com</code> (para Outlook).</li>
+                            <li><strong>Usuário SMTP:</strong> O seu e-mail completo do remetente.</li>
+                            <li><strong>Senha SMTP:</strong> A sua Senha de App de 16 caracteres (sem espaços).</li>
+                        </ul>
+                    </li>
+                    <li>Clique em <strong>Testar Canal</strong> para validar o envio.</li>
+                </ol>
+            `
+        },
+        whatsapp: {
+            titulo: "Como configurar os Alertas do WhatsApp (CallMeBot)",
+            corpo: `
+                <p>O JobRadar utiliza a API gratuita do <strong>CallMeBot</strong> para enviar mensagens no WhatsApp:</p>
+                <ol>
+                    <li>Adicione o número do CallMeBot aos contatos do seu WhatsApp: <code>+34 644 59 71 67</code> ou acesse o link direto: <a href="https://api.whatsapp.com/send?phone=34644597167&text=I%20allow%20callmebot%20to%20send%20me%20messages" target="_blank">Ativar no WhatsApp</a>.</li>
+                    <li>Envie exatamente a mensagem: <code>I allow callmebot to send me messages</code>.</li>
+                    <li>Em alguns segundos, o robô responderá com a sua <strong>API Key</strong> de autorização.</li>
+                    <li>Preencha os campos no JobRadar:
+                        <ul>
+                            <li><strong>Número:</strong> Seu telefone com código do país e DDD (ex: <code>+5511999998888</code>).</li>
+                            <li><strong>API Key CallMeBot:</strong> A chave numérica fornecida pelo robô.</li>
+                        </ul>
+                    </li>
+                    <li>Para maiores informações, veja o tutorial oficial: <a href="https://www.callmebot.com/blog/free-api-whatsapp-messages/" target="_blank">Tutorial CallMeBot</a>.</li>
+                </ol>
+            `
+        },
+        webhook: {
+            titulo: "Como configurar Webhooks (Discord / Slack)",
+            corpo: `
+                <p>Envie alertas para canais do Discord ou Slack utilizando Webhooks:</p>
+                <ol>
+                    <li><strong>Discord:</strong>
+                        <ul>
+                            <li>Acesse as Configurações do seu Servidor > <strong>Integrações</strong> > <strong>Webhooks</strong>.</li>
+                            <li>Clique em <strong>Novo Webhook</strong>, escolha o canal e clique em <strong>Copiar URL do Webhook</strong>.</li>
+                            <li>Consulte o guia oficial: <a href="https://support.discord.com/hc/pt-br/articles/228383668-Usando-Webhooks" target="_blank">Documentação Discord</a>.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Slack:</strong>
+                        <ul>
+                            <li>Acesse a página de aplicativos da sua Workspace e adicione a integração <strong>Incoming WebHooks</strong>.</li>
+                            <li>Escolha o canal onde deseja publicar os alertas e copie a URL do Webhook.</li>
+                            <li>Consulte o guia oficial: <a href="https://api.slack.com/messaging/webhooks" target="_blank">Documentação Slack</a>.</li>
+                        </ul>
+                    </li>
+                    <li>Cole a URL gerada no campo <strong>URL Webhook Discord/Slack</strong> e clique em <strong>Testar Canal</strong>.</li>
+                </ol>
+            `
+        }
+    };
+
     const scrapersNomes = {
-        linkedin: "LinkedIn",
+        linkedin: "LinkedIn BR",
+        linkedin_intl: "LinkedIn Internacional",
         gupy: "Gupy",
         indeed: "Indeed",
         solides: "Sólides",
@@ -672,6 +1040,43 @@
         carregarConfiguracoes();
         carregarVagas();
         setInterval(checarStatus, 3000);
+    });
+
+    function mostrarPagina(nomePagina) {
+        const pageVagas = document.getElementById("pageVagas");
+        const pageConfig = document.getElementById("pageConfig");
+        const tabVagas = document.getElementById("tabVagas");
+        const tabConfig = document.getElementById("tabConfig");
+
+        if (nomePagina === "config") {
+            pageVagas.style.display = "none";
+            pageConfig.style.display = "block";
+            tabVagas.classList.remove("active");
+            tabConfig.classList.add("active");
+        } else {
+            pageVagas.style.display = "block";
+            pageConfig.style.display = "none";
+            tabVagas.classList.add("active");
+            tabConfig.classList.remove("active");
+        }
+    }
+
+    function abrirModalInfo(canal) {
+        const item = instrucoesCanais[canal];
+        if (!item) return;
+
+        document.getElementById("modalInfoTitulo").innerText = item.titulo;
+        document.getElementById("modalInfoCorpo").innerHTML = item.corpo;
+        document.getElementById("infoModalOverlay").style.display = "flex";
+    }
+
+    function fecharModalInfo(event) {
+        if (event && event.target !== event.currentTarget && !event.target.classList.contains("modal-close")) return;
+        document.getElementById("infoModalOverlay").style.display = "none";
+    }
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") fecharModalInfo();
     });
 
     async function carregarConfiguracoes() {
@@ -695,27 +1100,28 @@
     }
 
     function render() {
-        renderTags("cargosFortesContainer", "inputCargoForte", state.cargos_fortes, (newArr) => state.cargos_fortes = newArr);
-        renderTags("ferramentasContainer", "inputFerramenta", state.ferramentas, (newArr) => state.ferramentas = newArr);
-        renderTags("cidadesContainer", "inputCidade", state.cidades, (newArr) => state.cidades = newArr);
+        renderCargosFortes();
+        renderFerramentas();
+        renderCidades();
 
         if (!state.modalidades_aceitas) state.modalidades_aceitas = { remoto: true, hibrido: true, presencial: true };
         document.getElementById("checkModRemoto").checked = state.modalidades_aceitas.remoto !== false;
         document.getElementById("checkModHibrido").checked = state.modalidades_aceitas.hibrido !== false;
         document.getElementById("checkModPresencial").checked = state.modalidades_aceitas.presencial !== false;
 
-        document.getElementById("checkModRemoto").onchange = (e) => state.modalidades_aceitas.remoto = e.target.checked;
-        document.getElementById("checkModHibrido").onchange = (e) => state.modalidades_aceitas.hibrido = e.target.checked;
-        document.getElementById("checkModPresencial").onchange = (e) => state.modalidades_aceitas.presencial = e.target.checked;
+        document.getElementById("checkModRemoto").onchange = (e) => { state.modalidades_aceitas.remoto = e.target.checked; salvarEstadoEmLocalStorage(); };
+        document.getElementById("checkModHibrido").onchange = (e) => { state.modalidades_aceitas.hibrido = e.target.checked; salvarEstadoEmLocalStorage(); };
+        document.getElementById("checkModPresencial").onchange = (e) => { state.modalidades_aceitas.presencial = e.target.checked; salvarEstadoEmLocalStorage(); };
 
         document.getElementById("selectPreferencia").value = state.preferencia_modalidade || "remoto";
-        document.getElementById("selectPreferencia").onchange = (e) => state.preferencia_modalidade = e.target.value;
+        document.getElementById("selectPreferencia").onchange = (e) => { state.preferencia_modalidade = e.target.value; salvarEstadoEmLocalStorage(); };
 
         if (!state.senioridades_alvo) state.senioridades_alvo = ["Júnior", "Pleno", "Sênior"];
         document.querySelectorAll(".check-senioridade").forEach(chk => {
             chk.checked = state.senioridades_alvo.some(s => s.toLowerCase().includes(chk.value.toLowerCase()) || chk.value.toLowerCase().includes(s.toLowerCase()));
             chk.onchange = () => {
                 state.senioridades_alvo = Array.from(document.querySelectorAll(".check-senioridade:checked")).map(c => c.value);
+                salvarEstadoEmLocalStorage();
             };
         });
 
@@ -750,6 +1156,167 @@
         document.getElementById("inputWhUrl").value = wh.url || "";
 
         renderScrapers();
+        configurarInputsEvents();
+    }
+
+    function focarInput(inputId) {
+        const el = document.getElementById(inputId);
+        if (el) el.focus();
+    }
+
+    function salvarEstadoEmLocalStorage() {
+        try {
+            localStorage.setItem("jobradar_config", JSON.stringify(state));
+        } catch(e) {}
+    }
+
+    function configurarInputsEvents() {
+        bindInputTag("inputCargoForte", adicionarCargoForte);
+        bindInputTag("inputFerramenta", adicionarFerramenta);
+        bindInputTag("inputCidade", adicionarCidade);
+    }
+
+    function bindInputTag(inputId, actionFn) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+
+        input.onkeydown = (e) => {
+            if (e.key === "Enter" || e.key === "," || e.keyCode === 13 || e.keyCode === 188) {
+                e.preventDefault();
+                actionFn();
+            }
+            if (e.key === "Backspace" && input.value === "") {
+                if (inputId === "inputCargoForte" && state.cargos_fortes && state.cargos_fortes.length > 0) {
+                    state.cargos_fortes.pop();
+                    salvarEstadoEmLocalStorage();
+                    renderCargosFortes();
+                } else if (inputId === "inputFerramenta" && state.ferramentas && state.ferramentas.length > 0) {
+                    state.ferramentas.pop();
+                    salvarEstadoEmLocalStorage();
+                    renderFerramentas();
+                } else if (inputId === "inputCidade" && state.cidades && state.cidades.length > 0) {
+                    state.cidades.pop();
+                    salvarEstadoEmLocalStorage();
+                    renderCidades();
+                }
+            }
+        };
+
+        input.onblur = () => {
+            if (input.value.trim() !== "") {
+                actionFn();
+            }
+        };
+
+        input.oninput = () => {
+            if (input.value.includes(",")) {
+                actionFn();
+            }
+        };
+    }
+
+    function adicionarItemLista(stateKey, inputId, renderFn) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        const val = input.value.trim();
+        if (!val) return;
+
+        if (!state[stateKey]) state[stateKey] = [];
+
+        const partes = val.split(",").map(s => s.trim()).filter(s => s.length > 0);
+        let alterou = false;
+
+        partes.forEach(item => {
+            const existe = state[stateKey].some(t => t.toLowerCase() === item.toLowerCase());
+            if (!existe) {
+                state[stateKey].push(item);
+                alterou = true;
+            }
+        });
+
+        if (alterou) {
+            input.value = "";
+            salvarEstadoEmLocalStorage();
+            renderFn();
+            input.focus();
+        } else {
+            input.value = "";
+        }
+    }
+
+    function removerItemLista(stateKey, index, renderFn) {
+        if (!state[stateKey]) return;
+        state[stateKey].splice(index, 1);
+        salvarEstadoEmLocalStorage();
+        renderFn();
+    }
+
+    function adicionarCargoForte() { adicionarItemLista("cargos_fortes", "inputCargoForte", renderCargosFortes); }
+    function removerCargoForte(index) { removerItemLista("cargos_fortes", index, renderCargosFortes); }
+    function renderCargosFortes() { renderTagsLista("cargosFortesTagsList", state.cargos_fortes || [], removerCargoForte); }
+
+    function adicionarFerramenta() { adicionarItemLista("ferramentas", "inputFerramenta", renderFerramentas); }
+    function removerFerramenta(index) { removerItemLista("ferramentas", index, renderFerramentas); }
+    function renderFerramentas() { renderTagsLista("ferramentasTagsList", state.ferramentas || [], removerFerramenta); }
+
+    function adicionarCidade() { adicionarItemLista("cidades", "inputCidade", renderCidade); }
+    function removerCidade(index) { removerItemLista("cidades", index, renderCidades); }
+    function renderCidades() { renderTagsLista("cidadesTagsList", state.cidades || [], removerCidade); }
+
+    function renderTagsLista(containerId, list, removerFn) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        container.innerHTML = "";
+        if (!list || list.length === 0) return;
+
+        list.forEach((item, index) => {
+            const tag = document.createElement("span");
+            tag.className = "tag";
+            
+            const txtNode = document.createTextNode(item + " ");
+            const btnDelete = document.createElement("span");
+            btnDelete.className = "tag-remove";
+            btnDelete.innerHTML = "&times;";
+            btnDelete.onclick = (e) => {
+                e.stopPropagation();
+                removerFn(index);
+            };
+
+            tag.appendChild(txtNode);
+            tag.appendChild(btnDelete);
+            container.appendChild(tag);
+        });
+    }
+
+    function capturarInputsPendentes() {
+        adicionarCargoForte();
+        adicionarFerramenta();
+        adicionarCidade();
+    }
+
+    function renderScrapers() {
+        const grid = document.getElementById("scrapersGrid");
+        grid.innerHTML = "";
+
+        Object.keys(scrapersNomes).forEach(key => {
+            const active = state.scrapers_ativos[key] !== false;
+            const item = document.createElement("div");
+            item.className = "scraper-toggle";
+            item.innerHTML = `
+                <span>${scrapersNomes[key]}</span>
+                <label class="switch">
+                    <input type="checkbox" ${active ? "checked" : ""} onchange="toggleScraper('${key}', this.checked)">
+                    <span class="slider"></span>
+                </label>
+            `;
+            grid.appendChild(item);
+        });
+    }
+
+    function toggleScraper(key, isChecked) {
+        state.scrapers_ativos[key] = isChecked;
+        salvarEstadoEmLocalStorage();
     }
 
     function lerCanaisDaTela() {
@@ -799,105 +1366,10 @@
         }
     }
 
-    function processarInputParaTags(inputId, items, updateFn, containerId) {
-        const input = document.getElementById(inputId);
-        if (!input) return;
-
-        const rawValue = input.value;
-        if (!rawValue || rawValue.trim() === "") return;
-
-        const partes = rawValue.split(",").map(s => s.trim()).filter(s => s.length > 0);
-        let alterou = false;
-
-        partes.forEach(val => {
-            if (!items.includes(val)) {
-                items.push(val);
-                alterou = true;
-            }
-        });
-
-        if (alterou) {
-            updateFn(items);
-            input.value = "";
-            renderTags(containerId, inputId, items, updateFn);
-        }
-    }
-
-    function capturarInputsPendentes() {
-        processarInputParaTags("inputCargoForte", state.cargos_fortes, (newArr) => state.cargos_fortes = newArr, "cargosFortesContainer");
-        processarInputParaTags("inputFerramenta", state.ferramentas, (newArr) => state.ferramentas = newArr, "ferramentasContainer");
-        processarInputParaTags("inputCidade", state.cidades, (newArr) => state.cidades = newArr, "cidadesContainer");
-    }
-
-    function renderTags(containerId, inputId, items, updateFn) {
-        const container = document.getElementById(containerId);
-        const input = document.getElementById(inputId);
-        if (!container || !input) return;
-
-        container.querySelectorAll(".tag").forEach(t => t.remove());
-
-        items.forEach((item, index) => {
-            const tag = document.createElement("span");
-            tag.className = "tag";
-            tag.innerHTML = `${item} <span class="remove-btn" onclick="removerTag('${containerId}', ${index})">&times;</span>`;
-            container.insertBefore(tag, input);
-        });
-
-        input.onkeydown = (e) => {
-            if (e.key === "Enter" || e.key === ",") {
-                e.preventDefault();
-                processarInputParaTags(inputId, items, updateFn, containerId);
-            }
-        };
-
-        input.onblur = () => {
-            processarInputParaTags(inputId, items, updateFn, containerId);
-        };
-
-        input.oninput = () => {
-            if (input.value.includes(",")) {
-                processarInputParaTags(inputId, items, updateFn, containerId);
-            }
-        };
-    }
-
-    function removerTag(containerId, index) {
-        if (containerId === "cargosFortesContainer") state.cargos_fortes.splice(index, 1);
-        if (containerId === "ferramentasContainer") state.ferramentas.splice(index, 1);
-        if (containerId === "cidadesContainer") state.cidades.splice(index, 1);
-        render();
-    }
-
-    function renderScrapers() {
-        const grid = document.getElementById("scrapersGrid");
-        grid.innerHTML = "";
-
-        Object.keys(scrapersNomes).forEach(key => {
-            const active = state.scrapers_ativos[key] !== false;
-            const item = document.createElement("div");
-            item.className = "scraper-toggle";
-            item.innerHTML = `
-                <span>${scrapersNomes[key]}</span>
-                <label class="switch">
-                    <input type="checkbox" ${active ? "checked" : ""} onchange="toggleScraper('${key}', this.checked)">
-                    <span class="slider"></span>
-                </label>
-            `;
-            grid.appendChild(item);
-        });
-    }
-
-    function toggleScraper(key, isChecked) {
-        state.scrapers_ativos[key] = isChecked;
-    }
-
     async function salvarConfiguracoes() {
         capturarInputsPendentes();
         lerCanaisDaTela();
-
-        try {
-            localStorage.setItem("jobradar_config", JSON.stringify(state));
-        } catch(e) {}
+        salvarEstadoEmLocalStorage();
 
         try {
             const res = await fetch("/api/config", {
@@ -906,29 +1378,59 @@
                 body: JSON.stringify(state)
             });
             const data = await res.json();
-            if (data.success) {
-                showToast("Configurações salvas com sucesso!");
-            } else {
-                showToast("Configurações salvas com sucesso!");
-            }
+            showToast("Configurações salvas com sucesso!");
         } catch (err) {
             showToast("Configurações salvas com sucesso!");
         }
     }
 
-    async function salvarERodar() {
+    let wasRunning = false;
+
+    async function salvarERodar(force = false) {
         await salvarConfiguracoes();
+        carregarVagas();
         try {
-            const res = await fetch("/api/run", { method: "POST" });
+            const res = await fetch("/api/run", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ force })
+            });
             const data = await res.json();
             if (data.success) {
-                showToast("Busca iniciada!");
+                showToast("Busca iniciada em segundo plano!");
                 checarStatus();
+            } else if (data.is_running) {
+                if (confirm("Já existe uma busca em andamento. Deseja interromper a busca atual e reiniciar?")) {
+                    salvarERodar(true);
+                }
             } else {
-                alert(data.message || "Busca em andamento");
+                showToast(data.message || "Não foi possível iniciar a busca.");
             }
         } catch (err) {
-            alert("Configurações salvas no navegador! Para iniciar uma busca no GitHub, a automação do GitHub Actions roda automaticamente a cada 3 horas, ou você pode rodá-la localmente no terminal com 'python app.py'.");
+            showToast("Erro ao iniciar busca.");
+        }
+    }
+
+    async function cancelarBusca() {
+        try {
+            const res = await fetch("/api/cancel", { method: "POST" });
+            const data = await res.json();
+            showToast(data.message);
+            checarStatus();
+        } catch (err) {
+            showToast("Erro ao cancelar busca.");
+        }
+    }
+
+    async function limparListaVagas() {
+        if (!confirm("Deseja realmente limpar todas as vagas salvas e começar do zero?")) return;
+        try {
+            const res = await fetch("/api/clear-jobs", { method: "POST" });
+            const data = await res.json();
+            showToast(data.message);
+            carregarVagas();
+        } catch (err) {
+            showToast("Erro ao limpar vagas.");
         }
     }
 
@@ -937,16 +1439,46 @@
             const res = await fetch("/api/status");
             const data = await res.json();
 
-            const dot = document.getElementById("statusDot");
-            const text = document.getElementById("statusText");
+            const progressBar = document.getElementById("searchProgressBar");
+            const progressText = document.getElementById("progressText");
             const logBox = document.getElementById("logBox");
+            const btnBuscar = document.getElementById("btnBuscarVagas");
+            const btnBuscarConfig = document.getElementById("btnBuscarVagasConfig");
 
             if (data.is_running) {
-                dot.className = "dot active";
-                text.innerText = "Buscando...";
+                wasRunning = true;
+                if (progressBar) progressBar.style.display = "block";
+                if (progressText) progressText.innerText = "Executando varredura...";
+
+                if (btnBuscar) {
+                    btnBuscar.innerText = "Buscando... (Parar)";
+                    btnBuscar.className = "btn btn-secondary";
+                    btnBuscar.onclick = () => cancelarBusca();
+                }
+                if (btnBuscarConfig) {
+                    btnBuscarConfig.innerText = "Buscando... (Parar)";
+                    btnBuscarConfig.className = "btn btn-secondary";
+                    btnBuscarConfig.onclick = () => cancelarBusca();
+                }
             } else {
-                dot.className = "dot";
-                text.innerText = "Pronto";
+                if (progressBar) progressBar.style.display = "none";
+
+                if (wasRunning) {
+                    wasRunning = false;
+                    carregarVagas();
+                    showToast("Busca concluída! Lista de vagas atualizada.");
+                }
+
+                if (btnBuscar) {
+                    btnBuscar.innerText = "Buscar Vagas";
+                    btnBuscar.className = "btn btn-primary";
+                    btnBuscar.onclick = () => salvarERodar();
+                }
+                if (btnBuscarConfig) {
+                    btnBuscarConfig.innerText = "Salvar & Buscar Vagas";
+                    btnBuscarConfig.className = "btn btn-primary";
+                    btnBuscarConfig.onclick = () => salvarERodar();
+                }
             }
 
             if (data.logs && data.logs.length > 0) {
@@ -960,39 +1492,81 @@
         try {
             const res = await fetch("/api/jobs");
             const data = await res.json();
-            const tbody = document.getElementById("vagasTableBody");
-            tbody.innerHTML = "";
-
-            if (!data.vagas || data.vagas.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--text-muted);">Nenhuma vaga encontrada ainda.</td></tr>`;
-                return;
-            }
-
-            data.vagas.sort((a, b) => (b.score || 0) - (a.score || 0));
-
-            data.vagas.forEach(vaga => {
-                const tr = document.createElement("tr");
-                const scoreVal = vaga.score !== undefined && vaga.score !== null ? vaga.score : 5;
-                
-                let bg = "var(--primary-light)", border = "#bfdbfe", text = "var(--primary)";
-                if (scoreVal >= 8) { bg = "var(--success-light)"; border = "#a7f3d0"; text = "var(--success)"; }
-                else if (scoreVal >= 5) { bg = "var(--warning-light)"; border = "#fde68a"; text = "var(--warning)"; }
-
-                const modalidadeBadge = vaga.modalidade ? `<span style="background: #f1f5f9; border: 1px solid var(--border); color: var(--text-secondary); font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; font-weight: 500;">${vaga.modalidade}</span>` : "";
-
-                tr.innerHTML = `
-                    <td><span class="score-pill" style="background: ${bg}; border: 1px solid ${border}; color: ${text};">Score: ${scoreVal}/10</span></td>
-                    <td><strong>${vaga.titulo}</strong></td>
-                    <td>${vaga.empresa || '-'}</td>
-                    <td>${vaga.local || '-'} ${modalidadeBadge}</td>
-                    <td><span style="background: #f1f5f9; border: 1px solid var(--border); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; color: var(--text-secondary); font-weight: 500;">${vaga.fonte}</span></td>
-                    <td><a href="${vaga.url}" target="_blank" class="job-link">Ver Vaga</a></td>
-                `;
-                tbody.appendChild(tr);
-            });
+            todasAsVagas = data.vagas || [];
+            aplicarFiltrosTabela();
         } catch (err) {
             console.error("Erro ao carregar vagas:", err);
         }
+    }
+
+    function aplicarFiltrosTabela() {
+        const scoreFiltro = document.getElementById("filtroScore").value;
+        const modFiltro = document.getElementById("filtroModalidade").value;
+        const localFiltro = document.getElementById("filtroLocal").value.toLowerCase().trim();
+        const fonteFiltro = document.getElementById("filtroFonte").value.toLowerCase().trim();
+
+        const tbody = document.getElementById("vagasTableBody");
+        tbody.innerHTML = "";
+
+        let vagasFiltradas = todasAsVagas.filter(vaga => {
+            const scoreVal = vaga.score !== undefined && vaga.score !== null ? vaga.score : 5;
+            if (scoreFiltro !== "todos" && scoreVal < parseInt(scoreFiltro)) return false;
+
+            const modalidadeTexto = vaga.modalidade || (vaga.local && vaga.local.toLowerCase().includes("remoto") ? "Remoto" : "Presencial");
+            if (modFiltro !== "todas") {
+                const modNorm = modalidadeTexto.toLowerCase();
+                if (modFiltro === "remoto" && !modNorm.includes("remot")) return false;
+                if (modFiltro === "hibrido" && !modNorm.includes("hibr") && !modNorm.includes("híbr")) return false;
+                if (modFiltro === "presencial" && !modNorm.includes("presenc") && !modNorm.includes("site")) return false;
+            }
+
+            if (localFiltro && ! (vaga.local || "").toLowerCase().includes(localFiltro)) return false;
+
+            if (fonteFiltro !== "todas") {
+                const fonteNorm = (vaga.fonte || "").toLowerCase();
+                if (fonteFiltro === "linkedin br") {
+                    if (!fonteNorm.includes("linkedin") || fonteNorm.includes("internacional")) return false;
+                } else if (fonteFiltro === "linkedin internacional") {
+                    if (!fonteNorm.includes("internacional")) return false;
+                } else if (!fonteNorm.includes(fonteFiltro)) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+        if (vagasFiltradas.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 24px; color: var(--text-muted);">Nenhuma vaga encontrada com os filtros selecionados.</td></tr>`;
+            return;
+        }
+
+        vagasFiltradas.sort((a, b) => (b.score || 0) - (a.score || 0));
+
+        vagasFiltradas.forEach(vaga => {
+            const tr = document.createElement("tr");
+            const scoreVal = vaga.score !== undefined && vaga.score !== null ? vaga.score : 5;
+            
+            let bg = "var(--primary-subtle)", border = "var(--primary-border)", text = "var(--primary)";
+            if (scoreVal >= 8) { bg = "var(--success-bg)"; border = "var(--success-border)"; text = "var(--success)"; }
+            else if (scoreVal >= 5) { bg = "var(--warning-bg)"; border = "var(--warning-border)"; text = "var(--warning)"; }
+
+            const modalidadeTexto = vaga.modalidade || (vaga.local && vaga.local.toLowerCase().includes("remoto") ? "Remoto" : "Presencial");
+            const modalidadeBadge = `<span style="background: var(--primary-subtle); border: 1px solid var(--primary-border); color: var(--primary); font-size: 0.75rem; padding: 3px 8px; border-radius: 6px; font-weight: 600;">${modalidadeTexto}</span>`;
+            const divulgadaEm = vaga.publicado_em || "Recente";
+
+            tr.innerHTML = `
+                <td><span class="score-pill" style="background: ${bg}; border: 1px solid ${border}; color: ${text};">Score: ${scoreVal}/10</span></td>
+                <td><strong>${vaga.titulo}</strong></td>
+                <td>${vaga.empresa || '-'}</td>
+                <td><span style="font-size: 0.8125rem; color: var(--text-sub); font-weight: 500;">${divulgadaEm}</span></td>
+                <td>${modalidadeBadge}</td>
+                <td>${vaga.local || '-'}</td>
+                <td><span style="background: var(--surface-subtle); border: 1px solid var(--border); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; color: var(--text-sub); font-weight: 500;">${vaga.fonte}</span></td>
+                <td><a href="${vaga.url}" target="_blank" class="job-link">Ver Vaga</a></td>
+            `;
+            tbody.appendChild(tr);
+        });
     }
 
     function showToast(msg) {

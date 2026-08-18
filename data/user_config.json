@@ -1,27 +1,24 @@
 {
   "modalidades_aceitas": {
     "remoto": true,
-    "hibrido": true,
-    "presencial": true
+    "hibrido": false,
+    "presencial": false
   },
   "preferencia_modalidade": "remoto",
   "senioridades_alvo": [
-    "Júnior",
-    "Pleno",
-    "Sênior"
+    "Sênior",
+    "Especialista/Liderança"
   ],
   "cargos_fortes": [
     "Gerente de Projetos",
-    "Project Manager"
+    "Project Manager",
+    "PMO"
   ],
   "cargos_ambiguos": [
     "Coordenador de Projetos",
     "Scrum Master"
   ],
-  "ferramentas": [
-    "pmp",
-    "scrum"
-  ],
+  "ferramentas": [],
   "qualificadores_dados": [
     "pmp",
     "scrum",
@@ -32,10 +29,35 @@
     "curso"
   ],
   "cidades": [
-    "São Paulo",
-    "Recife"
+    "Brasil",
+    "Brasília",
+    "São Paulo"
   ],
   "aceitar_remoto": true,
+  "canais_notificacao": {
+    "telegram": {
+      "ativo": false,
+      "bot_token": "",
+      "chat_id": ""
+    },
+    "email": {
+      "ativo": true,
+      "destinatario": "contato.marcoscarolino@gmail.com",
+      "smtp_host": "smtp.gmail.com",
+      "smtp_port": 587,
+      "smtp_user": "contato.marcoscarolino@gmail.com",
+      "smtp_pass": "limf vhfx nibq ndmd"
+    },
+    "whatsapp": {
+      "ativo": false,
+      "numero": "",
+      "api_key": ""
+    },
+    "webhook": {
+      "ativo": false,
+      "url": ""
+    }
+  },
   "scrapers_ativos": {
     "linkedin": true,
     "gupy": true,
@@ -45,6 +67,7 @@
     "geekhunter": true,
     "trampos": true,
     "jobs99": true,
-    "weworkremotely": true
+    "weworkremotely": false,
+    "linkedin_intl": false
   }
 }
