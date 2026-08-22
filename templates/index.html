@@ -454,6 +454,44 @@
     </div>
 </div>
 
+<!-- Modal de Configuração do Firebase -->
+<div id="firebaseConfigModal" class="fixed inset-0 bg-olive-950/60 hidden items-center justify-center p-4 z-50" onclick="fecharModalFirebase(event)">
+    <div class="bg-white border border-olive-200 rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden" onclick="event.stopPropagation()">
+        <div class="px-5 py-4 border-b border-olive-200 flex items-center justify-between">
+            <h3 class="font-semibold text-olive-900 text-base md:text-lg flex items-center gap-2">
+                <i class="ph ph-google-logo text-lime-600 text-xl"></i> Conectar Projeto do Firebase
+            </h3>
+            <button type="button" class="text-olive-400 hover:text-olive-600 text-xl font-medium" onclick="fecharModalFirebase()">&times;</button>
+        </div>
+        <div class="p-5 overflow-y-auto text-sm text-olive-700 font-normal leading-relaxed space-y-3.5">
+            <p class="text-xs text-olive-600">
+                Para habilitar o <strong>Google Sign-In</strong> e o banco <strong>Firestore</strong> na sua conta gratuita do Firebase:
+            </p>
+            <ol class="text-xs list-decimal ml-4 space-y-1.5 text-olive-700">
+                <li>Acesse o <a href="https://console.firebase.google.com/" target="_blank" rel="noopener noreferrer" class="text-lime-700 font-semibold underline">Firebase Console</a> e crie um projeto (ex: <em>Job Radar</em>).</li>
+                <li>Vá em <strong>Authentication &gt; Sign-in method</strong> e ative o provedor <strong>Google</strong>. Em <em>Authorized domains</em> adicione <code>localhost</code>.</li>
+                <li>Vá em <strong>Firestore Database</strong> e clique em <em>Criar banco de dados</em>.</li>
+                <li>Nas <strong>Configurações do Projeto (⚙️) &gt; Geral &gt; Seus aplicativos &gt; Web (&lt;/&gt;)</strong>, copie o código <code>firebaseConfig</code>.</li>
+            </ol>
+            <div class="space-y-1.5 pt-1">
+                <label class="block text-xs font-semibold text-olive-800">Cole o objeto firebaseConfig aqui:</label>
+                <textarea id="inputFirebaseConfigJson" rows="6" class="w-full p-3 bg-olive-50 border border-olive-200 rounded-xl text-xs font-mono text-olive-900 focus:outline-none focus:border-lime-500" placeholder='const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "seu-app.firebaseapp.com",
+  projectId: "seu-app",
+  storageBucket: "seu-app.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdef"
+};'></textarea>
+            </div>
+        </div>
+        <div class="px-5 py-3.5 border-t border-olive-200 bg-olive-50 flex items-center justify-between gap-3">
+            <button type="button" class="px-4 py-2 bg-olive-100 hover:bg-olive-200 text-olive-800 font-medium text-xs rounded-xl transition-colors border-0" onclick="fecharModalFirebase()">Cancelar</button>
+            <button type="button" class="px-5 py-2 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-xs rounded-xl transition-colors border-0 shadow-xs" onclick="salvarFirebaseConfigModal()">Salvar e Conectar</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const API_BASE = window.location.hostname.includes("github.io") ? "http://127.0.0.1:5000" : "";
 
@@ -567,21 +605,86 @@
         }
     }
 
-    async function fazerLoginGoogle() {
-        if (!auth) {
-            showToast("Para ativar o login em nuvem, configure o Firebase no console.");
+    function abrirModalFirebase() {
+        const modal = document.getElementById("firebaseConfigModal");
+        if (modal) {
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+        }
+    }
+
+    function fecharModalFirebase(event) {
+        if (event && event.target !== event.currentTarget && !event.target.classList.contains("modal-close")) return;
+        const modal = document.getElementById("firebaseConfigModal");
+        if (modal) {
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+    }
+
+    function salvarFirebaseConfigModal() {
+        const raw = document.getElementById("inputFirebaseConfigJson").value;
+        if (!raw.trim()) {
+            alert("Cole o objeto de configuração do Firebase.");
             return;
         }
+
+        try {
+            let parsed = null;
+            if (raw.includes("{")) {
+                const jsonStr = raw.substring(raw.indexOf("{"), raw.lastIndexOf("}") + 1);
+                const formatted = jsonStr
+                    .replace(/([a-zA-Z0-9_]+)\s*:/g, '"$1":')
+                    .replace(/'/g, '"')
+                    .replace(/,\s*}/g, '}');
+                parsed = JSON.parse(formatted);
+            } else {
+                parsed = JSON.parse(raw);
+            }
+
+            if (parsed && (parsed.apiKey || parsed.projectId)) {
+                localStorage.setItem("jobradar_firebase_config", JSON.stringify(parsed));
+                showToast("Credenciais salvas! Reiniciando conexão...");
+                fecharModalFirebase();
+                setTimeout(() => window.location.reload(), 600);
+            } else {
+                alert("Não foi possível identificar apiKey ou projectId no texto informado.");
+            }
+        } catch (e) {
+            alert("Formato inválido. Cole o objeto firebaseConfig exatamente como mostrado no Firebase Console.");
+        }
+    }
+
+    async function fazerLoginGoogle() {
+        if (!firebaseConfig.apiKey || firebaseConfig.apiKey.includes("Dummy")) {
+            abrirModalFirebase();
+            return;
+        }
+
+        if (!auth) {
+            abrirModalFirebase();
+            return;
+        }
+
         try {
             const provider = new firebase.auth.GoogleAuthProvider();
             const result = await auth.signInWithPopup(provider);
             showToast(`Bem-vindo(a), ${result.user.displayName || 'Usuário'}!`);
         } catch (error) {
             console.error("Erro no login Google:", error);
-            if (error.code === "auth/configuration-not-found" || error.code === "auth/invalid-api-key") {
-                alert("Configure o Google Sign-In no seu projeto Firebase Console e inclua as credenciais.");
+            if (
+                error.code === "auth/configuration-not-found" ||
+                error.code === "auth/invalid-api-key" ||
+                error.code === "auth/api-key-not-valid" ||
+                error.code === "auth/unauthorized-domain"
+            ) {
+                if (error.code === "auth/unauthorized-domain") {
+                    alert("Domínio não autorizado. Acesse o Firebase Console > Authentication > Settings > Authorized Domains e adicione 'localhost'.");
+                } else {
+                    abrirModalFirebase();
+                }
             } else {
-                showToast("Erro ao autenticar com Google: " + (error.message || error));
+                showToast("Erro na autenticação: " + (error.message || error));
             }
         }
     }
