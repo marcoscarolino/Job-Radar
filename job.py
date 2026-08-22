@@ -15,26 +15,15 @@ def _normalizar(texto: str) -> str:
     return "".join(c for c in sem_acento if not unicodedata.combining(c))
 
 
-def _contem_termo(termo: str, texto: str, aceitar_plural: bool = False) -> bool:
-    """Substring com borda de palavra, não substring cru.
-
-    "bi" solto como substring pegava qualquer palavra que contivesse "bi" no
-    meio — "bilíngue", "híbrido" (normalizado "hibrido"), "habilidade",
-    "mo(bi)le", "am(bi)ente" etc. Com borda de palavra, "bi" só bate como
-    palavra isolada, mas termos com espaço tipo "power bi" continuam
-    funcionando igual.
-
-    Existiam duas versões praticamente idênticas disso (_contem_termo com
-    \\b e _tem_termo com (?<!\\w)/(?!\\w)) — as duas asserções de borda são
-    equivalentes na prática pra qualquer termo que comece/termine em
-    caractere de palavra (todo termo daqui é texto normal, então sempre é o
-    caso). A única diferença real era o `s?` opcional pra plural, que virou
-    o parâmetro `aceitar_plural` abaixo. Duas funções fazendo a mesma coisa
-    de formas ligeiramente diferentes era risco de uma mudar (ex: corrigir
-    um bug de borda) e a outra ficar pra trás, divergindo em silêncio.
-    """
-    sufixo = "s?" if aceitar_plural else ""
-    return re.search(rf"(?<!\w){re.escape(termo)}{sufixo}(?!\w)", texto) is not None
+def _contem_termo(termo: str, texto: str, aceitar_plural: bool = False, aceitar_sufixo: bool = True) -> bool:
+    """Substring com borda de palavra inicial. Permite sufixos comuns de cargos (ex: 'product design' -> 'product designer', 'analista' -> 'analistas')."""
+    if not termo or not texto:
+        return False
+    if len(termo) <= 2:
+        return re.search(rf"(?<!\w){re.escape(termo)}(?!\w)", texto) is not None
+    if aceitar_sufixo or aceitar_plural:
+        return re.search(rf"(?<!\w){re.escape(termo)}", texto) is not None
+    return re.search(rf"(?<!\w){re.escape(termo)}(?!\w)", texto) is not None
 
 
 # Vocabulário de "é vaga remota" usado no campo local. Antes só tinha
