@@ -1480,6 +1480,19 @@
         } catch (err) {}
 
         try {
+            const resRemote = await fetch("./data/user_config.json?v=" + Date.now());
+            if (resRemote.ok) {
+                const remoteConfig = await resRemote.json();
+                if (remoteConfig && typeof remoteConfig === "object" && remoteConfig.cargos_fortes) {
+                    state = remoteConfig;
+                    localStorage.setItem("jobradar_config", JSON.stringify(remoteConfig));
+                    render();
+                    return;
+                }
+            }
+        } catch (err) {}
+
+        try {
             const saved = localStorage.getItem("jobradar_config");
             if (saved) {
                 state = JSON.parse(saved);
