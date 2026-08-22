@@ -67,19 +67,9 @@ def _construir_scrapers(perfil: Perfil, termos_busca: list[str]):
 
 
 def _proximo_bloco_termos(perfil: Perfil) -> list[str]:
-    """Rodízio: cada ciclo pega um BLOCO fixo (perfil.termos_por_ciclo) de
-    perfil.termos_busca, começando de onde o ciclo anterior parou, e avança
-    — volta pro início quando chega no fim da lista. A posição fica salva
-    no jobs.db (tabela metadados, chave com sufixo do perfil — dois perfis
-    rotacionam de forma independente), então sobrevive entre execuções do
-    GitHub Actions (cada run é uma máquina nova).
-
-    Isso é o que desacopla custo por ciclo do tamanho da lista de termos:
-    lista grande leva mais ciclos pra cobrir tudo, mas cada ciclo individual
-    continua custando o mesmo. Sem isso, dobrar a lista de termos dobrava o
-    tempo de TODO ciclo.
-    """
-    total = len(perfil.termos_busca)
+    from perfis import obter_termos_busca_perfil
+    termos_busca_atuais = obter_termos_busca_perfil(perfil.chave)
+    total = len(termos_busca_atuais)
     if total == 0:
         return []
 
@@ -87,13 +77,9 @@ def _proximo_bloco_termos(perfil: Perfil) -> list[str]:
 
     chave_offset = f"termos_offset_{perfil.chave}"
     offset_salvo = obter_metadado(chave_offset)
-    # % total protege contra a lista ter encolhido desde o último ciclo
-    # (termo removido do config.py) — sem isso, um offset salvo maior que o
-    # tamanho atual da lista quebraria o acesso por índice abaixo.
     offset = int(offset_salvo) % total if offset_salvo else 0
 
-    bloco = [perfil.termos_busca[(offset + i) % total] for i in range(tamanho_bloco)]
-
+    bloco = [termos_busca_atuais[(offset + i) % total] for i in range(tamanho_bloco)]
     definir_metadado(chave_offset, str((offset + tamanho_bloco) % total))
 
     return bloco
@@ -193,16 +179,21 @@ def _enviar_digest_diario(perfil: Perfil):
 
 
 def ciclo_de_busca(perfil: Perfil):
+    from perfis import obter_regras_perfil, obter_termos_busca_perfil
+
     total_novas = 0
     total_brutas = 0
     total_filtradas = 0
     scrapers_com_problema = []
     descartes_escopo_ciclo: Counter = Counter()
 
+    regras_atuais = obter_regras_perfil(perfil.chave)
+    termos_busca_atuais = obter_termos_busca_perfil(perfil.chave)
+
     termos_do_ciclo = _proximo_bloco_termos(perfil)
     logger.info(
         f"[{perfil.nome}] Bloco de termos deste ciclo: {len(termos_do_ciclo)}/"
-        f"{len(perfil.termos_busca)} — {', '.join(termos_do_ciclo)}"
+        f"{len(termos_busca_atuais)} — {', '.join(termos_do_ciclo)}"
     )
     scrapers = _construir_scrapers(perfil, termos_do_ciclo)
 
@@ -239,7 +230,7 @@ def ciclo_de_busca(perfil: Perfil):
                 continue
 
             total_brutas += len(vagas)
-            vagas_filtradas, descartes = filtrar_vagas(vagas, perfil.regras)
+            vagas_filtradas, descartes = filtrar_vagas(vagas, regras_atuais)
             descartes_escopo_ciclo.update(descartes)
 
             # Eixo secundário (Ibéria, quando ligado): mesma regra de cargo,

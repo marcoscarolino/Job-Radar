@@ -200,6 +200,50 @@ def obter_scrapers_dinamicos(perfil_chave: str = "brasil") -> list[DefinicaoScra
     return scrapers_filtrados
 
 
+def obter_regras_perfil(perfil_chave: str = "brasil") -> RegrasFiltro:
+    """Retorna o objeto RegrasFiltro re-lendo data/user_config.json dinamicamente."""
+    if perfil_chave == "internacional":
+        return _REGRAS_INTL
+
+    usr_cfg = carregar_config()
+    cargos_fortes = usr_cfg.get("cargos_fortes", ["Gerente de Projetos", "Project Manager"])
+    cargos_ambiguos = usr_cfg.get("cargos_ambiguos", ["Coordenador de Projetos", "Scrum Master"])
+    qualificadores = usr_cfg.get("qualificadores_dados", ["pmp", "scrum", "agile", "gestão", "projetos", "certificação", "curso"])
+    ferramentas = usr_cfg.get("ferramentas", [])
+    cidades_usr = usr_cfg.get("cidades", ["São Paulo", "Recife"])
+    aceitar_remoto = usr_cfg.get("aceitar_remoto", True)
+
+    cidades = ["Remoto"] + [c for c in cidades_usr if c.lower() != "remoto"] if aceitar_remoto else [c for c in cidades_usr if c.lower() != "remoto"]
+
+    return RegrasFiltro(
+        keywords_forte=cargos_fortes,
+        keywords_ambiguo=cargos_ambiguos,
+        qualificadores_dados=qualificadores,
+        ferramentas_titulo=ferramentas,
+        qualificadores_cargo=QUALIFICADORES_CARGO,
+        cidades=cidades,
+        mercados_remoto_aceitos=MERCADOS_REMOTO_ACEITOS,
+        modalidades_aceitas=usr_cfg.get("modalidades_aceitas"),
+        preferencia_modalidade=usr_cfg.get("preferencia_modalidade", "remoto"),
+        senioridades_alvo=usr_cfg.get("senioridades_alvo"),
+    )
+
+
+def obter_termos_busca_perfil(perfil_chave: str = "brasil") -> list[str]:
+    """Retorna os termos de busca re-lendo data/user_config.json dinamicamente."""
+    if perfil_chave == "internacional":
+        return TERMOS_BUSCA_INTL
+
+    usr_cfg = carregar_config()
+    cargos_fortes = usr_cfg.get("cargos_fortes", ["Gerente de Projetos", "Project Manager"])
+    cargos_ambiguos = usr_cfg.get("cargos_ambiguos", ["Coordenador de Projetos", "Scrum Master"])
+    ferramentas = usr_cfg.get("ferramentas", [])
+
+    termos = set(k.lower() for k in (cargos_fortes + cargos_ambiguos)) | set(f.lower() for f in ferramentas)
+    res = sorted(termos)
+    return res if res else TERMOS_BUSCA
+
+
 PERFIL_BR = Perfil(
     chave="brasil",
     nome="Brasil",
@@ -216,14 +260,6 @@ PERFIL_BR = Perfil(
 )
 
 
-# Regra primária: só remoto ("Remote"/"Remoto" em CIDADES_INTL), mercado
-# LATAM/Portugal/Espanha aceito. Sem cargo ambíguo/ferramenta ainda nesse
-# perfil — simples de propósito por ser o mais novo dos dois.
-#
-# idiomas_exigidos: sem mercado declarado, exige espanhol/português/LATAM
-# no título (ver IDIOMAS_EXIGIDOS_INTL e comentário em RegrasFiltro) — a
-# busca já tentava garantir isso via termo, mas nunca era reconferido na
-# vaga em si.
 _REGRAS_INTL = RegrasFiltro(
     keywords_forte=KEYWORDS_INTL,
     keywords_ambiguo=[],
@@ -235,9 +271,6 @@ _REGRAS_INTL = RegrasFiltro(
     idiomas_exigidos=IDIOMAS_EXIGIDOS_INTL,
 )
 
-# Eixo secundário (Ibéria): vaga presencial/híbrida em Portugal/Espanha,
-# achada de propósito (LOCATIONS_INTL busca lá) mas que CIDADES_INTL (só
-# remoto) rejeitaria. DESLIGADO — mesmo motivo do eixo BR acima.
 _REGRAS_INTL_IBERIA = RegrasFiltro(
     keywords_forte=KEYWORDS_INTL,
     keywords_ambiguo=[],
@@ -247,9 +280,6 @@ _REGRAS_INTL_IBERIA = RegrasFiltro(
     cidades=CIDADES_EUROPA_IBERICA,
 )
 
-# As 3 fontes rodam toda vez (FREQUENCIA_ALTA) — perfil novo, sem medição de
-# rendimento por fonte ainda que justifique separar em cadência alta/baixa
-# como o perfil BR. Ajustar quando/se tiver dado real.
 _SCRAPERS_INTL = [
     DefinicaoScraper(LinkedInIntlScraper, FREQUENCIA_ALTA, {"locations": LOCATIONS_INTL}),
     DefinicaoScraper(IndeedIntlScraper, FREQUENCIA_ALTA, {"dominios": DOMINIOS_INDEED_INTL}),
