@@ -158,13 +158,7 @@ def run_scraper():
                         LAST_RUN_LOGS.pop(0)
 
                 proc.wait()
-                vagas = obter_vagas_recientes(limit=100)
-                if vagas:
-                    try:
-                        from notifier.dispatcher import enviar_digest_email_multicanal
-                        enviar_digest_email_multicanal(vagas)
-                    except Exception as e:
-                        pass
+                LAST_RUN_LOGS.append("Varredura local concluída com sucesso.")
             except Exception as e:
                 LAST_RUN_LOGS.append(f"Erro na execução: {e}")
 
