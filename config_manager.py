@@ -7,6 +7,7 @@ from pathlib import Path
 CONFIG_PATH = Path(__file__).parent / "data" / "user_config.json"
 
 DEFAULT_CONFIG = {
+    "score_minimo": "todos",  # "todos", "5", "8"
     "modalidades_aceitas": {
         "remoto": True,
         "hibrido": True,
@@ -41,11 +42,6 @@ DEFAULT_CONFIG = {
     ],
     "aceitar_remoto": True,
     "canais_notificacao": {
-        "telegram": {
-            "ativo": True,
-            "bot_token": "",
-            "chat_id": "",
-        },
         "email": {
             "ativo": False,
             "destinatario": "",
@@ -53,15 +49,6 @@ DEFAULT_CONFIG = {
             "smtp_port": 587,
             "smtp_user": "",
             "smtp_pass": "",
-        },
-        "whatsapp": {
-            "ativo": False,
-            "numero": "",
-            "api_key": "",
-        },
-        "webhook": {
-            "ativo": False,
-            "url": "",
         },
     },
     "scrapers_ativos": {

@@ -2,49 +2,62 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JobRadar — Painel de Vagas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>JobRadar — Varredura Inteligente de Vagas</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans, Inter, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --bg: #f4f6f9;
-            --surface: #ffffff;
-            --surface-subtle: #f8fafc;
-            --border: #e2e8f0;
-            --border-hover: #cbd5e1;
+            /* Modo Light (Claro) */
+            --bg-canvas: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-surface-elevated: #f1f5f9;
+            --bg-surface-subtle: #f8fafc;
             
-            --text-main: #0f172a;
-            --text-sub: #475569;
+            --border-subtle: #f1f5f9;
+            --border-default: #e2e8f0;
+            --border-hover: #cbd5e1;
+            --border-accent: #0284c7;
+            
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
             --text-muted: #94a3b8;
             
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --primary-subtle: #eff6ff;
-            --primary-border: #bfdbfe;
+            --accent-primary: #0284c7;
+            --accent-primary-hover: #0369a1;
+            --accent-primary-subtle: #e0f2fe;
             
-            --success: #059669;
-            --success-bg: #ecfdf5;
-            --success-border: #a7f3d0;
+            --score-high: #15803d;
+            --score-high-bg: #dcfce7;
+            --score-high-border: #86efac;
             
-            --warning: #d97706;
-            --warning-bg: #fffbeb;
-            --warning-border: #fde68a;
+            --score-mid: #b45309;
+            --score-mid-bg: #fef3c7;
+            --score-mid-border: #fde68a;
+            
+            --score-low: #475569;
+            --score-low-bg: #f1f5f9;
+            --score-low-border: #cbd5e1;
             
             --danger: #dc2626;
             --danger-bg: #fef2f2;
+            --danger-border: #fecaca;
             
-            --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
-            --shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.04), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
-            --shadow-md: 0 10px 15px -3px rgba(15, 23, 42, 0.05), 0 4px 6px -4px rgba(15, 23, 42, 0.03);
+            --radius-xl: 16px;
+            --radius-lg: 12px;
+            --radius-md: 8px;
+            --radius-sm: 6px;
             
-            --radius-lg: 16px;
-            --radius: 12px;
-            --radius-sm: 8px;
-            --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
-            --font-body: 'Inter', system-ui, sans-serif;
+            --font-display: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            --font-body: 'Inter', system-ui, -apple-system, sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
+
+            --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
         }
 
         * {
@@ -53,97 +66,299 @@
             padding: 0;
             font-family: var(--font-body);
             -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text-main);
-            padding: 40px 24px;
+            background-color: var(--bg-canvas);
+            color: var(--text-primary);
             min-height: 100vh;
+            padding-bottom: 90px;
             line-height: 1.5;
         }
 
-        .container {
-            max-width: 1080px;
+        /* Estrutura do Container */
+        .app-container {
+            max-width: 1020px;
             margin: 0 auto;
+            padding: 16px;
         }
 
-        /* Header Layout & Navigation Tabs */
-        header {
+        @media (min-width: 768px) {
+            .app-container {
+                padding: 28px 24px;
+            }
+            body {
+                padding-bottom: 30px;
+            }
+        }
+
+        /* Cabeçalho da Aplicação */
+        .app-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 28px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border);
+            justify-content: space-between;
+            padding: 14px 20px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .radar-status-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent-primary-subtle);
+            border: 1px solid var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-primary);
         }
 
         .brand-title {
             font-family: var(--font-display);
-            font-size: 1.625rem;
+            font-size: 1.25rem;
             font-weight: 800;
-            letter-spacing: -0.03em;
-            color: var(--text-main);
-            line-height: 1.1;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-badge {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: var(--accent-primary-subtle);
+            color: var(--accent-primary);
+            border: 1px solid var(--border-hover);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .brand-subtitle {
-            font-size: 0.875rem;
-            color: var(--text-sub);
-            margin-top: 4px;
-            font-weight: 400;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            display: none;
         }
 
-        .nav-tabs {
-            display: inline-flex;
-            background-color: var(--surface-subtle);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            padding: 4px;
+        @media (min-width: 640px) {
+            .brand-subtitle { display: block; }
+        }
+
+        /* Abas de Navegação no Desktop */
+        .desktop-nav-tabs {
+            display: none;
             gap: 4px;
+            background: var(--bg-surface-elevated);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-default);
+        }
+
+        @media (min-width: 768px) {
+            .desktop-nav-tabs { display: flex; }
         }
 
         .nav-btn {
-            padding: 8px 16px;
-            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-display);
             font-size: 0.875rem;
             font-weight: 600;
-            color: var(--text-sub);
+            color: var(--text-secondary);
             background: transparent;
             border: none;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
+        }
+
+        .nav-btn:hover {
+            color: var(--text-primary);
+            background: rgba(0, 0, 0, 0.03);
         }
 
         .nav-btn.active {
-            background-color: var(--surface);
-            color: var(--primary);
+            background: var(--bg-surface);
+            color: var(--accent-primary);
+            font-weight: 700;
             box-shadow: var(--shadow-sm);
         }
 
-        /* Progress Bar Container */
-        .progress-container {
-            background-color: var(--surface);
-            border: 1px solid var(--primary-border);
-            border-radius: var(--radius);
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Sistema de Botões (Sem Gradientes) */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.15s ease;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--accent-primary);
+            color: #ffffff;
+            border: 1px solid var(--accent-primary-hover);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-primary-hover);
+        }
+
+        .btn-secondary {
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border-default);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-surface-elevated);
+            border-color: var(--border-hover);
+        }
+
+        .btn-danger {
+            background: var(--danger-bg);
+            color: var(--danger);
+            border: 1px solid var(--danger-border);
+        }
+
+        .btn-danger:hover {
+            background: #fee2e2;
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 0.78rem;
+            border-radius: var(--radius-sm);
+        }
+
+        /* Navegação Inferior Mobile (Bottom Bar) */
+        .mobile-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-default);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 12px;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        @media (min-width: 768px) {
+            .mobile-bottom-nav { display: none; }
+        }
+
+        .mobile-tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            padding: 8px 0;
+            transition: color 0.15s ease;
+        }
+
+        .mobile-tab-item svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .mobile-tab-item.active {
+            color: var(--accent-primary);
+            font-weight: 700;
+        }
+
+        .mobile-scan-fab {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            color: #ffffff;
+            border: 2px solid var(--bg-surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            transform: translateY(-10px);
+            transition: background-color 0.15s ease;
+        }
+
+        .mobile-scan-fab:hover {
+            background: var(--accent-primary-hover);
+        }
+
+        /* Cartão de Progresso de Varredura */
+        .progress-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-accent);
+            border-radius: var(--radius-lg);
             padding: 16px 20px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             box-shadow: var(--shadow-sm);
         }
 
         .progress-header {
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            font-size: 0.875rem;
+            font-size: 0.85rem;
             font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 8px;
+            color: var(--accent-primary);
+            margin-bottom: 10px;
         }
 
         .progress-track {
-            width: 100%;
-            height: 8px;
-            background-color: var(--primary-subtle);
+            height: 6px;
+            background: var(--bg-surface-elevated);
             border-radius: 999px;
             overflow: hidden;
         }
@@ -151,109 +366,390 @@
         .progress-bar-fill {
             height: 100%;
             width: 100%;
-            background: linear-gradient(90deg, var(--primary) 0%, #60a5fa 50%, var(--primary) 100%);
-            background-size: 200% 100%;
-            animation: progressPulse 1.5s infinite linear;
+            background: var(--accent-primary);
             border-radius: 999px;
+            animation: progressSimple 1.5s infinite ease-in-out;
         }
 
-        @keyframes progressPulse {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+        @keyframes progressSimple {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
         }
 
-        /* Grid */
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 24px;
+        /* Alternador de Páginas */
+        .page-view {
+            animation: fadeIn 0.2s ease-out;
         }
 
-        @media (min-width: 768px) {
-            .grid-2 {
-                grid-template-columns: 1fr 1fr;
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        /* Cards */
+        /* Cartões & Grid */
         .card {
-            background-color: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 24px;
-            box-shadow: var(--shadow);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .card:hover {
-            border-color: var(--border-hover);
+            background: var(--bg-surface);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 18px;
+            box-shadow: var(--shadow-sm);
         }
 
         .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 16px;
         }
 
         .card-title {
             font-family: var(--font-display);
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: 700;
+            color: var(--text-primary);
             letter-spacing: -0.01em;
-            color: var(--text-main);
         }
 
         .card-subtitle {
-            font-size: 0.8125rem;
-            color: var(--text-sub);
-            margin-top: 2px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
         }
 
-        /* Inline Tag Input Box */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr 1fr; }
+            .grid-full { grid-column: 1 / -1; }
+        }
+
+        /* Barra de Busca e Filtros */
+        .filter-toolbar {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-input-wrapper svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            stroke: var(--text-muted);
+        }
+
+        .input-search {
+            width: 100%;
+            padding: 11px 14px 11px 42px;
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color 0.15s ease;
+        }
+
+        .input-search:focus {
+            border-color: var(--accent-primary);
+            background: var(--bg-surface);
+        }
+
+        .filter-chips-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-group {
+            flex: 1 1 140px;
+            min-width: 130px;
+        }
+
+        .filter-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .input-select, .input-text {
+            width: 100%;
+            padding: 9px 12px;
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color 0.15s ease;
+        }
+
+        .input-select:focus, .input-text:focus {
+            border-color: var(--accent-primary);
+            background: var(--bg-surface);
+        }
+
+        /* Cards de Vagas no Mobile */
+        .job-cards-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .job-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: var(--shadow-sm);
+            transition: border-color 0.15s ease;
+        }
+
+        .job-card:hover {
+            border-color: var(--border-hover);
+        }
+
+        .job-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .job-title {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.35;
+        }
+
+        .job-company {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-top: 3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Selos de Pontuação */
+        .score-pill {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .score-high {
+            background: var(--score-high-bg);
+            color: var(--score-high);
+            border: 1px solid var(--score-high-border);
+        }
+
+        .score-mid {
+            background: var(--score-mid-bg);
+            color: var(--score-mid);
+            border: 1px solid var(--score-mid-border);
+        }
+
+        .score-low {
+            background: var(--score-low-bg);
+            color: var(--score-low);
+            border: 1px solid var(--score-low-border);
+        }
+
+        .job-card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .badge-modality {
+            background: var(--accent-primary-subtle);
+            color: var(--accent-primary);
+            border: 1px solid #bae6fd;
+        }
+
+        .badge-source {
+            background: var(--bg-surface-elevated);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-default);
+            font-family: var(--font-mono);
+        }
+
+        .badge-location {
+            background: #f1f5f9;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-default);
+        }
+
+        .job-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-subtle);
+            margin-top: 4px;
+        }
+
+        .job-date {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .job-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--accent-primary);
+            color: #ffffff;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-display);
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background-color 0.15s ease;
+        }
+
+        .job-link-btn:hover {
+            background: var(--accent-primary-hover);
+        }
+
+        /* Tabela Desktop */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-default);
+            margin-top: 10px;
+            display: none;
+            background: var(--bg-surface);
+        }
+
+        @media (min-width: 900px) {
+            .table-container { display: block; }
+            .job-cards-list { display: none; }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.875rem;
+        }
+
+        th {
+            background: var(--bg-surface-elevated);
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-default);
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+        }
+
+        tr:hover td {
+            background: #f8fafc;
+        }
+
+        /* Container de Tag Inputs */
         .tag-input-container {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             gap: 8px;
-            background-color: var(--surface-subtle);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
             padding: 10px 12px;
-            min-height: 48px;
+            min-height: 50px;
             cursor: text;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            transition: border-color 0.15s ease;
         }
 
         .tag-input-container:focus-within {
-            border-color: var(--primary);
-            background-color: var(--surface);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            border-color: var(--accent-primary);
+            background: var(--bg-surface);
         }
 
         .tag-list {
             display: inline-flex;
             flex-wrap: wrap;
             gap: 6px;
-            align-items: center;
         }
 
         .tag {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background-color: var(--primary-subtle);
-            border: 1px solid var(--primary-border);
-            color: var(--primary);
+            background: var(--accent-primary-subtle);
+            border: 1px solid #bae6fd;
+            color: var(--accent-primary);
             padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.8125rem;
-            font-weight: 500;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 600;
         }
 
         .tag-remove {
             cursor: pointer;
             color: var(--text-muted);
-            font-size: 1.1rem;
+            font-size: 1rem;
             line-height: 1;
-            font-weight: 700;
             transition: color 0.15s ease;
         }
 
@@ -266,89 +762,51 @@
             outline: none;
             background: transparent;
             font-size: 0.875rem;
-            color: var(--text-main);
-            flex: 1 1 120px;
+            color: var(--text-primary);
+            flex: 1 1 140px;
             min-width: 120px;
             padding: 4px 0;
         }
 
-        /* Controls */
+        /* Checkboxes & Seleções */
         .options-group {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
         .checkbox-container {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
             cursor: pointer;
-            font-size: 0.875rem;
-            color: var(--text-main);
-            background: var(--surface-subtle);
-            padding: 8px 14px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            background: var(--bg-surface-elevated);
+            padding: 10px 14px;
             border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-default);
             user-select: none;
-            transition: all 0.2s ease;
+            transition: background-color 0.15s ease;
         }
 
         .checkbox-container:hover {
-            border-color: var(--border-hover);
-            background: #f1f5f9;
+            background: #e2e8f0;
         }
 
-        .checkbox-container input {
+        .checkbox-container input[type="checkbox"] {
+            accent-color: var(--accent-primary);
             width: 16px;
             height: 16px;
-            accent-color: var(--primary);
-            cursor: pointer;
         }
 
-        .input-text {
-            width: 100%;
-            background-color: var(--surface-subtle);
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            padding: 9px 12px;
-            border-radius: var(--radius-sm);
-            font-size: 0.875rem;
-            outline: none;
-            transition: border-color 0.2s, background-color 0.2s;
-        }
-
-        .input-text:focus {
-            border-color: var(--primary);
-            background-color: var(--surface);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        /* Portais Monitorados - Auto-fit Width Pills */
-        .scrapers-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .scraper-toggle {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--surface-subtle);
-            border: 1px solid var(--border);
-            padding: 8px 14px;
-            border-radius: var(--radius-sm);
-            font-size: 0.8125rem;
-            font-weight: 500;
-            width: max-content;
-        }
-
+        /* Interruptores (Switches) */
         .switch {
             position: relative;
             display: inline-block;
-            width: 34px;
-            height: 18px;
+            width: 42px;
+            height: 24px;
         }
 
         .switch input {
@@ -363,207 +821,141 @@
             top: 0; left: 0; right: 0; bottom: 0;
             background-color: #cbd5e1;
             transition: .2s;
-            border-radius: 20px;
+            border-radius: 24px;
         }
 
         .slider:before {
             position: absolute;
             content: "";
-            height: 12px;
-            width: 12px;
+            height: 18px;
+            width: 18px;
             left: 3px;
             bottom: 3px;
-            background-color: white;
+            background-color: #ffffff;
             transition: .2s;
             border-radius: 50%;
         }
 
         input:checked + .slider {
-            background-color: var(--primary);
+            background-color: var(--accent-primary);
         }
 
         input:checked + .slider:before {
-            transform: translateX(16px);
+            transform: translateX(18px);
         }
 
-        /* Actions Bar */
-        .actions-bar {
+        /* Cartão de Notificação */
+        .notif-card {
+            background: var(--bg-surface-elevated);
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-default);
             display: flex;
-            gap: 12px;
-            margin-top: 28px;
-            justify-content: flex-end;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .btn {
-            padding: 10px 20px;
-            border-radius: var(--radius-sm);
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s ease;
-            display: inline-flex;
+        .notif-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notif-title-group {
+            display: flex;
             align-items: center;
             gap: 8px;
-        }
-
-        .btn-secondary {
-            background-color: var(--surface);
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .btn-secondary:hover {
-            background-color: var(--surface-subtle);
-            border-color: var(--border-hover);
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-hover);
-        }
-
-        /* Table */
-        .table-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.875rem;
-            text-align: left;
-        }
-
-        th {
-            background-color: var(--surface-subtle);
-            padding: 12px 16px;
-            color: var(--text-sub);
             font-family: var(--font-display);
             font-weight: 700;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+            color: var(--text-primary);
         }
 
-        td {
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-main);
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        a.job-link {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        a.job-link:hover { text-decoration: underline; }
-
-        .score-pill {
-            display: inline-flex;
-            align-items: center;
-            font-family: var(--font-mono);
-            font-weight: 600;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 0.8125rem;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background-color: var(--text-main);
-            color: white;
-            padding: 12px 20px;
-            border-radius: var(--radius-sm);
-            font-size: 0.875rem;
-            font-weight: 500;
-            box-shadow: var(--shadow-md);
-            display: none;
-            z-index: 100;
-        }
-
-        .log-box {
-            background-color: #0f172a;
-            border-radius: var(--radius-sm);
-            padding: 14px;
-            font-family: var(--font-mono);
-            font-size: 0.8125rem;
-            color: #38bdf8;
-            max-height: 160px;
-            overflow-y: auto;
-            margin-top: 12px;
-        }
-
-        /* Info Icon & Modal Dialog */
         .btn-info-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            background: #e2e8f0;
+            border: none;
+            color: var(--text-secondary);
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            background-color: var(--primary-subtle);
-            border: 1px solid var(--primary-border);
-            color: var(--primary);
             font-size: 0.75rem;
-            font-family: var(--font-mono);
             font-weight: 700;
             cursor: pointer;
-            margin-left: 6px;
-            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.15s ease;
         }
 
         .btn-info-icon:hover {
-            background-color: var(--primary);
-            color: white;
-            border-color: var(--primary);
+            background: var(--accent-primary);
+            color: #ffffff;
         }
 
+        /* Grid de Scrapers */
+        .scrapers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 10px;
+        }
+
+        .scraper-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-surface-elevated);
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-default);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Console de Execução */
+        .log-box {
+            background: #0f172a;
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            color: #38bdf8;
+            max-height: 220px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.6;
+        }
+
+        /* Janela Modal de Instruções */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(4px);
+            background: rgba(15, 23, 42, 0.6);
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
-            padding: 20px;
+            z-index: 2000;
+            padding: 16px;
         }
 
         .modal-card {
-            background-color: var(--surface);
-            border: 1px solid var(--border);
+            background: var(--bg-surface);
+            border: 1px solid var(--border-default);
             border-radius: var(--radius-lg);
+            max-width: 540px;
             width: 100%;
-            max-width: 580px;
-            box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-md);
             overflow: hidden;
-            animation: modalFadeIn 0.2s ease-out;
-        }
-
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.96); }
-            to { opacity: 1; transform: scale(1); }
         }
 
         .modal-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border);
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border-default);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -571,125 +963,148 @@
 
         .modal-title {
             font-family: var(--font-display);
-            font-size: 1.125rem;
+            font-size: 1.05rem;
             font-weight: 700;
-            color: var(--text-main);
+            color: var(--text-primary);
         }
 
         .modal-close {
             background: transparent;
             border: none;
-            font-size: 1.25rem;
             color: var(--text-muted);
+            font-size: 1.4rem;
             cursor: pointer;
-            line-height: 1;
-        }
-
-        .modal-close:hover {
-            color: var(--text-main);
         }
 
         .modal-body {
-            padding: 24px;
-            max-height: 65vh;
+            padding: 20px;
             overflow-y: auto;
             font-size: 0.875rem;
-            color: var(--text-sub);
+            color: var(--text-secondary);
             line-height: 1.6;
+        }
+
+        .modal-body code {
+            background: var(--bg-surface-elevated);
+            color: var(--accent-primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
         }
 
         .modal-body ol, .modal-body ul {
             margin-left: 20px;
-            margin-top: 8px;
-            margin-bottom: 12px;
-        }
-
-        .modal-body li {
-            margin-bottom: 8px;
-        }
-
-        .modal-body a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .modal-body a:hover {
-            text-decoration: underline;
-        }
-
-        .modal-body code {
-            font-family: var(--font-mono);
-            background-color: var(--surface-subtle);
-            border: 1px solid var(--border);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.8125rem;
-            color: var(--text-main);
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
 
         .modal-footer {
-            padding: 16px 24px;
-            background-color: var(--surface-subtle);
-            border-top: 1px solid var(--border);
+            padding: 14px 20px;
+            border-top: 1px solid var(--border-default);
             display: flex;
             justify-content: flex-end;
+            background: var(--bg-surface-elevated);
+        }
+
+        /* Notificação Toast */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 999px;
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            font-weight: 700;
+            box-shadow: var(--shadow-md);
+            display: none;
+            z-index: 3000;
+        }
+
+        @media (min-width: 768px) {
+            .toast { bottom: 24px; }
+        }
+
+        .actions-bar {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <div class="brand">
-            <h1 class="brand-title">JobRadar</h1>
-            <p class="brand-subtitle">Varredura inteligente de vagas com score de relevância</p>
-        </div>
-        <div style="display: flex; gap: 12px; align-items: center;">
-            <div class="nav-tabs">
-                <button class="nav-btn active" id="tabVagas" onclick="mostrarPagina('vagas')">Vagas Encontradas</button>
-                <button class="nav-btn" id="tabConfig" onclick="mostrarPagina('config')">Configurações</button>
+<div class="app-container">
+    <!-- Cabeçalho -->
+    <header class="app-header">
+        <div class="brand-container">
+            <div class="radar-status-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/><circle cx="12" cy="12" r="2"/></svg>
             </div>
-            <button class="btn btn-primary" id="btnBuscarVagas" onclick="salvarERodar()">Buscar Vagas</button>
+            <div>
+                <h1 class="brand-title">
+                    JobRadar
+                    <span class="brand-badge" id="radarStatusBadge">Ativo</span>
+                </h1>
+                <p class="brand-subtitle">Varredura inteligente com pontuação de relevância</p>
+            </div>
+        </div>
+
+        <!-- Abas de Navegação no Desktop -->
+        <div class="desktop-nav-tabs">
+            <button class="nav-btn active" id="tabVagas" onclick="mostrarPagina('vagas')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                Vagas
+            </button>
+            <button class="nav-btn" id="tabConfig" onclick="mostrarPagina('config')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                Configurações
+            </button>
+        </div>
+
+        <div class="header-actions">
+            <button class="btn btn-primary btn-sm" id="btnBuscarVagas" onclick="salvarERodar()">Buscar Vagas</button>
         </div>
     </header>
 
-    <!-- Barra de Progresso de Busca -->
-    <div class="progress-container" id="searchProgressBar" style="display: none;">
+    <!-- Barra de Progresso da Varredura -->
+    <div class="progress-card" id="searchProgressBar" style="display: none;">
         <div class="progress-header">
-            <span>Varredura de vagas em andamento nos portais...</span>
-            <span id="progressText">Buscando...</span>
+            <span>Varredura de vagas em andamento...</span>
+            <span id="progressText" style="font-family: var(--font-mono);">Buscando...</span>
         </div>
         <div class="progress-track">
             <div class="progress-bar-fill"></div>
         </div>
     </div>
 
-    <!-- PÁGINA 1: Tabela de Vagas -->
+    <!-- PÁGINA 1: VAGAS -->
     <div id="pageVagas" class="page-view">
-        <div class="card" style="padding: 0; overflow: hidden;">
-            <div style="padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
-                <div>
-                    <div class="card-title">Vagas Encontradas</div>
-                    <div class="card-subtitle">Exibindo vagas dos últimos 7 dias (Atualização automática via GitHub Actions a cada 3h)</div>
-                </div>
-                <button class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.8125rem; color: var(--danger); border-color: #fecaca; background: #fef2f2;" onclick="limparListaVagas()">Limpar Lista</button>
+        <!-- Barra de Busca e Filtros -->
+        <div class="filter-toolbar">
+            <div class="search-input-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                <input type="text" id="filtroSearchText" class="input-search" placeholder="Buscar por título, palavra-chave ou empresa..." oninput="aplicarFiltrosTabela()">
             </div>
 
-            <!-- Barra de Filtros Interativos em Tempo Real -->
-            <div style="padding: 16px 24px; background: var(--surface-subtle); border-bottom: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
-                <div style="flex: 1 1 140px; min-width: 140px;">
-                    <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-sub); display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Score Mínimo</label>
-                    <select id="filtroScore" class="input-text" style="padding: 6px 10px; font-size: 0.8125rem;" onchange="aplicarFiltrosTabela()">
-                        <option value="todos">Todos os Scores</option>
+            <div class="filter-chips-row">
+                <div class="filter-group">
+                    <label class="filter-label">Pontuação Mínima</label>
+                    <select id="filtroScore" class="input-select" onchange="aplicarFiltrosTabela()">
+                        <option value="todos">Todas as Pontuações</option>
                         <option value="8">8+ (Alta Relevância)</option>
                         <option value="5">5+ (Média Relevância)</option>
                     </select>
                 </div>
 
-                <div style="flex: 1 1 150px; min-width: 150px;">
-                    <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-sub); display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Modalidade</label>
-                    <select id="filtroModalidade" class="input-text" style="padding: 6px 10px; font-size: 0.8125rem;" onchange="aplicarFiltrosTabela()">
+                <div class="filter-group">
+                    <label class="filter-label">Modalidade</label>
+                    <select id="filtroModalidade" class="input-select" onchange="aplicarFiltrosTabela()">
                         <option value="todas">Todas as Modalidades</option>
                         <option value="remoto">Remoto</option>
                         <option value="hibrido">Híbrido</option>
@@ -697,14 +1112,14 @@
                     </select>
                 </div>
 
-                <div style="flex: 1 1 180px; min-width: 180px;">
-                    <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-sub); display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Local</label>
-                    <input type="text" id="filtroLocal" class="input-text" style="padding: 6px 10px; font-size: 0.8125rem;" placeholder="Filtrar por cidade..." oninput="aplicarFiltrosTabela()">
+                <div class="filter-group">
+                    <label class="filter-label">Cidade / Local</label>
+                    <input type="text" id="filtroLocal" class="input-text" placeholder="Ex: São Paulo" oninput="aplicarFiltrosTabela()">
                 </div>
 
-                <div style="flex: 1 1 170px; min-width: 170px;">
-                    <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-sub); display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Fonte / Portal</label>
-                    <select id="filtroFonte" class="input-text" style="padding: 6px 10px; font-size: 0.8125rem;" onchange="aplicarFiltrosTabela()">
+                <div class="filter-group">
+                    <label class="filter-label">Portal / Fonte</label>
+                    <select id="filtroFonte" class="input-select" onchange="aplicarFiltrosTabela()">
                         <option value="todas">Todas as Fontes</option>
                         <option value="linkedin br">LinkedIn BR</option>
                         <option value="linkedin internacional">LinkedIn Internacional</option>
@@ -718,61 +1133,77 @@
                         <option value="weworkremotely">WeWorkRemotely</option>
                     </select>
                 </div>
-            </div>
 
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Score</th>
-                            <th>Título da Vaga</th>
-                            <th>Empresa</th>
-                            <th>Divulgada Em</th>
-                            <th>Modalidade</th>
-                            <th>Local</th>
-                            <th>Fonte</th>
-                            <th>Ação</th>
-                        </tr>
-                    </thead>
-                    <tbody id="vagasTableBody">
-                        <tr><td colspan="8" style="text-align: center; padding: 24px; color: var(--text-muted);">Carregando vagas...</td></tr>
-                    </tbody>
-                </table>
+                <div style="margin-left: auto; display: flex; align-items: flex-end;">
+                    <button class="btn btn-danger btn-sm" onclick="limparListaVagas()">Limpar Lista</button>
+                </div>
             </div>
+        </div>
+
+        <!-- Feed de Vagas Mobile Cards -->
+        <div class="job-cards-list" id="vagasCardsContainer">
+            <div style="text-align: center; padding: 32px; color: var(--text-muted);">Carregando vagas...</div>
+        </div>
+
+        <!-- Tabela de Vagas Desktop Fallback -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pontuação</th>
+                        <th>Título da Vaga</th>
+                        <th>Empresa</th>
+                        <th>Divulgada Em</th>
+                        <th>Modalidade</th>
+                        <th>Local</th>
+                        <th>Fonte</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="vagasTableBody">
+                    <tr><td colspan="8" style="text-align: center; padding: 24px; color: var(--text-muted);">Carregando vagas...</td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <!-- PÁGINA 2: Configurações -->
+    <!-- PÁGINA 2: CONFIGURAÇÕES -->
     <div id="pageConfig" class="page-view" style="display: none;">
         <div class="grid grid-2">
             <!-- Cargos Principais -->
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Cargos Principais</div>
-                    <div class="card-subtitle">Ex: Gerente de Projetos, Project Manager</div>
+                    <div>
+                        <div class="card-title">Cargos Principais</div>
+                        <div class="card-subtitle">Ex: Gerente de Projetos, Project Manager</div>
+                    </div>
                 </div>
                 <div class="tag-input-container" onclick="focarInput('inputCargoForte')">
                     <span id="cargosFortesTagsList" class="tag-list"></span>
-                    <input type="text" class="tag-inline-input" id="inputCargoForte" placeholder="Digite um cargo...">
+                    <input type="text" class="tag-inline-input" id="inputCargoForte" placeholder="Digite um cargo e pressione Enter...">
                 </div>
             </div>
 
             <!-- Stacks & Certificações -->
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Stacks & Certificações</div>
-                    <div class="card-subtitle">Ex: pmp, scrum, aws, python</div>
+                    <div>
+                        <div class="card-title">Stacks & Certificações</div>
+                        <div class="card-subtitle">Ex: pmp, scrum, aws, python</div>
+                    </div>
                 </div>
                 <div class="tag-input-container" onclick="focarInput('inputFerramenta')">
                     <span id="ferramentasTagsList" class="tag-list"></span>
-                    <input type="text" class="tag-inline-input" id="inputFerramenta" placeholder="Digite uma stack...">
+                    <input type="text" class="tag-inline-input" id="inputFerramenta" placeholder="Digite uma tecnologia e pressione Enter...">
                 </div>
             </div>
 
             <!-- Modalidades Aceitas -->
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Modalidades Aceitas</div>
+                    <div>
+                        <div class="card-title">Modalidades Aceitas</div>
+                    </div>
                 </div>
                 <div class="options-group">
                     <label class="checkbox-container"><input type="checkbox" id="checkModRemoto" checked> Remoto</label>
@@ -781,11 +1212,11 @@
                 </div>
                 
                 <div style="margin-top: 16px;">
-                    <label style="font-size: 0.8125rem; color: var(--text-sub); display: block; margin-bottom: 6px; font-weight: 500;">Prioridade no Score (+3 pts):</label>
-                    <select id="selectPreferencia" class="input-text">
-                        <option value="remoto">Priorizar Remoto (+3 pts)</option>
-                        <option value="hibrido">Priorizar Híbrido (+3 pts)</option>
-                        <option value="presencial">Priorizar Presencial (+3 pts)</option>
+                    <label class="filter-label">Prioridade na Pontuação (+3 pontos):</label>
+                    <select id="selectPreferencia" class="input-select">
+                        <option value="remoto">Priorizar Remoto (+3 pontos)</option>
+                        <option value="hibrido">Priorizar Híbrido (+3 pontos)</option>
+                        <option value="presencial">Priorizar Presencial (+3 pontos)</option>
                         <option value="sem_preferencia">Sem Preferência</option>
                     </select>
                 </div>
@@ -794,19 +1225,23 @@
             <!-- Cidades & Regiões -->
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Cidades & Regiões</div>
-                    <div class="card-subtitle">Ex: São Paulo, Recife</div>
+                    <div>
+                        <div class="card-title">Cidades & Regiões</div>
+                        <div class="card-subtitle">Ex: São Paulo, Recife</div>
+                    </div>
                 </div>
                 <div class="tag-input-container" onclick="focarInput('inputCidade')">
                     <span id="cidadesTagsList" class="tag-list"></span>
-                    <input type="text" class="tag-inline-input" id="inputCidade" placeholder="Digite uma cidade...">
+                    <input type="text" class="tag-inline-input" id="inputCidade" placeholder="Digite uma cidade e pressione Enter...">
                 </div>
             </div>
 
             <!-- Senioridades Alvo -->
-            <div class="card" style="grid-column: 1 / -1;">
+            <div class="card grid-full">
                 <div class="card-header">
-                    <div class="card-title">Senioridades Alvo (+2 pts bônus no foco)</div>
+                    <div>
+                        <div class="card-title">Senioridades Alvo (+2 pontos de bônus no foco)</div>
+                    </div>
                 </div>
                 <div class="options-group">
                     <label class="checkbox-container"><input type="checkbox" value="Estágio/Trainee" class="check-senioridade"> Estágio / Trainee</label>
@@ -818,106 +1253,97 @@
             </div>
 
             <!-- Canais de Notificação -->
-            <div class="card" style="grid-column: 1 / -1;">
+            <div class="card grid-full">
                 <div class="card-header">
-                    <div class="card-title">Canais de Notificação</div>
+                    <div>
+                        <div class="card-title">Canais de Notificação</div>
+                        <div class="card-subtitle">Receba resumos consolidados de vagas via E-mail</div>
+                    </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
-                    <!-- Telegram -->
-                    <div style="background: var(--surface-subtle); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <div style="display: flex; align-items: center;">
-                                <span style="font-weight: 600; font-size: 0.875rem;">Telegram</span>
-                                <button type="button" class="btn-info-icon" onclick="abrirModalInfo('telegram')" title="Como configurar o Telegram">i</button>
-                            </div>
-                            <label class="switch"><input type="checkbox" id="checkTgAtivo" checked><span class="slider"></span></label>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 6px;">
-                            <input type="text" id="inputTgBotToken" class="input-text" placeholder="Bot Token (.env)">
-                            <input type="text" id="inputTgChatId" class="input-text" placeholder="Chat ID">
-                            <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 0.75rem; justify-content: center; margin-top: 4px;" onclick="testarNotificacao('telegram')">Testar Canal</button>
-                        </div>
-                    </div>
-
+                <div style="max-width: 500px;">
                     <!-- E-mail -->
-                    <div style="background: var(--surface-subtle); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <div style="display: flex; align-items: center;">
-                                <span style="font-weight: 600; font-size: 0.875rem;">E-mail (SMTP - Digest Único)</span>
-                                <button type="button" class="btn-info-icon" onclick="abrirModalInfo('email')" title="Como configurar o E-mail">i</button>
+                    <div class="notif-card">
+                        <div class="notif-header">
+                            <div class="notif-title-group">
+                                <span>E-mail Consolidado</span>
+                                <button type="button" class="btn-info-icon" onclick="abrirModalInfo('email')" title="Ajuda do E-mail">i</button>
                             </div>
                             <label class="switch"><input type="checkbox" id="checkEmailAtivo"><span class="slider"></span></label>
                         </div>
-                        <div style="display: flex; flex-direction: column; gap: 6px;">
-                            <input type="email" id="inputEmailDestinatario" class="input-text" placeholder="Seu E-mail">
-                            <input type="text" id="inputEmailSmtpHost" class="input-text" placeholder="smtp.gmail.com">
-                            <input type="text" id="inputEmailSmtpUser" class="input-text" placeholder="Usuário SMTP">
-                            <input type="password" id="inputEmailSmtpPass" class="input-text" placeholder="Senha SMTP">
-                            <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 0.75rem; justify-content: center; margin-top: 4px;" onclick="testarNotificacao('email')">Testar Canal</button>
-                        </div>
-                    </div>
-
-                    <!-- WhatsApp -->
-                    <div style="background: var(--surface-subtle); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <div style="display: flex; align-items: center;">
-                                <span style="font-weight: 600; font-size: 0.875rem;">WhatsApp</span>
-                                <button type="button" class="btn-info-icon" onclick="abrirModalInfo('whatsapp')" title="Como configurar o WhatsApp">i</button>
-                            </div>
-                            <label class="switch"><input type="checkbox" id="checkWaAtivo"><span class="slider"></span></label>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 6px;">
-                            <input type="text" id="inputWaNumero" class="input-text" placeholder="+5511999998888">
-                            <input type="text" id="inputWaApiKey" class="input-text" placeholder="API Key CallMeBot">
-                            <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 0.75rem; justify-content: center; margin-top: 4px;" onclick="testarNotificacao('whatsapp')">Testar Canal</button>
-                        </div>
-                    </div>
-
-                    <!-- Webhook -->
-                    <div style="background: var(--surface-subtle); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <div style="display: flex; align-items: center;">
-                                <span style="font-weight: 600; font-size: 0.875rem;">Webhook</span>
-                                <button type="button" class="btn-info-icon" onclick="abrirModalInfo('webhook')" title="Como configurar Webhooks">i</button>
-                            </div>
-                            <label class="switch"><input type="checkbox" id="checkWhAtivo"><span class="slider"></span></label>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 6px;">
-                            <input type="url" id="inputWhUrl" class="input-text" placeholder="URL Webhook Discord/Slack">
-                            <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 0.75rem; justify-content: center; margin-top: 4px;" onclick="testarNotificacao('webhook')">Testar Canal</button>
-                        </div>
+                        <input type="email" id="inputEmailDestinatario" class="input-text" placeholder="Seu E-mail de Destino">
+                        <input type="text" id="inputEmailSmtpHost" class="input-text" placeholder="smtp.gmail.com">
+                        <input type="text" id="inputEmailSmtpUser" class="input-text" placeholder="Usuário SMTP (Seu E-mail)">
+                        <input type="password" id="inputEmailSmtpPass" class="input-text" placeholder="Senha de App SMTP">
+                        <button class="btn btn-secondary btn-sm" onclick="testarNotificacao('email')">Testar Canal E-mail</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Portais Monitorados - Pílulas Compactas Auto-fit -->
-            <div class="card" style="grid-column: 1 / -1;">
+            <!-- Portais Monitorados -->
+            <div class="card grid-full">
                 <div class="card-header">
-                    <div class="card-title">Portais Monitorados</div>
+                    <div>
+                        <div class="card-title">Portais de Busca Monitorados</div>
+                        <div class="card-subtitle">Ative ou desative fontes para varredura de vagas</div>
+                    </div>
                 </div>
                 <div class="scrapers-grid" id="scrapersGrid">
-                    <!-- Preenchido via JS -->
+                    <!-- Via JS -->
+                </div>
+            </div>
+
+            <!-- Filtro de Pontuação Mínima para Recebimento de Vagas -->
+            <div class="card grid-full">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Pontuação Mínima para Recebimento de Vagas & Alertas</div>
+                        <div class="card-subtitle">Escolha o nível mínimo de pontuação das vagas que você deseja visualizar e receber em notificações</div>
+                    </div>
+                </div>
+                <div style="max-width: 440px;">
+                    <select id="selectScoreMinimoConfig" class="input-select" onchange="alterarScoreMinimoConfig(this.value)">
+                        <option value="todos">Todas as Pontuações (Receber todas as vagas)</option>
+                        <option value="5">Pontuação 5+ (Relevância média e alta — 5 a 10)</option>
+                        <option value="8">Pontuação 8+ (Apenas alta relevância — 8 a 10)</option>
+                    </select>
                 </div>
             </div>
         </div>
 
-        <!-- Console Logs -->
-        <div class="card" style="margin-top: 24px;" id="logsCard">
-            <div class="card-title" style="font-size: 0.875rem;">Console de Execução</div>
+        <!-- Console de Execução -->
+        <div class="card" id="logsCard">
+            <div class="card-header" style="margin-bottom: 10px;">
+                <div class="card-title" style="font-size: 0.9rem;">Console de Execução</div>
+            </div>
             <div class="log-box" id="logBox">Pronto para buscar vagas...</div>
         </div>
 
         <div class="actions-bar">
             <button class="btn btn-secondary" onclick="salvarConfiguracoes()">Salvar Configurações</button>
-            <button class="btn btn-primary" id="btnBuscarVagasConfig" onclick="salvarERodar()">Salvar & Buscar Vagas</button>
+            <button class="btn btn-primary" id="btnBuscarVagasConfig" onclick="salvarERodar()">Salvar e Buscar Vagas</button>
         </div>
     </div>
 </div>
 
+<!-- Navegação Inferior Mobile (Bottom Bar) -->
+<nav class="mobile-bottom-nav">
+    <button class="mobile-tab-item active" id="tabVagasMobile" onclick="mostrarPagina('vagas')">
+        <svg viewBox="0 0 24 24"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        Vagas
+    </button>
+    <button class="mobile-scan-fab" id="btnBuscarVagasNav" onclick="salvarERodar()" title="Buscar Vagas">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    </button>
+    <button class="mobile-tab-item" id="tabConfigMobile" onclick="mostrarPagina('config')">
+        <svg viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Configurações
+    </button>
+</nav>
+
 <div class="toast" id="toast">Salvo com sucesso!</div>
 
-<!-- Modal de Instruções -->
+<!-- Janela Modal de Instruções -->
 <div class="modal-overlay" id="infoModalOverlay" onclick="fecharModalInfo(event)">
     <div class="modal-card" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -935,6 +1361,7 @@
     const API_BASE = window.location.hostname.includes("github.io") ? "http://127.0.0.1:5000" : "";
 
     let state = {
+        score_minimo: "todos",
         cargos_fortes: ["Gerente de Projetos", "Project Manager"],
         ferramentas: ["pmp", "scrum"],
         cidades: ["São Paulo", "Recife"],
@@ -948,78 +1375,30 @@
     let todasAsVagas = [];
 
     const instrucoesCanais = {
-        telegram: {
-            titulo: "Como configurar os Alertas do Telegram",
-            corpo: `
-                <p>Siga o passo a passo para criar o seu Bot no Telegram e obter o Chat ID:</p>
-                <ol>
-                    <li>Abra o Telegram e pesquise pelo bot oficial <strong>@BotFather</strong> ou acesse diretamente: <a href="https://t.me/BotFather" target="_blank">Abrir @BotFather</a>.</li>
-                    <li>Envie a mensagem <code>/newbot</code> para o BotFather e siga as instruções para definir o nome e nome de usuário do seu bot.</li>
-                    <li>O BotFather enviará o seu <strong>Bot Token</strong> de API (ex: <code>123456789:ABCdefGhIJKlmNoPQ...</code>). Copie e cole este token no campo <strong>Bot Token</strong>.</li>
-                    <li>Para descobrir o seu <strong>Chat ID</strong>, abra o bot <strong>@userinfobot</strong> no Telegram: <a href="https://t.me/userinfobot" target="_blank">Abrir @userinfobot</a> e envie a mensagem <code>/start</code>. Ele responderá com o seu código numérico.</li>
-                    <li>Cole o seu <strong>Chat ID</strong> no campo correspondente, ative o canal e clique no botão <strong>Testar Canal</strong>.</li>
-                </ol>
-            `
-        },
         email: {
             titulo: "Como configurar os Alertas por E-mail (Gmail / SMTP)",
             corpo: `
-                <p>O JobRadar enviará <strong>um único e-mail consolidado</strong> com todas as vagas organizadas por score:</p>
+                <p>O JobRadar enviará <strong>um único e-mail consolidado</strong> com todas as vagas organizadas por pontuação de relevância:</p>
                 <ol>
-                    <li>Acesse a área de segurança da sua conta Google: <a href="https://myaccount.google.com/security" target="_blank">Segurança da Conta Google</a>.</li>
+                    <li>Acesse a área de segurança da sua conta Google: <a href="https://myaccount.google.com/security" target="_blank" style="color:var(--accent-primary);">Segurança da Conta Google</a>.</li>
                     <li>Certifique-se de que a <strong>Verificação em duas etapas</strong> esteja ativada na sua conta.</li>
-                    <li>Acesse o gerador de senhas de aplicativo: <a href="https://myaccount.google.com/apppasswords" target="_blank">Gerar Senha de App Google</a>.</li>
+                    <li>Acesse o gerador de senhas de aplicativo: <a href="https://myaccount.google.com/apppasswords" target="_blank" style="color:var(--accent-primary);">Gerar Senha de App Google</a>.</li>
                     <li>Digite o nome <code>JobRadar</code> e clique em <strong>Criar</strong>. O Google exibirá um código de 16 caracteres.</li>
-                    <li>Preencha os campos no JobRadar da seguinte forma:
-                        <ul>
-                            <li><strong>Seu E-mail:</strong> O seu e-mail de destino.</li>
-                            <li><strong>Servidor SMTP:</strong> <code>smtp.gmail.com</code> (para Gmail) ou <code>smtp.office365.com</code> (para Outlook).</li>
-                            <li><strong>Usuário SMTP:</strong> O seu e-mail completo do remetente.</li>
-                            <li><strong>Senha SMTP:</strong> A sua Senha de App de 16 caracteres (sem espaços).</li>
-                        </ul>
-                    </li>
+                    <li>Preencha os campos no JobRadar com seu e-mail, servidor <code>smtp.gmail.com</code> e a senha gerada.</li>
                     <li>Clique em <strong>Testar Canal</strong> para validar o envio.</li>
                 </ol>
             `
         },
         whatsapp: {
-            titulo: "Como configurar os Alertas do WhatsApp (CallMeBot)",
+            titulo: "Como configurar Alertas no WhatsApp (Green API - Gratuito)",
             corpo: `
-                <p>O JobRadar utiliza a API gratuita do <strong>CallMeBot</strong> para enviar mensagens no WhatsApp:</p>
+                <p>A <strong>Green API</strong> oferece uma instância gratuita permanente para desenvolvedores enviarem mensagens e alertas no WhatsApp:</p>
                 <ol>
-                    <li>Adicione o número do CallMeBot aos contatos do seu WhatsApp: <code>+34 644 59 71 67</code> ou acesse o link direto: <a href="https://api.whatsapp.com/send?phone=34644597167&text=I%20allow%20callmebot%20to%20send%20me%20messages" target="_blank">Ativar no WhatsApp</a>.</li>
-                    <li>Envie exatamente a mensagem: <code>I allow callmebot to send me messages</code>.</li>
-                    <li>Em alguns segundos, o robô responderá com a sua <strong>API Key</strong> de autorização.</li>
-                    <li>Preencha os campos no JobRadar:
-                        <ul>
-                            <li><strong>Número:</strong> Seu telefone com código do país e DDD (ex: <code>+5511999998888</code>).</li>
-                            <li><strong>API Key CallMeBot:</strong> A chave numérica fornecida pelo robô.</li>
-                        </ul>
-                    </li>
-                    <li>Para maiores informações, veja o tutorial oficial: <a href="https://www.callmebot.com/blog/free-api-whatsapp-messages/" target="_blank">Tutorial CallMeBot</a>.</li>
-                </ol>
-            `
-        },
-        webhook: {
-            titulo: "Como configurar Webhooks (Discord / Slack)",
-            corpo: `
-                <p>Envie alertas para canais do Discord ou Slack utilizando Webhooks:</p>
-                <ol>
-                    <li><strong>Discord:</strong>
-                        <ul>
-                            <li>Acesse as Configurações do seu Servidor > <strong>Integrações</strong> > <strong>Webhooks</strong>.</li>
-                            <li>Clique em <strong>Novo Webhook</strong>, escolha o canal e clique em <strong>Copiar URL do Webhook</strong>.</li>
-                            <li>Consulte o guia oficial: <a href="https://support.discord.com/hc/pt-br/articles/228383668-Usando-Webhooks" target="_blank">Documentação Discord</a>.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Slack:</strong>
-                        <ul>
-                            <li>Acesse a página de aplicativos da sua Workspace e adicione a integração <strong>Incoming WebHooks</strong>.</li>
-                            <li>Escolha o canal onde deseja publicar os alertas e copie a URL do Webhook.</li>
-                            <li>Consulte o guia oficial: <a href="https://api.slack.com/messaging/webhooks" target="_blank">Documentação Slack</a>.</li>
-                        </ul>
-                    </li>
-                    <li>Cole a URL gerada no campo <strong>URL Webhook Discord/Slack</strong> e clique em <strong>Testar Canal</strong>.</li>
+                    <li>Acesse o site da Green API e crie sua conta gratuita: <a href="https://green-api.com" target="_blank" style="color:var(--accent-primary);">Acessar Green-API.com</a>.</li>
+                    <li>No painel da Green API, crie uma instância no plano <strong>Developer (Gratuito)</strong>.</li>
+                    <li>Escaneie o código QR exibido na tela usando o seu aplicativo do WhatsApp no celular.</li>
+                    <li>Copie o seu <strong>idInstance</strong> (ex: <code>1101000000</code>) e o seu <strong>apiTokenInstance</strong>.</li>
+                    <li>Cole os códigos nos campos correspondentes no JobRadar, digite seu número com DDD (ex: <code>5511999998888</code>) e clique em <strong>Testar Canal WhatsApp</strong>.</li>
                 </ol>
             `
         }
@@ -1049,24 +1428,30 @@
         const pageConfig = document.getElementById("pageConfig");
         const tabVagas = document.getElementById("tabVagas");
         const tabConfig = document.getElementById("tabConfig");
+        const tabVagasMobile = document.getElementById("tabVagasMobile");
+        const tabConfigMobile = document.getElementById("tabConfigMobile");
 
         if (nomePagina === "config") {
             pageVagas.style.display = "none";
             pageConfig.style.display = "block";
-            tabVagas.classList.remove("active");
-            tabConfig.classList.add("active");
+            if (tabVagas) tabVagas.classList.remove("active");
+            if (tabConfig) tabConfig.classList.add("active");
+            if (tabVagasMobile) tabVagasMobile.classList.remove("active");
+            if (tabConfigMobile) tabConfigMobile.classList.add("active");
         } else {
             pageVagas.style.display = "block";
             pageConfig.style.display = "none";
-            tabVagas.classList.add("active");
-            tabConfig.classList.remove("active");
+            if (tabVagas) tabVagas.classList.add("active");
+            if (tabConfig) tabConfig.classList.remove("active");
+            if (tabVagasMobile) tabVagasMobile.classList.add("active");
+            if (tabConfigMobile) tabConfigMobile.classList.remove("active");
         }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function abrirModalInfo(canal) {
         const item = instrucoesCanais[canal];
         if (!item) return;
-
         document.getElementById("modalInfoTitulo").innerText = item.titulo;
         document.getElementById("modalInfoCorpo").innerHTML = item.corpo;
         document.getElementById("infoModalOverlay").style.display = "flex";
@@ -1106,6 +1491,9 @@
         renderFerramentas();
         renderCidades();
 
+        const elScoreMin = document.getElementById("selectScoreMinimoConfig");
+        if (elScoreMin) elScoreMin.value = state.score_minimo || "todos";
+
         if (!state.modalidades_aceitas) state.modalidades_aceitas = { remoto: true, hibrido: true, presencial: true };
         document.getElementById("checkModRemoto").checked = state.modalidades_aceitas.remoto !== false;
         document.getElementById("checkModHibrido").checked = state.modalidades_aceitas.hibrido !== false;
@@ -1129,17 +1517,9 @@
 
         if (!state.canais_notificacao) {
             state.canais_notificacao = {
-                telegram: { ativo: true, bot_token: "", chat_id: "" },
-                email: { ativo: false, destinatario: "", smtp_host: "smtp.gmail.com", smtp_port: 587, smtp_user: "", smtp_pass: "" },
-                whatsapp: { ativo: false, numero: "", api_key: "" },
-                webhook: { ativo: false, url: "" }
+                email: { ativo: false, destinatario: "", smtp_host: "smtp.gmail.com", smtp_port: 587, smtp_user: "", smtp_pass: "" }
             };
         }
-
-        const tg = state.canais_notificacao.telegram || {};
-        document.getElementById("checkTgAtivo").checked = tg.ativo !== false;
-        document.getElementById("inputTgBotToken").value = tg.bot_token || "";
-        document.getElementById("inputTgChatId").value = tg.chat_id || "";
 
         const em = state.canais_notificacao.email || {};
         document.getElementById("checkEmailAtivo").checked = !!em.ativo;
@@ -1148,15 +1528,6 @@
         document.getElementById("inputEmailSmtpUser").value = em.smtp_user || "";
         document.getElementById("inputEmailSmtpPass").value = em.smtp_pass || "";
 
-        const wa = state.canais_notificacao.whatsapp || {};
-        document.getElementById("checkWaAtivo").checked = !!wa.ativo;
-        document.getElementById("inputWaNumero").value = wa.numero || "";
-        document.getElementById("inputWaApiKey").value = wa.api_key || "";
-
-        const wh = state.canais_notificacao.webhook || {};
-        document.getElementById("checkWhAtivo").checked = !!wh.ativo;
-        document.getElementById("inputWhUrl").value = wh.url || "";
-
         renderScrapers();
         configurarInputsEvents();
     }
@@ -1164,6 +1535,11 @@
     function focarInput(inputId) {
         const el = document.getElementById(inputId);
         if (el) el.focus();
+    }
+
+    function alterarScoreMinimoConfig(val) {
+        state.score_minimo = val;
+        salvarEstadoEmLocalStorage();
     }
 
     function salvarEstadoEmLocalStorage() {
@@ -1205,15 +1581,11 @@
         };
 
         input.onblur = () => {
-            if (input.value.trim() !== "") {
-                actionFn();
-            }
+            if (input.value.trim() !== "") actionFn();
         };
 
         input.oninput = () => {
-            if (input.value.includes(",")) {
-                actionFn();
-            }
+            if (input.value.includes(",")) actionFn();
         };
     }
 
@@ -1224,7 +1596,6 @@
         if (!val) return;
 
         if (!state[stateKey]) state[stateKey] = [];
-
         const partes = val.split(",").map(s => s.trim()).filter(s => s.length > 0);
         let alterou = false;
 
@@ -1299,6 +1670,7 @@
 
     function renderScrapers() {
         const grid = document.getElementById("scrapersGrid");
+        if (!grid) return;
         grid.innerHTML = "";
 
         Object.keys(scrapersNomes).forEach(key => {
@@ -1323,11 +1695,6 @@
 
     function lerCanaisDaTela() {
         state.canais_notificacao = {
-            telegram: {
-                ativo: document.getElementById("checkTgAtivo").checked,
-                bot_token: document.getElementById("inputTgBotToken").value.trim(),
-                chat_id: document.getElementById("inputTgChatId").value.trim()
-            },
             email: {
                 ativo: document.getElementById("checkEmailAtivo").checked,
                 destinatario: document.getElementById("inputEmailDestinatario").value.trim(),
@@ -1335,15 +1702,6 @@
                 smtp_port: 587,
                 smtp_user: document.getElementById("inputEmailSmtpUser").value.trim(),
                 smtp_pass: document.getElementById("inputEmailSmtpPass").value.trim()
-            },
-            whatsapp: {
-                ativo: document.getElementById("checkWaAtivo").checked,
-                numero: document.getElementById("inputWaNumero").value.trim(),
-                api_key: document.getElementById("inputWaApiKey").value.trim()
-            },
-            webhook: {
-                ativo: document.getElementById("checkWhAtivo").checked,
-                url: document.getElementById("inputWhUrl").value.trim()
             }
         };
     }
@@ -1380,9 +1738,9 @@
                 body: JSON.stringify(state)
             });
             const data = await res.json();
-            showToast("Configurações salvas com sucesso!");
+            showToast("Configurações salvas!");
         } catch (err) {
-            showToast("Configurações salvas com sucesso!");
+            showToast("Configurações salvas!");
         }
     }
 
@@ -1399,7 +1757,7 @@
             });
             const data = await res.json();
             if (data.success) {
-                showToast("Busca iniciada em segundo plano!");
+                showToast("Varredura iniciada!");
                 checarStatus();
             } else if (data.is_running) {
                 if (confirm("Já existe uma busca em andamento. Deseja interromper a busca atual e reiniciar?")) {
@@ -1449,38 +1807,49 @@
             const logBox = document.getElementById("logBox");
             const btnBuscar = document.getElementById("btnBuscarVagas");
             const btnBuscarConfig = document.getElementById("btnBuscarVagasConfig");
+            const statusBadge = document.getElementById("radarStatusBadge");
 
             if (data.is_running) {
                 wasRunning = true;
                 if (progressBar) progressBar.style.display = "block";
                 if (progressText) progressText.innerText = "Executando varredura...";
+                if (statusBadge) {
+                    statusBadge.innerText = "Buscando...";
+                    statusBadge.style.color = "#b45309";
+                    statusBadge.style.backgroundColor = "#fef3c7";
+                }
 
                 if (btnBuscar) {
-                    btnBuscar.innerText = "Buscando... (Parar)";
-                    btnBuscar.className = "btn btn-secondary";
+                    btnBuscar.innerText = "Parar Busca";
+                    btnBuscar.className = "btn btn-secondary btn-sm";
                     btnBuscar.onclick = () => cancelarBusca();
                 }
                 if (btnBuscarConfig) {
-                    btnBuscarConfig.innerText = "Buscando... (Parar)";
+                    btnBuscarConfig.innerText = "Parar Busca";
                     btnBuscarConfig.className = "btn btn-secondary";
                     btnBuscarConfig.onclick = () => cancelarBusca();
                 }
             } else {
                 if (progressBar) progressBar.style.display = "none";
+                if (statusBadge) {
+                    statusBadge.innerText = "Ativo";
+                    statusBadge.style.color = "var(--accent-primary)";
+                    statusBadge.style.backgroundColor = "var(--accent-primary-subtle)";
+                }
 
                 if (wasRunning) {
                     wasRunning = false;
                     carregarVagas();
-                    showToast("Busca concluída! Lista de vagas atualizada.");
+                    showToast("Busca concluída! Vagas atualizadas.");
                 }
 
                 if (btnBuscar) {
                     btnBuscar.innerText = "Buscar Vagas";
-                    btnBuscar.className = "btn btn-primary";
+                    btnBuscar.className = "btn btn-primary btn-sm";
                     btnBuscar.onclick = () => salvarERodar();
                 }
                 if (btnBuscarConfig) {
-                    btnBuscarConfig.innerText = "Salvar & Buscar Vagas";
+                    btnBuscarConfig.innerText = "Salvar e Buscar Vagas";
                     btnBuscarConfig.className = "btn btn-primary";
                     btnBuscarConfig.onclick = () => salvarERodar();
                 }
@@ -1524,9 +1893,12 @@
         const modFiltro = document.getElementById("filtroModalidade").value;
         const localFiltro = document.getElementById("filtroLocal").value.toLowerCase().trim();
         const fonteFiltro = document.getElementById("filtroFonte").value.toLowerCase().trim();
+        const searchTxt = (document.getElementById("filtroSearchText") ? document.getElementById("filtroSearchText").value : "").toLowerCase().trim();
 
         const tbody = document.getElementById("vagasTableBody");
+        const cardsContainer = document.getElementById("vagasCardsContainer");
         tbody.innerHTML = "";
+        cardsContainer.innerHTML = "";
 
         let vagasFiltradas = todasAsVagas.filter(vaga => {
             const scoreVal = vaga.score !== undefined && vaga.score !== null ? vaga.score : 5;
@@ -1553,10 +1925,20 @@
                 }
             }
 
+            if (searchTxt) {
+                const searchHaystack = `${vaga.titulo || ''} ${vaga.empresa || ''} ${vaga.local || ''} ${vaga.fonte || ''}`.toLowerCase();
+                if (!searchHaystack.includes(searchTxt)) return false;
+            }
+
             return true;
         });
 
         if (vagasFiltradas.length === 0) {
+            const emptyHtml = `<div style="text-align: center; padding: 48px 16px; background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px dashed var(--border-default); margin-top: 10px;">
+                <div style="font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text-primary);">Nenhuma vaga encontrada</div>
+                <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px;">Tente ajustar os filtros de busca ou clique em <strong>Buscar Vagas</strong> para atualizar a lista.</div>
+            </div>`;
+            cardsContainer.innerHTML = emptyHtml;
             tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 24px; color: var(--text-muted);">Nenhuma vaga encontrada com os filtros selecionados.</td></tr>`;
             return;
         }
@@ -1564,26 +1946,55 @@
         vagasFiltradas.sort((a, b) => (b.score || 0) - (a.score || 0));
 
         vagasFiltradas.forEach(vaga => {
-            const tr = document.createElement("tr");
             const scoreVal = vaga.score !== undefined && vaga.score !== null ? vaga.score : 5;
             
-            let bg = "var(--primary-subtle)", border = "var(--primary-border)", text = "var(--primary)";
-            if (scoreVal >= 8) { bg = "var(--success-bg)"; border = "var(--success-border)"; text = "var(--success)"; }
-            else if (scoreVal >= 5) { bg = "var(--warning-bg)"; border = "var(--warning-border)"; text = "var(--warning)"; }
+            let scoreClass = "score-low";
+            if (scoreVal >= 8) scoreClass = "score-high";
+            else if (scoreVal >= 5) scoreClass = "score-mid";
 
             const modalidadeTexto = vaga.modalidade || (vaga.local && vaga.local.toLowerCase().includes("remoto") ? "Remoto" : "Presencial");
-            const modalidadeBadge = `<span style="background: var(--primary-subtle); border: 1px solid var(--primary-border); color: var(--primary); font-size: 0.75rem; padding: 3px 8px; border-radius: 6px; font-weight: 600;">${modalidadeTexto}</span>`;
             const divulgadaEm = vaga.publicado_em || "Recente";
 
+            // 1. Render Mobile Job Card (Modo Light, sem gradientes ou emojis)
+            const cardEl = document.createElement("div");
+            cardEl.className = "job-card";
+            cardEl.innerHTML = `
+                <div class="job-card-top">
+                    <div>
+                        <h3 class="job-title">${vaga.titulo}</h3>
+                        <div class="job-company">
+                            ${vaga.empresa || 'Empresa Confidencial'}
+                        </div>
+                    </div>
+                    <span class="score-pill ${scoreClass}">Pontuação ${scoreVal}/10</span>
+                </div>
+                
+                <div class="job-card-meta">
+                    <span class="badge badge-modality">${modalidadeTexto}</span>
+                    ${vaga.local ? `<span class="badge badge-location">${vaga.local}</span>` : ''}
+                    <span class="badge badge-source">${vaga.fonte}</span>
+                </div>
+
+                <div class="job-card-footer">
+                    <span class="job-date">Divulgada em: ${divulgadaEm}</span>
+                    <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="job-link-btn">
+                        Ver Vaga
+                    </a>
+                </div>
+            `;
+            cardsContainer.appendChild(cardEl);
+
+            // 2. Render Desktop Table Row
+            const tr = document.createElement("tr");
             tr.innerHTML = `
-                <td><span class="score-pill" style="background: ${bg}; border: 1px solid ${border}; color: ${text};">Score: ${scoreVal}/10</span></td>
+                <td><span class="score-pill ${scoreClass}">${scoreVal}/10</span></td>
                 <td><strong>${vaga.titulo}</strong></td>
                 <td>${vaga.empresa || '-'}</td>
-                <td><span style="font-size: 0.8125rem; color: var(--text-sub); font-weight: 500;">${divulgadaEm}</span></td>
-                <td>${modalidadeBadge}</td>
+                <td><span style="font-size: 0.8rem; color: var(--text-secondary); font-family: var(--font-mono);">${divulgadaEm}</span></td>
+                <td><span class="badge badge-modality">${modalidadeTexto}</span></td>
                 <td>${vaga.local || '-'}</td>
-                <td><span style="background: var(--surface-subtle); border: 1px solid var(--border); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; color: var(--text-sub); font-weight: 500;">${vaga.fonte}</span></td>
-                <td><a href="${vaga.url}" target="_blank" class="job-link">Ver Vaga</a></td>
+                <td><span class="badge badge-source">${vaga.fonte}</span></td>
+                <td><a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="job-link-btn" style="padding: 4px 10px; font-size: 0.75rem;">Ver Vaga</a></td>
             `;
             tbody.appendChild(tr);
         });

@@ -184,25 +184,32 @@ def get_status():
 def test_notification():
     from notifier.dispatcher import enviar_notificacao_multicanal
     dados = request.json or {}
-    canal = dados.get("canal", "telegram")
+    canal = dados.get("canal", "email")
 
-    test_msg = "🔔 <b>[JobRadar Teste]</b> As notificações multicanal estão funcionando perfeitamente!"
+    test_msg = "[JobRadar Teste] As notificações estão funcionando perfeitamente!"
     test_html = """
-    <h2>📡 JobRadar - Teste de Notificação</h2>
+    <h2>JobRadar - Teste de Notificação</h2>
     <p>Seu canal de alerta foi configurado e validado com sucesso!</p>
-    <p>Você receberá novas vagas compatíveis diretamente por este canal.</p>
+    <p>Você receberá novas vagas compatíveis por este canal.</p>
     """
 
     res = enviar_notificacao_multicanal(
         texto_simples=test_msg,
-        assunto="🔔 JobRadar - Teste de Notificação",
+        assunto="JobRadar - Teste de Notificação",
         corpo_html=test_html,
+        forcar_canal=canal,
     )
 
-    if res.get(canal):
-        return jsonify({"success": True, "message": f"Alerta enviado com sucesso para {canal}!"})
+    resultado_canal = res.get(canal)
+    if isinstance(resultado_canal, tuple):
+        ok, detalhe = resultado_canal
     else:
-        return jsonify({"success": False, "message": f"Falha ao enviar alerta para {canal}. Verifique os dados digitados e tente novamente."}), 400
+        ok, detalhe = bool(resultado_canal), "Canal de notificação não respondeu."
+
+    if ok:
+        return jsonify({"success": True, "message": detalhe})
+    else:
+        return jsonify({"success": False, "message": detalhe}), 400
 
 
 if __name__ == "__main__":
