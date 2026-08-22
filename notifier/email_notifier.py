@@ -75,10 +75,15 @@ def enviar_email(
         return False
 
     try:
+        destinatarios_lista = [d.strip() for d in destinatario.split(",") if d.strip()]
+        if not destinatarios_lista:
+            logger.warning("[EmailNotifier] Nenhum destinatário válido informado.")
+            return False
+
         msg = MIMEMultipart("alternative")
         msg["Subject"] = assunto
         msg["From"] = f"JobRadar Alertas <{smtp_user}>"
-        msg["To"] = destinatario
+        msg["To"] = ", ".join(destinatarios_lista)
 
         part = MIMEText(corpo_html, "html", "utf-8")
         msg.attach(part)
@@ -86,9 +91,9 @@ def enviar_email(
         with smtplib.SMTP(smtp_host, int(smtp_port), timeout=10) as server:
             server.starttls()
             server.login(smtp_user, smtp_pass)
-            server.sendmail(smtp_user, [destinatario], msg.as_string())
+            server.sendmail(smtp_user, destinatarios_lista, msg.as_string())
 
-        logger.info(f"[EmailNotifier] E-mail enviado com sucesso para {destinatario}")
+        logger.info(f"[EmailNotifier] E-mail enviado com sucesso para {', '.join(destinatarios_lista)}")
         return True
     except Exception as e:
         logger.error(f"[EmailNotifier] Erro ao enviar e-mail para {destinatario}: {e}")
