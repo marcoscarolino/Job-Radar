@@ -10,7 +10,7 @@ logger = get_logger()
 
 def construir_digest_html(vagas: list[dict]) -> str:
     """Monta o HTML do e-mail consolidando todas as vagas agrupadas por pontuação de relevância,
-    seguindo rigorosamente a identidade visual do JobRadar (Onest, Olive & Lime, Target Icon)."""
+    seguindo rigorosamente a identidade visual do JobRadar (Onest, Olive & Lime 400, Target Icon)."""
     vagas_altas = [v for v in vagas if (v.get("score") or v.get("relevancia") or 5) >= 8]
     vagas_medias = [v for v in vagas if 5 <= (v.get("score") or v.get("relevancia") or 5) < 8]
     vagas_baixas = [v for v in vagas if (v.get("score") or v.get("relevancia") or 5) < 5]
@@ -39,11 +39,11 @@ def construir_digest_html(vagas: list[dict]) -> str:
             mod_texto = f" • {modalidade}" if modalidade else ""
 
             if score_val >= 8:
-                score_badge_style = "background-color: #ecfccb; color: #1e2019; border: 1px solid #bef264;"
+                score_badge_style = "background-color: #a3e635; color: #1e2019; border: 0;"
             elif score_val >= 5:
-                score_badge_style = "background-color: #fffbeb; color: #78350f; border: 1px solid #fde68a;"
+                score_badge_style = "background-color: #fef3c7; color: #78350f; border: 0;"
             else:
-                score_badge_style = "background-color: #f0f2ea; color: #4b5338; border: 1px solid #e1e5d5;"
+                score_badge_style = "background-color: #f0f2ea; color: #4b5338; border: 0;"
 
             items_html += f"""
             <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 14px; background-color: #f8f9f5; border: 1px solid #e1e5d5; border-radius: 14px; padding: 16px; box-sizing: border-box;">
@@ -76,7 +76,7 @@ def construir_digest_html(vagas: list[dict]) -> str:
                                     {divulgada_em}
                                 </td>
                                 <td align="right">
-                                    <a href="{link}" target="_blank" style="display: inline-block; background-color: #a3e635; color: #1e2019; padding: 6px 14px; border-radius: 12px; font-size: 14px; font-weight: 500; text-decoration: none; transition: all 0.2s ease;">
+                                    <a href="{link}" target="_blank" style="display: inline-block; background-color: #a3e635; color: #1e2019; padding: 6px 14px; border-radius: 12px; font-size: 14px; font-weight: 500; text-decoration: none; border: 0;">
                                         Ver vaga &rarr;
                                     </a>
                                 </td>

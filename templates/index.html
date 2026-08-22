@@ -77,7 +77,7 @@
         </div>
 
         <div>
-            <button id="btnToggleNav" onclick="togglePagina()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-olive-200 bg-white hover:bg-olive-100 text-olive-800 text-sm font-medium transition-colors">
+            <button id="btnToggleNav" onclick="togglePagina()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-olive-100/80 hover:bg-olive-200/80 text-olive-800 text-sm font-medium transition-colors border-0">
                 <i class="ph ph-gear text-lg" id="btnToggleNavIcon"></i>
                 <span id="btnToggleNavText">Configurações</span>
             </button>
@@ -162,12 +162,12 @@
 
                 <!-- Botões no final dos filtros -->
                 <div class="flex items-center gap-2 ml-auto pt-2 sm:pt-0">
-                    <button onclick="limparListaVagas()" class="px-3.5 py-2 text-rose-700 hover:bg-rose-50 border border-transparent hover:border-rose-200 font-medium text-sm rounded-xl transition-colors flex items-center gap-1.5">
+                    <button onclick="limparListaVagas()" class="px-3.5 py-2 text-rose-700 hover:bg-rose-100/70 font-medium text-sm rounded-xl transition-colors flex items-center gap-1.5 border-0">
                         <i class="ph ph-trash text-base"></i>
                         <span>Limpar lista</span>
                     </button>
 
-                    <button id="btnBuscarVagas" onclick="salvarERodar()" class="px-4 py-2 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-medium text-sm rounded-xl flex items-center gap-2 transition-colors">
+                    <button id="btnBuscarVagas" onclick="salvarERodar()" class="px-4 py-2 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-medium text-sm rounded-xl flex items-center gap-2 transition-colors border-0">
                         <i class="ph ph-magnifying-glass font-medium text-olive-950 text-base" id="btnBuscarVagasIcon"></i>
                         <span id="btnBuscarVagasLabel" class="text-olive-950">Buscar vagas</span>
                     </button>
@@ -245,13 +245,13 @@
                     <h3 class="font-medium text-olive-900 text-lg">Modalidades aceitas</h3>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors">
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none transition-colors border-0">
                         <input type="checkbox" id="checkModRemoto" class="accent-lime-500 rounded-md"> Remoto
                     </label>
-                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors">
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none transition-colors border-0">
                         <input type="checkbox" id="checkModHibrido" class="accent-lime-500 rounded-md"> Híbrido
                     </label>
-                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors">
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none transition-colors border-0">
                         <input type="checkbox" id="checkModPresencial" class="accent-lime-500 rounded-md"> Presencial
                     </label>
                 </div>
@@ -285,19 +285,19 @@
                     <h3 class="font-medium text-olive-900 text-lg">Senioridades alvo (+2 pontos de bônus no foco)</h3>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors">
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none transition-colors border-0">
                         <input type="checkbox" value="Estágio/Trainee" class="check-senioridade accent-lime-500 rounded-md"> Estágio / Trainee
                     </label>
-                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors">
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none transition-colors border-0">
                         <input type="checkbox" value="Júnior" class="check-senioridade accent-lime-500 rounded-md"> Júnior
                     </label>
-                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors">
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none transition-colors border-0">
                         <input type="checkbox" value="Pleno" class="check-senioridade accent-lime-500 rounded-md"> Pleno
                     </label>
-                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors">
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors border-0">
                         <input type="checkbox" value="Sênior" class="check-senioridade accent-lime-500 rounded-md"> Sênior
                     </label>
-                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors">
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors border-0">
                         <input type="checkbox" value="Especialista/Liderança" class="check-senioridade accent-lime-500 rounded-md"> Especialista / Liderança
                     </label>
                 </div>
@@ -315,7 +315,7 @@
                         <div class="flex items-center gap-2 font-medium text-sm text-olive-900">
                             <i class="ph ph-envelope text-lg text-lime-600"></i>
                             <span>E-mail consolidado</span>
-                            <button type="button" class="w-5 h-5 rounded-full bg-olive-200 hover:bg-lime-400 hover:text-olive-950 text-olive-700 text-xs font-medium flex items-center justify-center transition-colors" onclick="abrirModalInfo('email')" title="Ajuda">i</button>
+                            <button type="button" class="w-5 h-5 rounded-full bg-olive-200 hover:bg-lime-400 hover:text-olive-950 text-olive-700 text-xs font-medium flex items-center justify-center transition-colors border-0" onclick="abrirModalInfo('email')" title="Ajuda">i</button>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer shrink-0">
                             <input type="checkbox" id="checkEmailAtivo" class="sr-only peer">
@@ -326,7 +326,7 @@
                     <input type="text" id="inputEmailSmtpHost" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="smtp.gmail.com">
                     <input type="text" id="inputEmailSmtpUser" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Usuário SMTP (Seu e-mail)">
                     <input type="password" id="inputEmailSmtpPass" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Senha de app SMTP">
-                    <button class="px-3.5 py-2 bg-white border border-olive-200 hover:bg-olive-100 text-olive-800 font-medium text-sm rounded-xl transition-colors" onclick="testarNotificacao('email')">Testar canal e-mail</button>
+                    <button class="px-3.5 py-2 bg-olive-100 hover:bg-olive-200 text-olive-800 font-medium text-sm rounded-xl transition-colors border-0" onclick="testarNotificacao('email')">Testar canal e-mail</button>
                 </div>
             </div>
 
@@ -364,7 +364,7 @@
         </div>
 
         <div class="flex items-center justify-end pt-2">
-            <button class="px-5 py-2.5 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-medium text-sm rounded-xl transition-colors" onclick="salvarConfiguracoes()">Salvar configurações</button>
+            <button class="px-5 py-2.5 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-medium text-sm rounded-xl transition-colors border-0" onclick="salvarConfiguracoes()">Salvar configurações</button>
         </div>
     </div>
 </div>
@@ -383,7 +383,7 @@
         </div>
         <div class="p-5 overflow-y-auto text-sm text-olive-700 font-normal leading-relaxed" id="modalInfoCorpo"></div>
         <div class="px-5 py-3 border-t border-olive-200 bg-olive-50 flex justify-end">
-            <button type="button" class="px-4 py-2 bg-white border border-olive-200 hover:bg-olive-100 text-olive-800 font-medium text-sm rounded-xl transition-colors" onclick="fecharModalInfo()">Fechar</button>
+            <button type="button" class="px-4 py-2 bg-olive-100 hover:bg-olive-200 text-olive-800 font-medium text-sm rounded-xl transition-colors border-0" onclick="fecharModalInfo()">Fechar</button>
         </div>
     </div>
 </div>
@@ -714,12 +714,12 @@
 
         list.forEach((item, index) => {
             const tag = document.createElement("span");
-            tag.className = "inline-flex items-center gap-1 px-2.5 py-1 bg-lime-100 border border-lime-300 text-olive-950 rounded-lg text-sm font-medium";
+            tag.className = "inline-flex items-center gap-1 px-2.5 py-1 bg-lime-400 text-olive-950 rounded-lg text-sm font-medium border-0";
             
             const txtNode = document.createTextNode(item + " ");
             const btnDelete = document.createElement("button");
             btnDelete.type = "button";
-            btnDelete.className = "text-olive-700 hover:text-rose-600 transition-colors ml-0.5 font-medium";
+            btnDelete.className = "text-olive-950 hover:text-rose-700 transition-colors ml-0.5 font-medium border-0";
             btnDelete.innerHTML = "&times;";
             btnDelete.onclick = (e) => {
                 e.stopPropagation();
@@ -1093,17 +1093,17 @@
         vagasFiltradas.forEach(vaga => {
             const scoreVal = vaga.score !== undefined && vaga.score !== null ? vaga.score : 5;
             
-            let scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-olive-100 text-olive-700 border border-olive-200 font-medium text-sm inline-flex items-center";
+            let scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-olive-100 text-olive-700 font-medium text-sm inline-flex items-center border-0";
             if (scoreVal >= 8) {
-                scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-lime-100 text-olive-950 border border-lime-300 font-medium text-sm inline-flex items-center";
+                scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-lime-400 text-olive-950 font-medium text-sm inline-flex items-center border-0";
             } else if (scoreVal >= 5) {
-                scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 font-medium text-sm inline-flex items-center";
+                scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-amber-100 text-amber-900 font-medium text-sm inline-flex items-center border-0";
             }
 
             const modalidadeTexto = vaga.modalidade || (vaga.local && vaga.local.toLowerCase().includes("remoto") ? "Remoto" : "Presencial");
             const divulgadaEm = extrairDataFormatada(vaga);
 
-            // 1. Mobile Card (Box do ícone Lime 400 no hover com texto oklch(15.3% 0.006 107.1))
+            // 1. Mobile Card (Box do ícone Lime 400 no hover sem bordas)
             const cardEl = document.createElement("div");
             cardEl.className = "bg-white border border-olive-200 rounded-2xl p-4 space-y-2";
             cardEl.innerHTML = `
@@ -1112,7 +1112,7 @@
                         <h3 class="font-medium text-olive-900 text-sm leading-snug">${vaga.titulo}</h3>
                         <p class="text-sm font-normal text-olive-600 mt-0.5">${vaga.empresa || 'Empresa Confidencial'}</p>
                     </div>
-                    <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-xl border border-olive-200 bg-white hover:bg-lime-400 hover:border-lime-400 text-olive-600 hover:text-[oklch(15.3%_0.006_107.1)] flex items-center justify-center transition-all shrink-0" title="Ver vaga">
+                    <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-xl bg-olive-100/60 hover:bg-lime-400 text-olive-600 hover:text-olive-950 flex items-center justify-center transition-all shrink-0 border-0" title="Ver vaga">
                         <i class="ph ph-arrow-up-right text-base"></i>
                     </a>
                 </div>
@@ -1129,7 +1129,7 @@
             `;
             cardsContainer.appendChild(cardEl);
 
-            // 2. Desktop Table Row (Box do ícone Lime 400 no hover com texto oklch(15.3% 0.006 107.1))
+            // 2. Desktop Table Row (Box do ícone Lime 400 no hover sem bordas)
             const tr = document.createElement("tr");
             tr.className = "hover:bg-olive-50/80 transition-colors";
             tr.innerHTML = `
@@ -1143,7 +1143,7 @@
                 <td class="py-3.5 px-4 text-olive-700 font-normal">${vaga.local || '-'}</td>
                 <td class="py-3.5 px-4 text-olive-600 text-sm font-normal">${vaga.fonte}</td>
                 <td class="py-3.5 px-4 text-right">
-                    <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-xl border border-olive-200 bg-white hover:bg-lime-400 hover:border-lime-400 text-olive-600 hover:text-[oklch(15.3%_0.006_107.1)] inline-flex items-center justify-center transition-all" title="Ver vaga">
+                    <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-xl bg-olive-100/60 hover:bg-lime-400 text-olive-600 hover:text-olive-950 inline-flex items-center justify-center transition-all border-0" title="Ver vaga">
                         <i class="ph ph-arrow-up-right text-base"></i>
                     </a>
                 </td>
