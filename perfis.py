@@ -206,6 +206,12 @@ def obter_regras_perfil(perfil_chave: str = "brasil") -> RegrasFiltro:
         return _REGRAS_INTL
 
     usr_cfg = carregar_config()
+    scrapers_act = usr_cfg.get("scrapers_ativos", {})
+    linkedin_intl_ativo = scrapers_act.get("linkedin_intl", False)
+
+    # Se as opções internacionais estiverem desativadas, só aceita o mercado "Brasil"
+    mercados = MERCADOS_REMOTO_ACEITOS if linkedin_intl_ativo else ["Brasil"]
+
     cargos_fortes = usr_cfg.get("cargos_fortes", ["Gerente de Projetos", "Project Manager"])
     cargos_ambiguos = usr_cfg.get("cargos_ambiguos", ["Coordenador de Projetos", "Scrum Master"])
     qualificadores = usr_cfg.get("qualificadores_dados", ["pmp", "scrum", "agile", "gestão", "projetos", "certificação", "curso"])
@@ -222,7 +228,7 @@ def obter_regras_perfil(perfil_chave: str = "brasil") -> RegrasFiltro:
         ferramentas_titulo=ferramentas,
         qualificadores_cargo=QUALIFICADORES_CARGO,
         cidades=cidades,
-        mercados_remoto_aceitos=MERCADOS_REMOTO_ACEITOS,
+        mercados_remoto_aceitos=mercados,
         modalidades_aceitas=usr_cfg.get("modalidades_aceitas"),
         preferencia_modalidade=usr_cfg.get("preferencia_modalidade", "remoto"),
         senioridades_alvo=usr_cfg.get("senioridades_alvo"),

@@ -26,9 +26,14 @@ LAST_RUN_LOGS = []
 
 
 def obter_vagas_recientes(limit: int = 100) -> list[dict]:
-    """Retorna as vagas mais recentes gravadas no SQLite data/jobs.db com score de relevância."""
+    """Retorna as vagas mais recentes gravadas no SQLite data/jobs.db que combinam com as regras ativas."""
     if not DB_PATH.exists():
         return []
+
+    from perfis import obter_regras_perfil
+    from job import Job
+
+    regras = obter_regras_perfil("brasil")
 
     try:
         conn = sqlite3.connect(DB_PATH)
@@ -40,19 +45,31 @@ def obter_vagas_recientes(limit: int = 100) -> list[dict]:
                    publicado_em
             FROM vagas_vistas
             ORDER BY encontrada_em DESC, ROWID DESC
-            LIMIT ?
             """,
-            (limit,),
         )
         colunas = [column[0] for column in cursor.description]
         vagas = []
         for row in cursor.fetchall():
             row_dict = dict(zip(colunas, row))
-            if row_dict.get("score") is None:
-                row_dict["score"] = 5  # Score padrão se não gravado
-            if not row_dict.get("publicado_em"):
-                row_dict["publicado_em"] = "Recente"
-            vagas.append(row_dict)
+
+            j = Job(
+                titulo=row_dict.get("titulo") or "",
+                empresa=row_dict.get("empresa") or "",
+                local=row_dict.get("local") or "",
+                link=row_dict.get("url") or "",
+                site=row_dict.get("fonte") or "",
+                publicado_em=row_dict.get("publicado_em") or "",
+                modalidade=row_dict.get("modalidade") or "",
+            )
+
+            if j.combina_com(regras):
+                if not row_dict.get("score"):
+                    row_dict["score"] = j.pontuar_relevancia(regras)
+                if not row_dict.get("publicado_em"):
+                    row_dict["publicado_em"] = "Recente"
+                vagas.append(row_dict)
+                if len(vagas) >= limit:
+                    break
         conn.close()
         return vagas
     except Exception as e:
