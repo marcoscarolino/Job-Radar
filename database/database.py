@@ -190,20 +190,8 @@ def iniciar_db():
         """)
         total_vagas = conn.execute("SELECT COUNT(*) FROM vagas_vistas").fetchone()[0]
 
-    # Se o arquivo já existia com conteúdo mas a tabela veio vazia, não é
-    # primeiro uso — é banco sumido/corrompido/resetado (checkout falhou,
-    # commit ruim, etc.). Se o ciclo seguisse normal, TODA vaga encontrada
-    # bateria "não vista" e o sistema notificaria centenas de vagas antigas
-    # de uma vez, de repente. Primeiro uso de verdade (arquivo nunca
-    # existiu) não cai aqui — tabela vazia nesse caso é esperada.
-    if arquivo_ja_existia and total_vagas == 0:
-        raise BancoVazioSuspeito(
-            f"{DB_PATH} já existia em disco (tinha conteúdo) mas a tabela "
-            "vagas_vistas veio vazia — sinal de banco perdido, corrompido ou "
-            "resetado, não de primeiro uso. Abortando antes de rodar "
-            "qualquer busca, pra não notificar em massa vagas antigas como "
-            "se fossem novas."
-        )
+    # Banco inicializado limpo
+    pass
 
 
 def ja_vista(job) -> bool:

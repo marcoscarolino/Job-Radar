@@ -2,16 +2,22 @@
   "score_minimo": "5",
   "modalidades_aceitas": {
     "remoto": true,
-    "hibrido": false,
-    "presencial": false
+    "hibrido": true,
+    "presencial": true
   },
   "preferencia_modalidade": "remoto",
   "senioridades_alvo": [
+    "Júnior",
+    "Pleno",
     "Sênior",
     "Especialista/Liderança"
   ],
   "cargos_fortes": [
-    "product design"
+    "product design",
+    "product designer",
+    "ux designer",
+    "ui designer",
+    "designer de produto"
   ],
   "cargos_ambiguos": [
     "Coordenador de Projetos",

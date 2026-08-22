@@ -26,7 +26,7 @@ from notifier.telegram import (
     notificar_vaga_exploratoria,
     processar_feedback_pendente,
 )
-from perfis import FREQUENCIA_ALTA, PERFIS, Perfil
+from perfis import FREQUENCIA_ALTA, PERFIS, Perfil, obter_scrapers_dinamicos, obter_regras_perfil, obter_termos_busca_perfil
 from utils.filtro import filtrar_vagas
 from logger import get_logger
 
