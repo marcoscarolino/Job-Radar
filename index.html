@@ -1469,11 +1469,13 @@
     async function carregarConfiguracoes() {
         try {
             const res = await fetch(API_BASE + "/api/config");
-            const data = await res.json();
-            if (data.success) {
-                state = data.config;
-                render();
-                return;
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.success && data.config) {
+                    state = data.config;
+                    render();
+                    return;
+                }
             }
         } catch (err) {}
 
@@ -1482,8 +1484,36 @@
             if (saved) {
                 state = JSON.parse(saved);
                 render();
+                return;
             }
         } catch (e) {}
+
+        state = {
+            score_minimo: "todos",
+            modalidades_aceitas: { remoto: true, hibrido: true, presencial: true },
+            preferencia_modalidade: "remoto",
+            senioridades_alvo: ["Júnior", "Pleno", "Sênior", "Especialista/Liderança"],
+            cargos_fortes: ["product design", "product designer", "ux designer", "ui designer", "designer de produto"],
+            cargos_ambiguos: ["Coordenador de Projetos", "Scrum Master"],
+            ferramentas: [],
+            cidades: ["Brasil", "Brasília", "São Paulo"],
+            scrapers_ativos: {
+                linkedin: true,
+                gupy: true,
+                indeed: true,
+                solides: true,
+                catho: true,
+                geekhunter: true,
+                trampos: true,
+                jobs99: true,
+                weworkremotely: false,
+                linkedin_intl: false
+            },
+            canais_notificacao: {
+                email: { ativo: true, destinatario: "", smtp_host: "smtp.gmail.com", smtp_port: 587, smtp_user: "", smtp_pass: "" }
+            }
+        };
+        render();
     }
 
     function render() {
