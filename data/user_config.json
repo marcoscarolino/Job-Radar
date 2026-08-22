@@ -7,13 +7,10 @@
   },
   "preferencia_modalidade": "remoto",
   "senioridades_alvo": [
-    "Sênior",
     "Especialista/Liderança"
   ],
   "cargos_fortes": [
-    "PMO",
-    "Gerente de Projetos",
-    "Project Manager"
+    "Product Design"
   ],
   "cargos_ambiguos": [
     "Coordenador de Projetos",
@@ -41,7 +38,7 @@
   "canais_notificacao": {
     "email": {
       "ativo": true,
-      "destinatario": "paloma.pessoa86@gmail.com, contato.marcoscarolino@gmail.com",
+      "destinatario": "contato.marcoscarolino@gmail.com",
       "smtp_host": "smtp.gmail.com",
       "smtp_port": 587,
       "smtp_user": "contato.marcoscarolino@gmail.com",
@@ -53,9 +50,9 @@
       "chat_id": ""
     },
     "whatsapp": {
+      "api_key": "",
       "ativo": false,
-      "numero": "",
-      "api_key": ""
+      "numero": ""
     },
     "webhook": {
       "ativo": false,
