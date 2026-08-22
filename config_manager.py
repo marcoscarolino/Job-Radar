@@ -74,7 +74,12 @@ def carregar_config() -> dict:
     """Carrega as configurações salvas em local_user_config.json ou user_config.json.
     Se o arquivo não existir, retorna as configurações padrão (DEFAULT_CONFIG).
     """
-    target_path = LOCAL_CONFIG_PATH if LOCAL_CONFIG_PATH.exists() else CONFIG_PATH
+    is_default_path = CONFIG_PATH == (Path(__file__).parent / "data" / "user_config.json")
+    if is_default_path:
+        target_path = LOCAL_CONFIG_PATH if LOCAL_CONFIG_PATH.exists() else CONFIG_PATH
+    else:
+        target_path = CONFIG_PATH
+
     if not target_path.exists():
         return copy.deepcopy(DEFAULT_CONFIG)
 

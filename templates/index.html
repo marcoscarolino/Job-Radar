@@ -493,7 +493,8 @@
 </div>
 
 <script>
-    const API_BASE = window.location.hostname.includes("github.io") ? "http://127.0.0.1:5000" : "";
+    const IS_GITHUB_PAGES = window.location.hostname.includes("github.io");
+    const API_BASE = "";
 
     // Configuração oficial do Firebase (Projeto Job Radar)
     const firebaseConfig = window.FIREBASE_CONFIG || {
@@ -577,7 +578,9 @@
         inicializarFirebaseClient();
         carregarConfiguracoes();
         carregarVagas();
-        setInterval(checarStatus, 3000);
+        if (!IS_GITHUB_PAGES) {
+            setInterval(checarStatus, 3000);
+        }
     });
 
     function inicializarFirebaseClient() {
@@ -821,17 +824,19 @@
     });
 
     async function carregarConfiguracoes() {
-        try {
-            const res = await fetch(API_BASE + "/api/config");
-            if (res.ok) {
-                const data = await res.json();
-                if (data && data.success && data.config) {
-                    state = data.config;
-                    render();
-                    return;
+        if (!IS_GITHUB_PAGES) {
+            try {
+                const res = await fetch(API_BASE + "/api/config");
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.success && data.config) {
+                        state = data.config;
+                        render();
+                        return;
+                    }
                 }
-            }
-        } catch (err) {}
+            } catch (err) {}
+        }
 
         try {
             const saved = localStorage.getItem("jobradar_config");
