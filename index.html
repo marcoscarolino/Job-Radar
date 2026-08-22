@@ -194,7 +194,6 @@
         <div class="flex flex-wrap items-center justify-between gap-3 px-1">
             <div class="flex items-center gap-2">
                 <span class="text-sm font-medium text-olive-900" id="contadorVagas">0 vagas encontradas</span>
-                <span id="badgeModoUsuario" class="px-2 py-0.5 rounded-full text-xs font-medium bg-olive-100 text-olive-700">Modo Visitante</span>
             </div>
             
             <div class="flex items-center gap-2">
@@ -233,23 +232,20 @@
             </div>
         </div>
 
-        <!-- Card Desbloquear Todas as Vagas (Exclusivo Modo Visitante) -->
-        <div id="visitorUnlockCard" class="hidden bg-gradient-to-br from-white via-lime-50/40 to-lime-100/50 border border-lime-300 rounded-2xl p-6 sm:p-8 text-center space-y-4 shadow-sm mt-6">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-lime-400 text-olive-950 text-3xl shadow-sm">
-                <i class="ph ph-sparkle"></i>
-            </div>
-            <div class="space-y-2 max-w-xl mx-auto">
-                <h3 class="text-lg md:text-xl font-semibold text-olive-950">Desbloqueie todas as vagas e alertas automáticos!</h3>
-                <p class="text-sm text-olive-700 font-normal leading-relaxed">
-                    Você está visualizando uma amostra de até <strong>5 vagas</strong> no Modo Visitante. Faça login gratuitamente com a sua conta Google para desbloquear a lista completa de oportunidades, sincronizar seus cargos personalizados na nuvem e receber resumos automáticos por e-mail na frequência que preferir!
+        <!-- Card Desbloquear Todas as Vagas (Modo Visitante) - Simples e Objetivo -->
+        <div id="visitorUnlockCard" class="hidden bg-white border border-olive-200 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 shadow-xs">
+            <div class="text-center sm:text-left">
+                <p class="text-sm font-medium text-olive-900">
+                    Você está vendo uma prévia de 5 vagas.
+                </p>
+                <p class="text-xs text-olive-600 font-normal mt-0.5">
+                    Faça login com sua conta Google para ver todas as vagas e receber alertas por e-mail.
                 </p>
             </div>
-            <div class="pt-2">
-                <button onclick="fazerLoginGoogle()" class="inline-flex items-center gap-2.5 px-6 py-3 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl transition-all shadow-md">
-                    <i class="ph ph-google-logo text-lg"></i>
-                    <span>Entrar com Google e ver todas as vagas</span>
-                </button>
-            </div>
+            <button onclick="fazerLoginGoogle()" class="shrink-0 inline-flex items-center gap-2 px-4 py-2 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-xs rounded-xl transition-all shadow-xs border-0">
+                <i class="ph ph-google-logo text-base"></i>
+                <span>Entrar com Google</span>
+            </button>
         </div>
     </div>
 
@@ -621,16 +617,11 @@
         const userAvatar = document.getElementById("userAvatar");
         const userInitial = document.getElementById("userInitial");
         const bannerVisitor = document.getElementById("configVisitorBanner");
-        const badgeModo = document.getElementById("badgeModoUsuario");
 
         if (currentUser) {
             if (btnLogin) btnLogin.classList.add("hidden");
             if (profileArea) profileArea.classList.remove("hidden");
             if (bannerVisitor) bannerVisitor.classList.add("hidden");
-            if (badgeModo) {
-                badgeModo.textContent = "Conectado";
-                badgeModo.className = "px-2 py-0.5 rounded-full text-xs font-semibold bg-lime-200 text-olive-950";
-            }
 
             const nome = currentUser.displayName || currentUser.email.split("@")[0];
             if (userName) userName.textContent = nome;
@@ -657,10 +648,6 @@
             if (btnLogin) btnLogin.classList.remove("hidden");
             if (profileArea) profileArea.classList.add("hidden");
             if (bannerVisitor) bannerVisitor.classList.remove("hidden");
-            if (badgeModo) {
-                badgeModo.textContent = "Modo Visitante (Até 5 vagas)";
-                badgeModo.className = "px-2 py-0.5 rounded-full text-xs font-medium bg-olive-100 text-olive-700";
-            }
         }
     }
 
@@ -1316,7 +1303,7 @@
         if (isVisitante) {
             vagasExibidas = vagasFiltradas.slice(0, 5);
             if (contadorVagas) {
-                contadorVagas.innerText = `${vagasExibidas.length} de ${totalEncontradas} vagas (Modo Visitante)`;
+                contadorVagas.innerText = `${vagasExibidas.length} de ${totalEncontradas} vagas`;
             }
             if (visitorCard) visitorCard.classList.remove("hidden");
         } else {
