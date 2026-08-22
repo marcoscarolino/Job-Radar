@@ -98,7 +98,7 @@
         </div>
     </div>
 
-    <!-- PÁGINA 1: VAGAS (Espaçamento/gap aumentado entre os filtros e a lista) -->
+    <!-- PÁGINA 1: VAGAS -->
     <div id="pageVagas" class="space-y-6 md:space-y-7">
         <!-- Barra de Busca e Filtros (Sem bordas) -->
         <div class="bg-white rounded-2xl p-5 space-y-4">
@@ -183,25 +183,15 @@
             <div class="text-center py-8 text-olive-400 text-sm font-normal">Carregando vagas...</div>
         </div>
 
-        <!-- Tabela Desktop (Sem borda no container, header mais escuro) -->
+        <!-- Tabela Desktop (Sem botões/ícones nos títulos de coluna) -->
         <div class="hidden md:block bg-white rounded-2xl overflow-hidden">
             <table class="w-full text-left text-sm">
                 <thead class="bg-olive-100/80 border-b border-olive-200/80 text-olive-800 text-sm font-medium select-none">
                     <tr>
-                        <th class="py-3.5 px-4">
-                            <button onclick="toggleSort('score')" class="flex items-center gap-1 hover:text-olive-950 transition-colors focus:outline-none font-medium">
-                                <span>Pontuação</span>
-                                <i class="ph text-base text-olive-500" id="sortScoreIcon"></i>
-                            </button>
-                        </th>
+                        <th class="py-3.5 px-4 font-medium">Pontuação</th>
                         <th class="py-3.5 px-4 font-medium">Título da vaga</th>
                         <th class="py-3.5 px-4 font-medium">Empresa</th>
-                        <th class="py-3.5 px-4">
-                            <button onclick="toggleSort('data')" class="flex items-center gap-1 hover:text-olive-950 transition-colors focus:outline-none font-medium">
-                                <span>Divulgação</span>
-                                <i class="ph text-base text-olive-500" id="sortDateIcon"></i>
-                            </button>
-                        </th>
+                        <th class="py-3.5 px-4 font-medium">Divulgação</th>
                         <th class="py-3.5 px-4 font-medium">Modalidade</th>
                         <th class="py-3.5 px-4 font-medium">Local</th>
                         <th class="py-3.5 px-4 font-medium">Fonte</th>
@@ -985,30 +975,6 @@
         else if (sortField === 'score' && sortDirection === 'asc') select.value = "score_asc";
     }
 
-    function toggleSort(field) {
-        if (sortField === field) {
-            sortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
-        } else {
-            sortField = field;
-            sortDirection = 'desc';
-        }
-        syncOrdenacaoSelect();
-        aplicarFiltrosTabela();
-    }
-
-    function updateSortIcons() {
-        const scoreIcon = document.getElementById("sortScoreIcon");
-        const dateIcon = document.getElementById("sortDateIcon");
-
-        const getIconClass = (field) => {
-            if (sortField !== field) return "ph-arrows-down-up text-olive-300";
-            return sortDirection === 'desc' ? "ph-caret-down font-medium text-lime-600" : "ph-caret-up font-medium text-lime-600";
-        };
-
-        if (scoreIcon) scoreIcon.className = "ph text-base " + getIconClass('score');
-        if (dateIcon) dateIcon.className = "ph text-base " + getIconClass('data');
-    }
-
     function extrairDataFormatada(vaga) {
         let raw = vaga.publicado_em || vaga.criado_em || "";
         if (!raw) return "Recente";
@@ -1040,7 +1006,6 @@
     }
 
     function aplicarFiltrosTabela() {
-        updateSortIcons();
         syncOrdenacaoSelect();
 
         const scoreFiltro = document.getElementById("filtroScore").value;
@@ -1100,7 +1065,7 @@
             return;
         }
 
-        // Ordenação Dinâmica (Padrão: Data decrescente)
+        // Ordenação Dinâmica via Dropdown "Ordenar por"
         vagasFiltradas.sort((a, b) => {
             if (sortField === 'score') {
                 const scoreA = a.score !== undefined && a.score !== null ? a.score : 0;
@@ -1134,7 +1099,7 @@
             const modalidadeTexto = vaga.modalidade || (vaga.local && vaga.local.toLowerCase().includes("remoto") ? "Remoto" : "Presencial");
             const divulgadaEm = extrairDataFormatada(vaga);
 
-            // 1. Mobile Card (Box do ícone Lime 400 no hover sem bordas)
+            // 1. Mobile Card
             const cardEl = document.createElement("div");
             cardEl.className = "bg-white rounded-2xl p-4 space-y-2";
             cardEl.innerHTML = `
@@ -1160,7 +1125,7 @@
             `;
             cardsContainer.appendChild(cardEl);
 
-            // 2. Desktop Table Row (Box do ícone Lime 400 no hover sem bordas)
+            // 2. Desktop Table Row
             const tr = document.createElement("tr");
             tr.className = "hover:bg-olive-50/80 transition-colors";
             tr.innerHTML = `
