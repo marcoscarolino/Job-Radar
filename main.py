@@ -418,6 +418,13 @@ def _rodar_um_ciclo_de_cada(perfis: list[Perfil]):
     except Exception as e:
         logger.warning(f"Erro ao enviar digest por e-mail no ciclo: {e}")
 
+    try:
+        from database.database import exportar_jobs_json
+        exportar_jobs_json()
+    except Exception as e:
+        logger.warning(f"Erro ao exportar data/jobs.json: {e}")
+
+
 
 
 def main():

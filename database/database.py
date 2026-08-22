@@ -323,4 +323,45 @@ def marcar_digest_enviado(perfil_chave: str):
 def limpar_banco_vagas():
     """Apaga todas as vagas registradas no banco para reiniciar do zero."""
     with _conectar() as conn:
-        conn.execute("DELETE FROM vagas_vistas")
+        conn.execute("DELETE FROM vagas_vistas")
+    exportar_jobs_json()
+
+
+def exportar_jobs_json(caminho_json=None) -> str:
+    """Exporta as vagas mais recentes registradas em vagas_vistas para um arquivo JSON estático."""
+    import json
+    from pathlib import Path
+    if caminho_json is None:
+        caminho_json = Path(__file__).parent.parent / "data" / "jobs.json"
+    else:
+        caminho_json = Path(caminho_json)
+
+    caminho_json.parent.mkdir(parents=True, exist_ok=True)
+
+    with _conectar() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT id, titulo, empresa, local, link AS url, site AS fonte,
+                   encontrada_em AS criado_em, modalidade, relevancia AS score,
+                   publicado_em
+            FROM vagas_vistas
+            ORDER BY encontrada_em DESC, ROWID DESC
+            LIMIT 100
+            """
+        )
+        colunas = [col[0] for col in cursor.description]
+        vagas = []
+        for row in cursor.fetchall():
+            d = dict(zip(colunas, row))
+            if d.get("score") is None:
+                d["score"] = 5
+            if not d.get("publicado_em"):
+                d["publicado_em"] = "Recente"
+            vagas.append(d)
+
+    with open(caminho_json, "w", encoding="utf-8") as f:
+        json.dump({"success": True, "vagas": vagas}, f, ensure_ascii=False, indent=2)
+
+    return str(caminho_json)
+
