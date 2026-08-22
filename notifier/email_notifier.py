@@ -9,54 +9,151 @@ logger = get_logger()
 
 
 def construir_digest_html(vagas: list[dict]) -> str:
-    """Monta o HTML do e-mail consolidando todas as vagas agrupadas por pontuação de relevância."""
+    """Monta o HTML do e-mail consolidando todas as vagas agrupadas por pontuação de relevância,
+    seguindo rigorosamente a identidade visual do JobRadar (Onest, Olive & Lime, Target Icon)."""
     vagas_altas = [v for v in vagas if (v.get("score") or v.get("relevancia") or 5) >= 8]
     vagas_medias = [v for v in vagas if 5 <= (v.get("score") or v.get("relevancia") or 5) < 8]
     vagas_baixas = [v for v in vagas if (v.get("score") or v.get("relevancia") or 5) < 5]
 
-    def render_bloco(titulo: str, cor_borda: str, lista: list[dict]) -> str:
+    def extrair_data(v: dict) -> str:
+        raw = v.get("publicado_em") or v.get("criado_em") or ""
+        if not raw:
+            return "Recente"
+        limpo = raw.replace("publicada em:", "").replace("Publicada em:", "").strip()
+        return limpo or "Recente"
+
+    def render_bloco(titulo_secao: str, lista: list[dict]) -> str:
         if not lista:
             return ""
         items_html = ""
         for v in lista:
             score_val = v.get("score") or v.get("relevancia") or 5
-            empresa = v.get("empresa") or "Não informada"
+            empresa = v.get("empresa") or "Empresa confidencial"
             local = v.get("local") or "Brasil"
             modalidade = v.get("modalidade") or ""
             link = v.get("url") or v.get("link") or "#"
             tit = v.get("titulo") or "Vaga"
             fonte = v.get("fonte") or v.get("site") or "Portal"
-            mod_badge = f" ({modalidade})" if modalidade else ""
+            divulgada_em = extrair_data(v)
+
+            mod_texto = f" • {modalidade}" if modalidade else ""
+
+            if score_val >= 8:
+                score_badge_style = "background-color: #ecfccb; color: #1e2019; border: 1px solid #bef264;"
+            elif score_val >= 5:
+                score_badge_style = "background-color: #fffbeb; color: #78350f; border: 1px solid #fde68a;"
+            else:
+                score_badge_style = "background-color: #f0f2ea; color: #4b5338; border: 1px solid #e1e5d5;"
 
             items_html += f"""
-            <li style="margin-bottom: 12px; font-size: 14px;">
-                <strong>{tit}</strong> — {empresa} <span style="color: #64748b;">({local}{mod_badge})</span><br>
-                <span style="font-size: 12px; color: #475569;">Pontuação: {score_val}/10 | Fonte: {fonte}</span> — 
-                <a href="{link}" target="_blank" style="color: #0284c7; font-weight: bold; text-decoration: none;">Ver Vaga &rarr;</a>
-            </li>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 14px; background-color: #f8f9f5; border: 1px solid #e1e5d5; border-radius: 14px; padding: 16px; box-sizing: border-box;">
+                <tr>
+                    <td style="padding-bottom: 6px;">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td align="left" style="font-size: 14px; font-weight: 500; color: #3f4530; line-height: 1.3;">
+                                    {tit}
+                                </td>
+                                <td align="right" style="vertical-align: top; width: 65px;">
+                                    <span style="display: inline-block; padding: 3px 8px; border-radius: 8px; font-size: 14px; font-weight: 500; {score_badge_style}">
+                                        {score_val}/10
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-size: 14px; font-weight: 400; color: #5c6743; padding-bottom: 12px;">
+                        {empresa} • {local}{mod_texto} • {fonte}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td align="left" style="font-size: 12px; font-weight: 400; color: #768456;">
+                                    {divulgada_em}
+                                </td>
+                                <td align="right">
+                                    <a href="{link}" target="_blank" style="display: inline-block; background-color: #a3e635; color: #1e2019; padding: 6px 14px; border-radius: 12px; font-size: 14px; font-weight: 500; text-decoration: none; transition: all 0.2s ease;">
+                                        Ver vaga &rarr;
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
             """
         return f"""
-        <div style="margin-bottom: 24px;">
-            <h3 style="color: {cor_borda}; border-bottom: 2px solid {cor_borda}; padding-bottom: 4px; font-family: sans-serif;">{titulo} ({len(lista)})</h3>
-            <ul style="padding-left: 20px; color: #1e293b;">
-                {items_html}
-            </ul>
+        <div style="margin-bottom: 28px;">
+            <h3 style="color: #3f4530; font-size: 18px; font-weight: 500; margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid #e1e5d5; padding-bottom: 8px;">
+                {titulo_secao} ({len(lista)})
+            </h3>
+            {items_html}
         </div>
         """
 
-    html = f"""
-    <div style="font-family: 'Inter', system-ui, sans-serif; color: #0f172a; max-width: 650px; margin: 0 auto; background: #ffffff; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px;">
-        <h2 style="color: #0284c7; font-family: sans-serif; margin-top: 0;">JobRadar — Resumo de Vagas Encontradas</h2>
-        <p style="color: #475569; font-size: 14px;">Foram identificadas <strong>{len(vagas)} nova(s) vaga(s)</strong> elegíveis no último ciclo de varredura. Confira a lista consolidada abaixo:</p>
-        
-        {render_bloco("Alta Relevância (Pontuação 8 - 10)", "#15803d", vagas_altas)}
-        {render_bloco("Média Relevância (Pontuação 5 - 7)", "#b45309", vagas_medias)}
-        {render_bloco("Outras Oportunidades (Pontuação 1 - 4)", "#475569", vagas_baixas)}
+    target_icon_svg = "%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%2365a30d' viewBox='0 0 256 256'%3E%3Cpath d='M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24zm0 192a88 88 0 1 1 88-88 88.1 88.1 0 0 1-88 88zm0-144a56 56 0 1 0 56 56 56.06 56.06 0 0 0-56-56zm0 96a40 40 0 1 1 40-40 40.05 40.05 0 0 1-40 40zm0-48a8 8 0 1 0 8 8 8 8 0 0 0-8-8z'/%3E%3C/svg%3E"
 
-        <hr style="border: none; border-top: 1px solid #e2e8f0; margin-top: 24px;">
-        <p style="font-size: 12px; color: #94a3b8; text-align: center;">Alertas automáticos gerados pelo JobRadar</p>
-    </div>
-    """
+    html = f"""<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobRadar — Resumo de Vagas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body style="margin: 0; padding: 0; background-color: #f8f9f5; font-family: 'Onest', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-font-smoothing: antialiased;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f8f9f5; padding: 24px 12px;">
+    <tr>
+        <td align="center">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 620px; background-color: #ffffff; border: 1px solid #e1e5d5; border-radius: 16px; padding: 28px; box-sizing: border-box;">
+                <!-- Header Logo -->
+                <tr>
+                    <td style="padding-bottom: 20px; border-bottom: 1px solid #f0f2ea;">
+                        <table border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td style="vertical-align: middle; padding-right: 8px;">
+                                    <img src="data:image/svg+xml,{target_icon_svg}" width="24" height="24" alt="Target Logo" style="display: block;">
+                                </td>
+                                <td style="font-size: 24px; font-weight: 600; color: #3f4530; line-height: 1;">
+                                    JobRadar
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <!-- Descrição da Varredura -->
+                <tr>
+                    <td style="padding-top: 20px; padding-bottom: 24px; font-size: 14px; font-weight: 400; color: #5c6743; line-height: 1.5;">
+                        Foram identificadas <strong style="color: #3f4530; font-weight: 500;">{len(vagas)} vaga(s)</strong> elegíveis no último ciclo de varredura. Confira a lista consolidada abaixo:
+                    </td>
+                </tr>
+                <!-- Blocos de Vagas -->
+                <tr>
+                    <td>
+                        {render_bloco("Alta relevância", vagas_altas)}
+                        {render_bloco("Média relevância", vagas_medias)}
+                        {render_bloco("Outras oportunidades", vagas_baixas)}
+                    </td>
+                </tr>
+                <!-- Rodapé -->
+                <tr>
+                    <td align="center" style="padding-top: 24px; border-top: 1px solid #f0f2ea; font-size: 12px; font-weight: 400; color: #768456;">
+                        Alertas automáticos gerados pelo JobRadar
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
+"""
     return html
 
 
