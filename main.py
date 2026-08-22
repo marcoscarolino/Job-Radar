@@ -186,6 +186,7 @@ def ciclo_de_busca(perfil: Perfil):
     total_filtradas = 0
     scrapers_com_problema = []
     descartes_escopo_ciclo: Counter = Counter()
+    novas_vagas_ciclo = []
 
     regras_atuais = obter_regras_perfil(perfil.chave)
     termos_busca_atuais = obter_termos_busca_perfil(perfil.chave)
@@ -250,80 +251,27 @@ def ciclo_de_busca(perfil: Perfil):
                 if ja_vista(vaga):
                     continue
 
-                # Item 08: só notifica na hora quando a relevância passa do
-                # limiar (ver LIMIAR_DIGEST_IMEDIATO em config.py) — abaixo
-                # disso, vai pra fila do digest diário sem mensagem
-                # individual (ver _enviar_digest_diario). Fila é salvar com
-                # digest_pendente=True: não tem "notificação que pode
-                # falhar" nesse caminho (a mensagem só sai no digest, depois),
-                # então salvar direto não arrisca perder a vaga do jeito que
-                # salvar ANTES de notificar arriscava no caminho imediato.
-                #
-                # MEDIDO: vaga com Job.publicacao_antiga (publicado_em "há X
-                # meses/anos" — ver job.py) nunca vai pra notificação
-                # imediata, mesmo com relevância alta — score mede "bate com
-                # o que você procura", não "é recente". Site com pouco
-                # volume pra um termo deixa vaga de meses atrás na página
-                # visível (confirmado ao vivo: Sólides ordena por data, mas
-                # sem volume novo suficiente a antiga não sai da 1ª página).
-                # Não é descartada (mesma vaga ainda pode estar aberta) — só
-                # sai do caminho "🚨 urgente" e vai pro digest em lote.
-                if vaga.relevancia >= LIMIAR_DIGEST_IMEDIATO and not vaga.publicacao_antiga:
-                    # Notifica ANTES de salvar. Se salvasse primeiro e o
-                    # Telegram falhasse, a vaga ficava marcada como "vista"
-                    # pra sempre — o próximo ciclo pulava ela em ja_vista()
-                    # e a vaga se perdia sem nunca ter sido notificada de
-                    # verdade.
-                    if not notificar_vaga(vaga):
-                        logger.warning(
-                            f"[{perfil.nome}] Falha ao notificar '{vaga.titulo}' - não marcada "
-                            "como vista, tenta de novo no próximo ciclo."
-                        )
-                        continue
-                    salvar_vaga(vaga, perfil_chave=perfil.chave)
-                    logger.info(f"[{perfil.nome}] Nova vaga: {vaga.titulo} - {vaga.empresa}")
-                else:
-                    salvar_vaga(vaga, perfil_chave=perfil.chave, digest_pendente=True)
-                    motivo_digest = "vaga antiga" if vaga.publicacao_antiga else f"relevância {vaga.relevancia}/10"
-                    logger.info(
-                        f"[{perfil.nome}] Nova vaga (digest, {motivo_digest}): "
-                        f"{vaga.titulo} - {vaga.empresa}"
-                    )
+                salvar_vaga(vaga, perfil_chave=perfil.chave)
+                logger.info(f"[{perfil.nome}] Nova vaga encontrada: {vaga.titulo} - {vaga.empresa}")
 
                 total_novas += 1
                 novas_da_fonte += 1
+                novas_vagas_ciclo.append(vaga)
 
             for vaga in vagas_secundarias:
                 if ja_vista(vaga):
                     continue
 
-                # Mesma regra de vaga antiga do loop acima.
-                if vaga.relevancia >= LIMIAR_DIGEST_IMEDIATO and not vaga.publicacao_antiga:
-                    if not notificar_vaga_exploratoria(vaga):
-                        logger.warning(
-                            f"[{perfil.nome}] Falha ao notificar '{vaga.titulo}' (exploratória) - "
-                            "não marcada como vista, tenta de novo no próximo ciclo."
-                        )
-                        continue
-                    salvar_vaga(vaga, perfil_chave=perfil.chave)
-                    logger.info(
-                        f"[{perfil.nome}] Nova vaga exploratória ({perfil.eixo_secundario_rotulo}): "
-                        f"{vaga.titulo} - {vaga.empresa}"
-                    )
-                else:
-                    salvar_vaga(vaga, perfil_chave=perfil.chave, digest_pendente=True, exploratoria=True)
-                    motivo_digest = "vaga antiga" if vaga.publicacao_antiga else f"relevância {vaga.relevancia}/10"
-                    logger.info(
-                        f"[{perfil.nome}] Nova vaga exploratória (digest, {motivo_digest}): "
-                        f"{vaga.titulo} - {vaga.empresa}"
-                    )
+                salvar_vaga(vaga, perfil_chave=perfil.chave, exploratoria=True)
+                logger.info(
+                    f"[{perfil.nome}] Nova vaga exploratória ({perfil.eixo_secundario_rotulo}): "
+                    f"{vaga.titulo} - {vaga.empresa}"
+                )
 
                 total_novas += 1
                 novas_da_fonte += 1
+                novas_vagas_ciclo.append(vaga)
 
-            # Funil por fonte: sem isso só dava pra ver bruta (por fonte) e
-            # nova (só o total do ciclo) — o meio (quanto o filtro de
-            # cargo/cidade descarta, fonte por fonte) ficava invisível.
             logger.info(
                 f"[{perfil.nome}][{nome}] Funil: {len(vagas)} brutas → "
                 f"{len(vagas_filtradas) + len(vagas_secundarias)} filtradas → {novas_da_fonte} novas"
@@ -333,6 +281,11 @@ def ciclo_de_busca(perfil: Perfil):
         f"[{perfil.nome}] Ciclo concluído: {total_brutas} brutas → {total_filtradas} filtradas → "
         f"{total_novas} nova(s)."
     )
+
+    if novas_vagas_ciclo:
+        from notifier.dispatcher import enviar_digest_email_multicanal
+        logger.info(f"[{perfil.nome}] Disparando 1 e-mail consolidado com {len(novas_vagas_ciclo)} nova(s) vaga(s)...")
+        enviar_digest_email_multicanal(novas_vagas_ciclo)
 
     # MEDIDO: descarte por escopo era invisível no log — o funil mostra
     # bruta → filtrada → nova, mas nunca QUAL escopo derrubou vaga nem

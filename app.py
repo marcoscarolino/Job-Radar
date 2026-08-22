@@ -76,6 +76,20 @@ def obter_vagas_recientes(limit: int = 100) -> list[dict]:
         return []
 
 
+def sincronizar_configuracao_github():
+    """Faz commit e push de data/user_config.json para o GitHub para atualizar o GitHub Actions."""
+    def _push():
+        try:
+            cwd = Path(__file__).parent
+            subprocess.run(["git", "add", "data/user_config.json"], cwd=cwd, check=True)
+            subprocess.run(["git", "commit", "-m", "chore: atualizar configuracoes do usuario via interface"], cwd=cwd, check=False)
+            subprocess.run(["git", "push", "origin", "main"], cwd=cwd, check=False)
+        except Exception as e:
+            pass
+
+    threading.Thread(target=_push, daemon=True).start()
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -94,7 +108,8 @@ def update_config():
         return jsonify({"success": False, "error": "Payload JSON ausente"}), 400
 
     config_salva = salvar_config(novos_dados)
-    return jsonify({"success": True, "config": config_salva, "message": "Configurações salvas com sucesso!"})
+    sincronizar_configuracao_github()
+    return jsonify({"success": True, "config": config_salva, "message": "Configurações salvas e sincronizadas com o GitHub Actions!"})
 
 
 @app.route("/api/jobs", methods=["GET"])
