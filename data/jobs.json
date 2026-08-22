@@ -2,78 +2,6 @@
   "success": true,
   "vagas": [
     {
-      "id": "5a74282f9f382fc485cf43549c20793d",
-      "titulo": "Project Manager",
-      "empresa": "Grupo GBI",
-      "local": "São Paulo - SP",
-      "url": "https://vagas.solides.com.br/vaga/814846/project-manager",
-      "fonte": "Solides",
-      "criado_em": "2026-08-22 17:11:58",
-      "modalidade": "Remoto",
-      "score": 10,
-      "publicado_em": "há 5 meses"
-    },
-    {
-      "id": "d726678fa33fee3e0ab8f5a4e327ef46",
-      "titulo": "Gerente de Projetos Sênior",
-      "empresa": "Empresa confidencial",
-      "local": "São Paulo - SP",
-      "url": "https://vagas.solides.com.br/vaga/880060/gerente-de-projetos-senior",
-      "fonte": "Solides",
-      "criado_em": "2026-08-22 17:11:58",
-      "modalidade": "Remoto",
-      "score": 10,
-      "publicado_em": "há 2 meses"
-    },
-    {
-      "id": "cd130c74634c43a4f7b687d1ae9ab44f",
-      "titulo": "Scrum Master",
-      "empresa": "Recrutamento para área de tecnologia com Fit Cultural e Aderência Técnica.",
-      "local": "Não informado",
-      "url": "https://werecruiter.gupy.io/job/eyJqb2JJZCI6MTE5NTEyODEsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
-      "fonte": "Gupy",
-      "criado_em": "2026-08-22 17:11:20",
-      "modalidade": "Remoto",
-      "score": 7,
-      "publicado_em": "Publicada em: 05/08/2026"
-    },
-    {
-      "id": "56a522fceb90c5e5d7761aa29b65ad2a",
-      "titulo": "Scrum Master (4761)",
-      "empresa": "Keep Simple",
-      "local": "Não informado",
-      "url": "https://keepsimple.gupy.io/job/eyJqb2JJZCI6MTIwNDUyNjEsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
-      "fonte": "Gupy",
-      "criado_em": "2026-08-22 17:11:20",
-      "modalidade": "Remoto",
-      "score": 7,
-      "publicado_em": "Publicada em: 11/08/2026"
-    },
-    {
-      "id": "c50c5e3f0dbcc1ab9e9942a78c45c975",
-      "titulo": "SCRUM MASTER - RHA3312",
-      "empresa": "Spread Tecnologia",
-      "local": "Não informado",
-      "url": "https://spread.gupy.io/job/eyJqb2JJZCI6MTIwOTQzNzYsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
-      "fonte": "Gupy",
-      "criado_em": "2026-08-22 17:11:20",
-      "modalidade": "Remoto",
-      "score": 7,
-      "publicado_em": "Publicada em: 14/08/2026"
-    },
-    {
-      "id": "39f089917f66828068de66daa0945604",
-      "titulo": "SCRUM MASTER - RHA3313",
-      "empresa": "Spread Tecnologia",
-      "local": "Não informado",
-      "url": "https://spread.gupy.io/job/eyJqb2JJZCI6MTIwOTQzNzMsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
-      "fonte": "Gupy",
-      "criado_em": "2026-08-22 17:11:20",
-      "modalidade": "Remoto",
-      "score": 7,
-      "publicado_em": "Publicada em: 14/08/2026"
-    },
-    {
       "id": "9550b6529819cb0b7b5d5b53aed0d85e",
       "titulo": "Scrum Master",
       "empresa": "Techne",
@@ -110,18 +38,6 @@
       "publicado_em": "Publicada em: 21/08/2026"
     },
     {
-      "id": "3bf2b139655c15a6dd7b3d2b0558824e",
-      "titulo": "SAP Project Manager",
-      "empresa": "MIGNOW",
-      "local": "Não informado",
-      "url": "https://mignow.gupy.io/job/eyJqb2JJZCI6ODA2ODA3Nywic291cmNlIjoiZ3VweV9wb3J0YWwifQ==?jobBoardSource=gupy_portal",
-      "fonte": "Gupy",
-      "criado_em": "2026-08-22 17:11:20",
-      "modalidade": "Remoto",
-      "score": 9,
-      "publicado_em": "Publicada em: 04/11/2024"
-    },
-    {
       "id": "7578944fef9ba5b1c56e901f839ee161",
       "titulo": "Project Manager Sênior - REMOTO",
       "empresa": "#Sejaveriter",
@@ -134,18 +50,6 @@
       "publicado_em": "Publicada em: 20/08/2026"
     },
     {
-      "id": "cc3285891f64ab6bf291f30fd8be1ec4",
-      "titulo": "Pessoa Consultora de Negócios - PMO",
-      "empresa": "BIP Brasil",
-      "local": "Não informado",
-      "url": "https://vemprabip.gupy.io/job/eyJqb2JJZCI6MTE3ODA3OTIsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
-      "fonte": "Gupy",
-      "criado_em": "2026-08-22 17:11:20",
-      "modalidade": "Remoto",
-      "score": 8,
-      "publicado_em": "Publicada em: 27/07/2026"
-    },
-    {
       "id": "9f4e0ed8bcb6a666bfbff8df679e05cf",
       "titulo": "12185884 - GERENTE DE PROJETOS DE TI",
       "empresa": "Quality Digital",
@@ -156,30 +60,6 @@
       "modalidade": "Remoto",
       "score": 9,
       "publicado_em": "Publicada em: 21/08/2026"
-    },
-    {
-      "id": "2e583b5123eb89a424d97ae176aa8037",
-      "titulo": "COORDENADOR DE PROJETOS ESTRATÉGICOS E INOVAÇÃO",
-      "empresa": "Tahto - Staff e Executivo #VemSerTahto",
-      "local": "Não informado",
-      "url": "https://vemsertahto.gupy.io/job/eyJqb2JJZCI6MTE2MDYwODcsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
-      "fonte": "Gupy",
-      "criado_em": "2026-08-22 17:11:20",
-      "modalidade": "Remoto",
-      "score": 8,
-      "publicado_em": "Publicada em: 24/07/2026"
-    },
-    {
-      "id": "6f42d45e642b93cb3ef6c36919119d4e",
-      "titulo": "Coordenador de Projetos - Geotecnologias",
-      "empresa": "Empresa confidencial",
-      "local": "São Paulo - SP",
-      "url": "https://vagas.solides.com.br/vaga/896043/coordenador-de-projetos-geotecnologias",
-      "fonte": "Solides",
-      "criado_em": "2026-08-22 17:08:53",
-      "modalidade": "Remoto",
-      "score": 9,
-      "publicado_em": "há 20 dias"
     }
   ]
 }

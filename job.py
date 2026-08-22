@@ -855,84 +855,71 @@ class Job:
 
     @property
     def publicacao_antiga(self) -> bool:
-        """True quando a vaga foi publicada há mais de 7 dias (ex: mais de 7 dias, semanas, meses ou anos)."""
+        """True quando a vaga foi publicada há mais de 7 dias (mais de 1 semana)."""
         texto = _normalizar(self.publicado_em)
         if not texto:
             return False
-        if "mes" in texto or "ano" in texto:
+
+        from datetime import date
+        m_dt = re.search(r"(\d{1,2})/(\d{1,2})/(\d{4})", texto)
+        if m_dt:
+            try:
+                d_pub = date(int(m_dt.group(3)), int(m_dt.group(2)), int(m_dt.group(1)))
+                if (date.today() - d_pub).days > 7:
+                    return True
+            except Exception:
+                pass
+
+        m_iso = re.search(r"(\d{4})-(\d{2})-(\d{2})", texto)
+        if m_iso:
+            try:
+                d_pub = date(int(m_iso.group(1)), int(m_iso.group(2)), int(m_iso.group(3)))
+                if (date.today() - d_pub).days > 7:
+                    return True
+            except Exception:
+                pass
+
+        if any(w in texto for w in ("mes", "ano", "month", "year")):
             return True
-        m = re.search(r"ha\s+(\d+)\s+dia", texto)
-        if m:
-            dias = int(m.group(1))
-            return dias > 7
-        m_sem = re.search(r"ha\s+(\d+)\s+semana", texto)
+
+        m_dia = re.search(r"(\d+)\s*(?:dia|d\b)", texto)
+        if m_dia:
+            return int(m_dia.group(1)) > 7
+
+        m_sem = re.search(r"(\d+)\s*(?:semana|sem\b|w\b)", texto)
         if m_sem:
-            semanas = int(m_sem.group(1))
-            return semanas > 1
-        if "semana" in texto and "1" not in texto:
+            return int(m_sem.group(1)) > 1
+
+        if "semana" in texto and not re.search(r"\b1\b|uma\b", texto):
             return True
+
         return False
 
 
     @property
     def escopo_remoto(self) -> set[str]:
-        """Mercado(s) geográfico(s) da vaga remota ({"Estados Unidos"},
-        {"Brasil", "LATAM"}...), derivado do texto de `local` — ver
-        extrair_escopo_remoto(). Conjunto VAZIO quando o texto não declara
-        restrição nenhuma (remoto "puro", ou vaga que nem é remota). Um
-        texto pode declarar mais de um mercado ao mesmo tempo ("Remote -
-        LATAM + Brazil") — devolve todos, não só o primeiro que bater. Só
-        informativo por si só; combina_com() é quem decide se rejeita com
-        base em RegrasFiltro.mercados_remoto_aceitos.
-
-        `escopo_indefinido=True` (ver campo acima) força conjunto vazio
-        direto, sem nem chamar extrair_escopo_remoto — usado quando
-        `local` não representa mercado de contratação (ex: sede da empresa
-        no WeWorkRemotely), então não tem base nenhuma pra derivar escopo
-        dali, mesmo com modalidade="Remoto".
-
-        Passa `self.modalidade` junto: fonte com filtro nativo (LinkedIn
-        f_WT=2) confirma remoto por esse campo, não mais escrevendo
-        "Remoto" dentro de `local` — sem isso, extrair_escopo_remoto nunca
-        achava o separador "remot..." no texto e devolvia conjunto vazio
-        (sem restrição) pra vaga remota confirmada, mesmo vinda dos
-        EUA/Índia/etc.
-        """
         if self.escopo_indefinido:
             return set()
         return extrair_escopo_remoto(self.local, self.modalidade)
 
     def combina_com(self, regras: RegrasFiltro) -> bool:
-        """Verifica se a vaga bate com pelo menos uma keyword E uma cidade/modalidade.
-
-        Cargo e localização são checados em campos separados (título e local,
-        respectivamente) — antes eram concatenados num texto só, o que causava
-        falso positivo: vaga americana com "Hybrid Remote" no TÍTULO batia
-        com "remot" e passava como se fosse remota no Brasil, mesmo com
-        local="Bloomington, IN". Cada critério agora só pode bater no campo
-        que realmente representa.
-
-        Título e local também são normalizados (minúsculo, sem acento) antes
-        de comparar, assim como as keywords/cidades — evita falha de match
-        por site escrever "Maceio" sem acento, ou por qualquer inconsistência
-        de acentuação entre o texto do site e o que está no config.py.
-
-        Cargo tem duas regras diferentes:
-        - keywords_forte: só existe mesmo em vaga de dados/BI, basta bater no
-          título.
-        - keywords_ambiguo: também é usado em vaga de outra área (ex:
-          "Business Analyst" existe em RH, finanças etc.) — só conta se o
-          título TAMBÉM tiver um dos qualificadores (ex: "dados", "sql",
-          "power bi"). É o que permite ir adicionando cargo adjacente
-          (Product Analyst, CRM Analyst, Marketing Analyst) sem cada um virar
-          fonte de ruído sozinho.
-        """
         return self._avaliar(regras).aprovada
 
     def _avaliar(self, regras: RegrasFiltro) -> _Avaliacao:
         """Faz a conta completa uma vez só — combina_com() e
-        pontuar_relevancia() leem o mesmo resultado, em vez de cada um
-        recalcular por conta própria (ver MEDIDO em _Avaliacao)."""
+        pontuar_relevancia() leem o mesmo resultado."""
+        if self.publicacao_antiga:
+            return _Avaliacao(
+                aprovada=False,
+                bate_forte=False,
+                bate_ambiguo=False,
+                bate_ferramenta=False,
+                bate_remoto=False,
+                escopos=set(),
+                mercado_confirmado=False,
+                idioma_bateu_titulo=False,
+            )
+
         titulo_norm = _normalizar(self.titulo)
         local_norm = _normalizar(self.local)
         modalidade_norm = _normalizar(self.modalidade)
