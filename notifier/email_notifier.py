@@ -95,7 +95,8 @@ def construir_digest_html(vagas: list[dict]) -> str:
         </div>
         """
 
-    target_icon_svg = "%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%2365a30d' viewBox='0 0 256 256'%3E%3Cpath d='M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24zm0 192a88 88 0 1 1 88-88 88.1 88.1 0 0 1-88 88zm0-144a56 56 0 1 0 56 56 56.06 56.06 0 0 0-56-56zm0 96a40 40 0 1 1 40-40 40.05 40.05 0 0 1-40 40zm0-48a8 8 0 1 0 8 8 8 8 0 0 0-8-8z'/%3E%3C/svg%3E"
+    # URL pública hospedada no repositório GitHub para renderização universal em todos os clientes de e-mail (Gmail, Outlook, Apple Mail)
+    logo_url = "https://raw.githubusercontent.com/marcoscarolino/Job-Radar/main/assets/logo.png"
 
     html = f"""<!DOCTYPE html>
 <html lang="pt-BR">
@@ -118,9 +119,9 @@ def construir_digest_html(vagas: list[dict]) -> str:
                         <table border="0" cellspacing="0" cellpadding="0">
                             <tr>
                                 <td style="vertical-align: middle; padding-right: 8px;">
-                                    <img src="data:image/svg+xml,{target_icon_svg}" width="24" height="24" alt="Target Logo" style="display: block;">
+                                    <img src="{logo_url}" width="26" height="26" alt="🎯" style="display: block; border: 0; width: 26px; height: 26px; outline: none; text-decoration: none;">
                                 </td>
-                                <td style="font-size: 24px; font-weight: 600; color: #3f4530; line-height: 1;">
+                                <td style="font-size: 24px; font-weight: 600; color: #3f4530; line-height: 1; vertical-align: middle;">
                                     JobRadar
                                 </td>
                             </tr>
