@@ -3,1124 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>JobRadar — Varredura Inteligente de Vagas</title>
+    <title>JobRadar</title>
     
-    <!-- Google Fonts: Plus Jakarta Sans, Inter, JetBrains Mono -->
+    <!-- Target Favicon SVG -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' fill='%2365a30d' viewBox='0 0 256 256'%3E%3Cpath d='M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24zm0 192a88 88 0 1 1 88-88 88.1 88.1 0 0 1-88 88zm0-144a56 56 0 1 0 56 56 56.06 56.06 0 0 0-56-56zm0 96a40 40 0 1 1 40-40 40.05 40.05 0 0 1-40 40zm0-48a8 8 0 1 0 8 8 8 8 0 0 0-8-8z'/%3E%3C/svg%3E">
+
+    <!-- Google Fonts: Apenas Onest (Regular 400, Medium 500, Semibold 600) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
     
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Onest', 'system-ui', 'sans-serif'],
+                        mono: ['Onest', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        olive: {
+                            50: '#f8f9f5',
+                            100: '#f0f2ea',
+                            200: '#e1e5d5',
+                            300: '#ccd4b9',
+                            400: '#b1bc94',
+                            500: '#94a273',
+                            600: '#768456',
+                            700: '#5c6743',
+                            800: '#4b5338',
+                            900: '#3f4530',
+                            950: 'oklch(15.3% 0.006 107.1)',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Phosphor Icons CDN -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
     <style>
-        :root {
-            /* Modo Light (Claro) */
-            --bg-canvas: #f8fafc;
-            --bg-surface: #ffffff;
-            --bg-surface-elevated: #f1f5f9;
-            --bg-surface-subtle: #f8fafc;
-            
-            --border-subtle: #f1f5f9;
-            --border-default: #e2e8f0;
-            --border-hover: #cbd5e1;
-            --border-accent: #0284c7;
-            
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --text-muted: #94a3b8;
-            
-            --accent-primary: #0284c7;
-            --accent-primary-hover: #0369a1;
-            --accent-primary-subtle: #e0f2fe;
-            
-            --score-high: #15803d;
-            --score-high-bg: #dcfce7;
-            --score-high-border: #86efac;
-            
-            --score-mid: #b45309;
-            --score-mid-bg: #fef3c7;
-            --score-mid-border: #fde68a;
-            
-            --score-low: #475569;
-            --score-low-bg: #f1f5f9;
-            --score-low-border: #cbd5e1;
-            
-            --danger: #dc2626;
-            --danger-bg: #fef2f2;
-            --danger-border: #fecaca;
-            
-            --radius-xl: 16px;
-            --radius-lg: 12px;
-            --radius-md: 8px;
-            --radius-sm: 6px;
-            
-            --font-display: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-            --font-body: 'Inter', system-ui, -apple-system, sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
-
-            --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.06);
-            --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
-        }
-
         * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: var(--font-body);
-            -webkit-font-smoothing: antialiased;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--bg-canvas);
-            color: var(--text-primary);
-            min-height: 100vh;
-            padding-bottom: 90px;
-            line-height: 1.5;
-        }
-
-        /* Estrutura do Container */
-        .app-container {
-            max-width: 1020px;
-            margin: 0 auto;
-            padding: 16px;
-        }
-
-        @media (min-width: 768px) {
-            .app-container {
-                padding: 28px 24px;
-            }
-            body {
-                padding-bottom: 30px;
-            }
-        }
-
-        /* Cabeçalho da Aplicação */
-        .app-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 20px;
-            background: var(--bg-surface);
-            border: 1px solid var(--border-default);
-            border-radius: var(--radius-lg);
-            margin-bottom: 20px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .brand-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .radar-status-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--accent-primary-subtle);
-            border: 1px solid var(--accent-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent-primary);
-        }
-
-        .brand-title {
-            font-family: var(--font-display);
-            font-size: 1.25rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .brand-badge {
-            font-family: var(--font-mono);
-            font-size: 0.68rem;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 4px;
-            background: var(--accent-primary-subtle);
-            color: var(--accent-primary);
-            border: 1px solid var(--border-hover);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .brand-subtitle {
-            font-size: 0.78rem;
-            color: var(--text-secondary);
-            display: none;
-        }
-
-        @media (min-width: 640px) {
-            .brand-subtitle { display: block; }
-        }
-
-        /* Abas de Navegação no Desktop */
-        .desktop-nav-tabs {
-            display: none;
-            gap: 4px;
-            background: var(--bg-surface-elevated);
-            padding: 4px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-default);
-        }
-
-        @media (min-width: 768px) {
-            .desktop-nav-tabs { display: flex; }
-        }
-
-        .nav-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 18px;
-            border-radius: var(--radius-sm);
-            font-family: var(--font-display);
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .nav-btn:hover {
-            color: var(--text-primary);
-            background: rgba(0, 0, 0, 0.03);
-        }
-
-        .nav-btn.active {
-            background: var(--bg-surface);
-            color: var(--accent-primary);
-            font-weight: 700;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Sistema de Botões (Sem Gradientes) */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 10px 18px;
-            border-radius: var(--radius-md);
-            font-family: var(--font-display);
-            font-size: 0.875rem;
-            font-weight: 700;
-            cursor: pointer;
-            border: 1px solid transparent;
-            transition: all 0.15s ease;
-            user-select: none;
-            white-space: nowrap;
-        }
-
-        .btn-primary {
-            background: var(--accent-primary);
-            color: #ffffff;
-            border: 1px solid var(--accent-primary-hover);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .btn-primary:hover {
-            background: var(--accent-primary-hover);
-        }
-
-        .btn-secondary {
-            background: var(--bg-surface);
-            color: var(--text-primary);
-            border: 1px solid var(--border-default);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .btn-secondary:hover {
-            background: var(--bg-surface-elevated);
-            border-color: var(--border-hover);
-        }
-
-        .btn-danger {
-            background: var(--danger-bg);
-            color: var(--danger);
-            border: 1px solid var(--danger-border);
-        }
-
-        .btn-danger:hover {
-            background: #fee2e2;
-        }
-
-        .btn-sm {
-            padding: 6px 14px;
-            font-size: 0.78rem;
-            border-radius: var(--radius-sm);
-        }
-
-        /* Navegação Inferior Mobile (Bottom Bar) */
-        .mobile-bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 64px;
-            background: var(--bg-surface);
-            border-top: 1px solid var(--border-default);
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            padding: 0 12px;
-            z-index: 1000;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        @media (min-width: 768px) {
-            .mobile-bottom-nav { display: none; }
-        }
-
-        .mobile-tab-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 0.72rem;
-            font-weight: 600;
-            cursor: pointer;
-            flex: 1;
-            padding: 8px 0;
-            transition: color 0.15s ease;
-        }
-
-        .mobile-tab-item svg {
-            width: 20px;
-            height: 20px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .mobile-tab-item.active {
-            color: var(--accent-primary);
-            font-weight: 700;
-        }
-
-        .mobile-scan-fab {
-            width: 46px;
-            height: 46px;
-            border-radius: 50%;
-            background: var(--accent-primary);
-            color: #ffffff;
-            border: 2px solid var(--bg-surface);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-md);
-            cursor: pointer;
-            transform: translateY(-10px);
-            transition: background-color 0.15s ease;
-        }
-
-        .mobile-scan-fab:hover {
-            background: var(--accent-primary-hover);
-        }
-
-        /* Cartão de Progresso de Varredura */
-        .progress-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-accent);
-            border-radius: var(--radius-lg);
-            padding: 16px 20px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .progress-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--accent-primary);
-            margin-bottom: 10px;
-        }
-
-        .progress-track {
-            height: 6px;
-            background: var(--bg-surface-elevated);
-            border-radius: 999px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            width: 100%;
-            background: var(--accent-primary);
-            border-radius: 999px;
-            animation: progressSimple 1.5s infinite ease-in-out;
-        }
-
-        @keyframes progressSimple {
-            0% { opacity: 0.4; }
-            50% { opacity: 1; }
-            100% { opacity: 0.4; }
-        }
-
-        /* Alternador de Páginas */
-        .page-view {
-            animation: fadeIn 0.2s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* Cartões & Grid */
-        .card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-default);
-            border-radius: var(--radius-lg);
-            padding: 20px;
-            margin-bottom: 18px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 16px;
-        }
-
-        .card-title {
-            font-family: var(--font-display);
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            letter-spacing: -0.01em;
-        }
-
-        .card-subtitle {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-        }
-
-        @media (min-width: 768px) {
-            .grid-2 { grid-template-columns: 1fr 1fr; }
-            .grid-full { grid-column: 1 / -1; }
-        }
-
-        /* Barra de Busca e Filtros */
-        .filter-toolbar {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-default);
-            border-radius: var(--radius-lg);
-            padding: 16px;
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .search-input-wrapper {
-            position: relative;
-            width: 100%;
-        }
-
-        .search-input-wrapper svg {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 18px;
-            height: 18px;
-            stroke: var(--text-muted);
-        }
-
-        .input-search {
-            width: 100%;
-            padding: 11px 14px 11px 42px;
-            background: var(--bg-surface-elevated);
-            border: 1px solid var(--border-default);
-            border-radius: var(--radius-md);
-            color: var(--text-primary);
-            font-size: 0.875rem;
-            outline: none;
-            transition: border-color 0.15s ease;
-        }
-
-        .input-search:focus {
-            border-color: var(--accent-primary);
-            background: var(--bg-surface);
-        }
-
-        .filter-chips-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .filter-group {
-            flex: 1 1 140px;
-            min-width: 130px;
-        }
-
-        .filter-label {
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 4px;
-            display: block;
-        }
-
-        .input-select, .input-text {
-            width: 100%;
-            padding: 9px 12px;
-            background: var(--bg-surface-elevated);
-            border: 1px solid var(--border-default);
-            border-radius: var(--radius-sm);
-            color: var(--text-primary);
-            font-size: 0.85rem;
-            outline: none;
-            transition: border-color 0.15s ease;
-        }
-
-        .input-select:focus, .input-text:focus {
-            border-color: var(--accent-primary);
-            background: var(--bg-surface);
-        }
-
-        /* Cards de Vagas no Mobile */
-        .job-cards-list {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .job-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-default);
-            border-radius: var(--radius-lg);
-            padding: 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            box-shadow: var(--shadow-sm);
-            transition: border-color 0.15s ease;
-        }
-
-        .job-card:hover {
-            border-color: var(--border-hover);
-        }
-
-        .job-card-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 12px;
-        }
-
-        .job-title {
-            font-family: var(--font-display);
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            line-height: 1.35;
-        }
-
-        .job-company {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-            margin-top: 3px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* Selos de Pontuação */
-        .score-pill {
-            font-family: var(--font-mono);
-            font-size: 0.78rem;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 999px;
-            display: inline-flex;
-            align-items: center;
-            white-space: nowrap;
-        }
-
-        .score-high {
-            background: var(--score-high-bg);
-            color: var(--score-high);
-            border: 1px solid var(--score-high-border);
-        }
-
-        .score-mid {
-            background: var(--score-mid-bg);
-            color: var(--score-mid);
-            border: 1px solid var(--score-mid-border);
-        }
-
-        .score-low {
-            background: var(--score-low-bg);
-            color: var(--score-low);
-            border: 1px solid var(--score-low-border);
-        }
-
-        .job-card-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .badge {
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: var(--radius-sm);
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .badge-modality {
-            background: var(--accent-primary-subtle);
-            color: var(--accent-primary);
-            border: 1px solid #bae6fd;
-        }
-
-        .badge-source {
-            background: var(--bg-surface-elevated);
-            color: var(--text-secondary);
-            border: 1px solid var(--border-default);
-            font-family: var(--font-mono);
-        }
-
-        .badge-location {
-            background: #f1f5f9;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-default);
-        }
-
-        .job-card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 10px;
-            border-top: 1px solid var(--border-subtle);
-            margin-top: 4px;
-        }
-
-        .job-date {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            font-family: var(--font-mono);
-        }
-
-        .job-link-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            background: var(--accent-primary);
-            color: #ffffff;
-            border-radius: var(--radius-sm);
-            font-family: var(--font-display);
-            font-size: 0.82rem;
-            font-weight: 700;
-            text-decoration: none;
-            transition: background-color 0.15s ease;
-        }
-
-        .job-link-btn:hover {
-            background: var(--accent-primary-hover);
-        }
-
-        /* Tabela Desktop */
-        .table-container {
-            width: 100%;
-            overflow-x: auto;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-default);
-            margin-top: 10px;
-            display: none;
-            background: var(--bg-surface);
-        }
-
-        @media (min-width: 900px) {
-            .table-container { display: block; }
-            .job-cards-list { display: none; }
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 0.875rem;
-        }
-
-        th {
-            background: var(--bg-surface-elevated);
-            color: var(--text-secondary);
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border-default);
-        }
-
-        td {
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--border-subtle);
-            color: var(--text-primary);
-        }
-
-        tr:hover td {
-            background: #f8fafc;
-        }
-
-        /* Container de Tag Inputs */
-        .tag-input-container {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 8px;
-            background: var(--bg-surface-elevated);
-            border: 1px solid var(--border-default);
-            border-radius: var(--radius-md);
-            padding: 10px 12px;
-            min-height: 50px;
-            cursor: text;
-            transition: border-color 0.15s ease;
-        }
-
-        .tag-input-container:focus-within {
-            border-color: var(--accent-primary);
-            background: var(--bg-surface);
-        }
-
-        .tag-list {
-            display: inline-flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: var(--accent-primary-subtle);
-            border: 1px solid #bae6fd;
-            color: var(--accent-primary);
-            padding: 4px 10px;
-            border-radius: var(--radius-sm);
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .tag-remove {
-            cursor: pointer;
-            color: var(--text-muted);
-            font-size: 1rem;
-            line-height: 1;
-            transition: color 0.15s ease;
-        }
-
-        .tag-remove:hover {
-            color: var(--danger);
-        }
-
-        .tag-inline-input {
-            border: none;
-            outline: none;
-            background: transparent;
-            font-size: 0.875rem;
-            color: var(--text-primary);
-            flex: 1 1 140px;
-            min-width: 120px;
-            padding: 4px 0;
-        }
-
-        /* Checkboxes & Seleções */
-        .options-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .checkbox-container {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            background: var(--bg-surface-elevated);
-            padding: 10px 14px;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border-default);
-            user-select: none;
-            transition: background-color 0.15s ease;
-        }
-
-        .checkbox-container:hover {
-            background: #e2e8f0;
-        }
-
-        .checkbox-container input[type="checkbox"] {
-            accent-color: var(--accent-primary);
-            width: 16px;
-            height: 16px;
-        }
-
-        /* Interruptores (Switches) */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 42px;
-            height: 24px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #cbd5e1;
-            transition: .2s;
-            border-radius: 24px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: #ffffff;
-            transition: .2s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: var(--accent-primary);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(18px);
-        }
-
-        /* Cartão de Notificação */
-        .notif-card {
-            background: var(--bg-surface-elevated);
-            padding: 16px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-default);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .notif-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .notif-title-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: var(--text-primary);
-        }
-
-        .btn-info-icon {
-            background: #e2e8f0;
-            border: none;
-            color: var(--text-secondary);
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            font-size: 0.75rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.15s ease;
-        }
-
-        .btn-info-icon:hover {
-            background: var(--accent-primary);
-            color: #ffffff;
-        }
-
-        /* Grid de Scrapers */
-        .scrapers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 10px;
-        }
-
-        .scraper-toggle {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--bg-surface-elevated);
-            padding: 10px 14px;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border-default);
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        /* Console de Execução */
-        .log-box {
-            background: #0f172a;
-            border: 1px solid var(--border-default);
-            border-radius: var(--radius-md);
-            padding: 14px;
-            font-family: var(--font-mono);
-            font-size: 0.78rem;
-            color: #38bdf8;
-            max-height: 220px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            word-break: break-word;
-            line-height: 1.6;
-        }
-
-        /* Janela Modal de Instruções */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.6);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 16px;
-        }
-
-        .modal-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-default);
-            border-radius: var(--radius-lg);
-            max-width: 540px;
-            width: 100%;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: var(--shadow-md);
-            overflow: hidden;
-        }
-
-        .modal-header {
-            padding: 18px 20px;
-            border-bottom: 1px solid var(--border-default);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-family: var(--font-display);
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .modal-close {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.4rem;
-            cursor: pointer;
-        }
-
-        .modal-body {
-            padding: 20px;
-            overflow-y: auto;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        .modal-body code {
-            background: var(--bg-surface-elevated);
-            color: var(--accent-primary);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: var(--font-mono);
-            font-size: 0.82rem;
-        }
-
-        .modal-body ol, .modal-body ul {
-            margin-left: 20px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
-
-        .modal-footer {
-            padding: 14px 20px;
-            border-top: 1px solid var(--border-default);
-            display: flex;
-            justify-content: flex-end;
-            background: var(--bg-surface-elevated);
-        }
-
-        /* Notificação Toast */
-        .toast {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--text-primary);
-            color: #ffffff;
-            padding: 10px 20px;
-            border-radius: 999px;
-            font-family: var(--font-display);
-            font-size: 0.85rem;
-            font-weight: 700;
-            box-shadow: var(--shadow-md);
-            display: none;
-            z-index: 3000;
-        }
-
-        @media (min-width: 768px) {
-            .toast { bottom: 24px; }
-        }
-
-        .actions-bar {
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-            margin-top: 24px;
+            font-family: 'Onest', system-ui, -apple-system, sans-serif !important;
+        }
+
+        /* Estilização moderna e espaçada para as setas dos dropdowns <select> */
+        select {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 256 256'%3E%3Cpath fill='%235c6743' d='M213.66 101.66l-80 80a8 8 0 0 1-11.32 0l-80-80a8 8 0 0 1 11.32-11.32L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32z'/%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 0.85rem center !important;
+            background-size: 1rem !important;
+            padding-right: 2.5rem !important;
         }
     </style>
 </head>
-<body>
+<body class="bg-olive-50 text-olive-900 font-sans min-h-screen pb-12 antialiased">
 
-<div class="app-container">
-    <!-- Cabeçalho -->
-    <header class="app-header">
-        <div class="brand-container">
-            <div class="radar-status-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/><circle cx="12" cy="12" r="2"/></svg>
-            </div>
-            <div>
-                <h1 class="brand-title">
-                    JobRadar
-                    <span class="brand-badge" id="radarStatusBadge">Ativo</span>
-                </h1>
-                <p class="brand-subtitle">Varredura inteligente com pontuação de relevância</p>
-            </div>
+<div class="max-w-6xl mx-auto px-4 py-4 md:py-6">
+    <!-- Header -->
+    <header class="flex items-center justify-between py-3 px-4 md:px-6 bg-white border border-olive-200 rounded-2xl mb-6">
+        <div class="flex items-center gap-2.5 cursor-pointer select-none" onclick="mostrarPagina('vagas')">
+            <i class="ph ph-target text-2xl text-lime-600"></i>
+            <h1 class="text-2xl font-semibold tracking-tight text-olive-900">
+                JobRadar
+            </h1>
         </div>
 
-        <!-- Abas de Navegação no Desktop -->
-        <div class="desktop-nav-tabs">
-            <button class="nav-btn active" id="tabVagas" onclick="mostrarPagina('vagas')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                Vagas
+        <div>
+            <button id="btnToggleNav" onclick="togglePagina()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-olive-200 bg-white hover:bg-olive-100 text-olive-800 text-sm font-medium transition-colors">
+                <i class="ph ph-gear text-lg" id="btnToggleNavIcon"></i>
+                <span id="btnToggleNavText">Configurações</span>
             </button>
-            <button class="nav-btn" id="tabConfig" onclick="mostrarPagina('config')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                Configurações
-            </button>
-        </div>
-
-        <div class="header-actions">
-            <button class="btn btn-primary btn-sm" id="btnBuscarVagas" onclick="salvarERodar()">Buscar Vagas</button>
         </div>
     </header>
 
     <!-- Barra de Progresso da Varredura -->
-    <div class="progress-card" id="searchProgressBar" style="display: none;">
-        <div class="progress-header">
-            <span>Varredura de vagas em andamento...</span>
-            <span id="progressText" style="font-family: var(--font-mono);">Buscando...</span>
+    <div id="searchProgressBar" class="hidden bg-white border border-lime-400 rounded-2xl p-4 mb-6">
+        <div class="flex items-center justify-between text-sm font-medium text-olive-950 mb-2">
+            <span class="flex items-center gap-2">
+                <i class="ph ph-spinner animate-spin text-lg text-lime-600"></i>
+                Varredura de vagas em andamento...
+            </span>
+            <span id="progressText" class="font-normal text-xs">Buscando...</span>
         </div>
-        <div class="progress-track">
-            <div class="progress-bar-fill"></div>
+        <div class="h-1.5 w-full bg-lime-100 rounded-full overflow-hidden">
+            <div class="h-full bg-lime-400 rounded-full w-full animate-pulse"></div>
         </div>
     </div>
 
     <!-- PÁGINA 1: VAGAS -->
-    <div id="pageVagas" class="page-view">
+    <div id="pageVagas" class="space-y-4">
         <!-- Barra de Busca e Filtros -->
-        <div class="filter-toolbar">
-            <div class="search-input-wrapper">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                <input type="text" id="filtroSearchText" class="input-search" placeholder="Buscar por título, palavra-chave ou empresa..." oninput="aplicarFiltrosTabela()">
+        <div class="bg-white border border-olive-200 rounded-2xl p-5 space-y-4">
+            <div class="relative w-full">
+                <i class="ph ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-olive-400 text-lg"></i>
+                <input type="text" id="filtroSearchText" class="w-full pl-10 pr-4 py-2.5 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Buscar por título, palavra-chave ou empresa..." oninput="aplicarFiltrosTabela()">
             </div>
 
-            <div class="filter-chips-row">
-                <div class="filter-group">
-                    <label class="filter-label">Pontuação Mínima</label>
-                    <select id="filtroScore" class="input-select" onchange="aplicarFiltrosTabela()">
-                        <option value="todos">Todas as Pontuações</option>
-                        <option value="8">8+ (Alta Relevância)</option>
-                        <option value="5">5+ (Média Relevância)</option>
+            <div class="flex flex-wrap items-end gap-3 pt-1">
+                <div class="flex-1 min-w-[130px]">
+                    <label class="block text-sm font-medium text-olive-800 mb-1.5">Pontuação mínima</label>
+                    <select id="filtroScore" class="w-full pl-3.5 pr-10 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all cursor-pointer font-normal" onchange="aplicarFiltrosTabela()">
+                        <option value="todos">Todas</option>
+                        <option value="8">8+ (Alta)</option>
+                        <option value="5">5+ (Média)</option>
                     </select>
                 </div>
 
-                <div class="filter-group">
-                    <label class="filter-label">Modalidade</label>
-                    <select id="filtroModalidade" class="input-select" onchange="aplicarFiltrosTabela()">
-                        <option value="todas">Todas as Modalidades</option>
+                <div class="flex-1 min-w-[130px]">
+                    <label class="block text-sm font-medium text-olive-800 mb-1.5">Modalidade</label>
+                    <select id="filtroModalidade" class="w-full pl-3.5 pr-10 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all cursor-pointer font-normal" onchange="aplicarFiltrosTabela()">
+                        <option value="todas">Todas</option>
                         <option value="remoto">Remoto</option>
                         <option value="hibrido">Híbrido</option>
                         <option value="presencial">Presencial</option>
                     </select>
                 </div>
 
-                <div class="filter-group">
-                    <label class="filter-label">Cidade / Local</label>
-                    <input type="text" id="filtroLocal" class="input-text" placeholder="Ex: São Paulo" oninput="aplicarFiltrosTabela()">
+                <div class="flex-1 min-w-[130px]">
+                    <label class="block text-sm font-medium text-olive-800 mb-1.5">Cidade / Local</label>
+                    <input type="text" id="filtroLocal" class="w-full px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Ex: São Paulo" oninput="aplicarFiltrosTabela()">
                 </div>
 
-                <div class="filter-group">
-                    <label class="filter-label">Portal / Fonte</label>
-                    <select id="filtroFonte" class="input-select" onchange="aplicarFiltrosTabela()">
-                        <option value="todas">Todas as Fontes</option>
+                <div class="flex-1 min-w-[130px]">
+                    <label class="block text-sm font-medium text-olive-800 mb-1.5">Portal / Fonte</label>
+                    <select id="filtroFonte" class="w-full pl-3.5 pr-10 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all cursor-pointer font-normal" onchange="aplicarFiltrosTabela()">
+                        <option value="todas">Todas as fontes</option>
                         <option value="linkedin br">LinkedIn BR</option>
                         <option value="linkedin internacional">LinkedIn Internacional</option>
                         <option value="gupy">Gupy</option>
@@ -1134,176 +149,207 @@
                     </select>
                 </div>
 
-                <div style="margin-left: auto; display: flex; align-items: flex-end;">
-                    <button class="btn btn-danger btn-sm" onclick="limparListaVagas()">Limpar Lista</button>
+                <!-- Dropdown de Ordenação -->
+                <div class="flex-1 min-w-[160px]">
+                    <label class="block text-sm font-medium text-olive-800 mb-1.5">Ordenar por</label>
+                    <select id="selectOrdenacao" class="w-full pl-3.5 pr-10 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all cursor-pointer font-normal" onchange="alterarOrdenacao(this.value)">
+                        <option value="data_desc">Mais recentes primeiro</option>
+                        <option value="data_asc">Mais antigas primeiro</option>
+                        <option value="score_desc">Maior pontuação primeiro</option>
+                        <option value="score_asc">Menor pontuação primeiro</option>
+                    </select>
+                </div>
+
+                <!-- Botões no final dos filtros -->
+                <div class="flex items-center gap-2 ml-auto pt-2 sm:pt-0">
+                    <button onclick="limparListaVagas()" class="px-3.5 py-2 text-rose-700 hover:bg-rose-50 border border-transparent hover:border-rose-200 font-medium text-sm rounded-xl transition-colors flex items-center gap-1.5">
+                        <i class="ph ph-trash text-base"></i>
+                        <span>Limpar lista</span>
+                    </button>
+
+                    <button id="btnBuscarVagas" onclick="salvarERodar()" class="px-4 py-2 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-medium text-sm rounded-xl flex items-center gap-2 transition-colors">
+                        <i class="ph ph-magnifying-glass font-medium text-olive-950 text-base" id="btnBuscarVagasIcon"></i>
+                        <span id="btnBuscarVagasLabel" class="text-olive-950">Buscar vagas</span>
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Feed de Vagas Mobile Cards -->
-        <div class="job-cards-list" id="vagasCardsContainer">
-            <div style="text-align: center; padding: 32px; color: var(--text-muted);">Carregando vagas...</div>
+        <!-- Feed de Vagas Mobile -->
+        <div class="md:hidden space-y-3" id="vagasCardsContainer">
+            <div class="text-center py-8 text-olive-400 text-sm font-normal">Carregando vagas...</div>
         </div>
 
-        <!-- Tabela de Vagas Desktop Fallback -->
-        <div class="table-container">
-            <table>
-                <thead>
+        <!-- Tabela Desktop -->
+        <div class="hidden md:block bg-white border border-olive-200 rounded-2xl overflow-hidden">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-olive-50 border-b border-olive-200 text-olive-700 text-sm font-medium select-none">
                     <tr>
-                        <th>Pontuação</th>
-                        <th>Título da Vaga</th>
-                        <th>Empresa</th>
-                        <th>Divulgada Em</th>
-                        <th>Modalidade</th>
-                        <th>Local</th>
-                        <th>Fonte</th>
-                        <th>Ação</th>
+                        <th class="py-3.5 px-4">
+                            <button onclick="toggleSort('score')" class="flex items-center gap-1 hover:text-olive-900 transition-colors focus:outline-none font-medium">
+                                <span>Pontuação</span>
+                                <i class="ph text-base text-olive-400" id="sortScoreIcon"></i>
+                            </button>
+                        </th>
+                        <th class="py-3.5 px-4 font-medium">Título da vaga</th>
+                        <th class="py-3.5 px-4 font-medium">Empresa</th>
+                        <th class="py-3.5 px-4">
+                            <button onclick="toggleSort('data')" class="flex items-center gap-1 hover:text-olive-900 transition-colors focus:outline-none font-medium">
+                                <span>Divulgação</span>
+                                <i class="ph text-base text-olive-400" id="sortDateIcon"></i>
+                            </button>
+                        </th>
+                        <th class="py-3.5 px-4 font-medium">Modalidade</th>
+                        <th class="py-3.5 px-4 font-medium">Local</th>
+                        <th class="py-3.5 px-4 font-medium">Fonte</th>
+                        <th class="py-3.5 px-4 text-right"></th>
                     </tr>
                 </thead>
-                <tbody id="vagasTableBody">
-                    <tr><td colspan="8" style="text-align: center; padding: 24px; color: var(--text-muted);">Carregando vagas...</td></tr>
+                <tbody id="vagasTableBody" class="divide-y divide-olive-100">
+                    <tr><td colspan="8" class="text-center py-8 text-olive-400 font-normal text-sm">Carregando vagas...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
     <!-- PÁGINA 2: CONFIGURAÇÕES -->
-    <div id="pageConfig" class="page-view" style="display: none;">
-        <div class="grid grid-2">
+    <div id="pageConfig" class="hidden space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Cargos Principais -->
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Cargos Principais</div>
-                        <div class="card-subtitle">Ex: Gerente de Projetos, Project Manager</div>
-                    </div>
+            <div class="bg-white border border-olive-200 rounded-2xl p-5 space-y-3">
+                <div>
+                    <h3 class="font-medium text-olive-900 text-lg">Cargos principais</h3>
+                    <p class="text-sm text-olive-600 font-normal">Ex: Gerente de Projetos, Project Manager</p>
                 </div>
-                <div class="tag-input-container" onclick="focarInput('inputCargoForte')">
-                    <span id="cargosFortesTagsList" class="tag-list"></span>
-                    <input type="text" class="tag-inline-input" id="inputCargoForte" placeholder="Digite um cargo e pressione Enter...">
+                <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputCargoForte')">
+                    <span id="cargosFortesTagsList" class="flex flex-wrap gap-1.5"></span>
+                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-900 placeholder:text-olive-400 font-normal" id="inputCargoForte" placeholder="Digite e pressione Enter...">
                 </div>
             </div>
 
             <!-- Stacks & Certificações -->
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Stacks & Certificações</div>
-                        <div class="card-subtitle">Ex: pmp, scrum, aws, python</div>
-                    </div>
+            <div class="bg-white border border-olive-200 rounded-2xl p-5 space-y-3">
+                <div>
+                    <h3 class="font-medium text-olive-900 text-lg">Stacks & certificações</h3>
+                    <p class="text-sm text-olive-600 font-normal">Ex: pmp, scrum, aws, python</p>
                 </div>
-                <div class="tag-input-container" onclick="focarInput('inputFerramenta')">
-                    <span id="ferramentasTagsList" class="tag-list"></span>
-                    <input type="text" class="tag-inline-input" id="inputFerramenta" placeholder="Digite uma tecnologia e pressione Enter...">
+                <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputFerramenta')">
+                    <span id="ferramentasTagsList" class="flex flex-wrap gap-1.5"></span>
+                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-900 placeholder:text-olive-400 font-normal" id="inputFerramenta" placeholder="Digite e pressione Enter...">
                 </div>
             </div>
 
             <!-- Modalidades Aceitas -->
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Modalidades Aceitas</div>
-                    </div>
+            <div class="bg-white border border-olive-200 rounded-2xl p-5 space-y-4">
+                <div>
+                    <h3 class="font-medium text-olive-900 text-lg">Modalidades aceitas</h3>
                 </div>
-                <div class="options-group">
-                    <label class="checkbox-container"><input type="checkbox" id="checkModRemoto" checked> Remoto</label>
-                    <label class="checkbox-container"><input type="checkbox" id="checkModHibrido" checked> Híbrido</label>
-                    <label class="checkbox-container"><input type="checkbox" id="checkModPresencial" checked> Presencial</label>
+                <div class="flex flex-wrap gap-3">
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors">
+                        <input type="checkbox" id="checkModRemoto" class="accent-lime-500 rounded-md"> Remoto
+                    </label>
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors">
+                        <input type="checkbox" id="checkModHibrido" class="accent-lime-500 rounded-md"> Híbrido
+                    </label>
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors">
+                        <input type="checkbox" id="checkModPresencial" class="accent-lime-500 rounded-md"> Presencial
+                    </label>
                 </div>
                 
-                <div style="margin-top: 16px;">
-                    <label class="filter-label">Prioridade na Pontuação (+3 pontos):</label>
-                    <select id="selectPreferencia" class="input-select">
+                <div>
+                    <label class="block text-sm font-medium text-olive-800 mb-1.5">Prioridade na pontuação (+3 pontos):</label>
+                    <select id="selectPreferencia" class="w-full pl-3.5 pr-10 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all cursor-pointer font-normal">
                         <option value="remoto">Priorizar Remoto (+3 pontos)</option>
                         <option value="hibrido">Priorizar Híbrido (+3 pontos)</option>
                         <option value="presencial">Priorizar Presencial (+3 pontos)</option>
-                        <option value="sem_preferencia">Sem Preferência</option>
+                        <option value="sem_preferencia">Sem preferência</option>
                     </select>
                 </div>
             </div>
 
             <!-- Cidades & Regiões -->
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Cidades & Regiões</div>
-                        <div class="card-subtitle">Ex: São Paulo, Recife</div>
-                    </div>
+            <div class="bg-white border border-olive-200 rounded-2xl p-5 space-y-3">
+                <div>
+                    <h3 class="font-medium text-olive-900 text-lg">Cidades & regiões</h3>
+                    <p class="text-sm text-olive-600 font-normal">Ex: São Paulo, Recife</p>
                 </div>
-                <div class="tag-input-container" onclick="focarInput('inputCidade')">
-                    <span id="cidadesTagsList" class="tag-list"></span>
-                    <input type="text" class="tag-inline-input" id="inputCidade" placeholder="Digite uma cidade e pressione Enter...">
+                <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputCidade')">
+                    <span id="cidadesTagsList" class="flex flex-wrap gap-1.5"></span>
+                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-900 placeholder:text-olive-400 font-normal" id="inputCidade" placeholder="Digite e pressione Enter...">
                 </div>
             </div>
 
             <!-- Senioridades Alvo -->
-            <div class="card grid-full">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Senioridades Alvo (+2 pontos de bônus no foco)</div>
-                    </div>
+            <div class="md:col-span-2 bg-white border border-olive-200 rounded-2xl p-5 space-y-3">
+                <div>
+                    <h3 class="font-medium text-olive-900 text-lg">Senioridades alvo (+2 pontos de bônus no foco)</h3>
                 </div>
-                <div class="options-group">
-                    <label class="checkbox-container"><input type="checkbox" value="Estágio/Trainee" class="check-senioridade"> Estágio / Trainee</label>
-                    <label class="checkbox-container"><input type="checkbox" value="Júnior" class="check-senioridade" checked> Júnior</label>
-                    <label class="checkbox-container"><input type="checkbox" value="Pleno" class="check-senioridade" checked> Pleno</label>
-                    <label class="checkbox-container"><input type="checkbox" value="Sênior" class="check-senioridade" checked> Sênior</label>
-                    <label class="checkbox-container"><input type="checkbox" value="Especialista/Liderança" class="check-senioridade"> Especialista / Liderança</label>
+                <div class="flex flex-wrap gap-3">
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors">
+                        <input type="checkbox" value="Estágio/Trainee" class="check-senioridade accent-lime-500 rounded-md"> Estágio / Trainee
+                    </label>
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors">
+                        <input type="checkbox" value="Júnior" class="check-senioridade accent-lime-500 rounded-md"> Júnior
+                    </label>
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors">
+                        <input type="checkbox" value="Pleno" class="check-senioridade accent-lime-500 rounded-md"> Pleno
+                    </label>
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors">
+                        <input type="checkbox" value="Sênior" class="check-senioridade accent-lime-500 rounded-md"> Sênior
+                    </label>
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors">
+                        <input type="checkbox" value="Especialista/Liderança" class="check-senioridade accent-lime-500 rounded-md"> Especialista / Liderança
+                    </label>
                 </div>
             </div>
 
             <!-- Canais de Notificação -->
-            <div class="card grid-full">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Canais de Notificação</div>
-                        <div class="card-subtitle">Receba resumos consolidados de vagas via E-mail</div>
-                    </div>
+            <div class="md:col-span-2 bg-white border border-olive-200 rounded-2xl p-5 space-y-4">
+                <div>
+                    <h3 class="font-medium text-olive-900 text-lg">Canais de notificação</h3>
+                    <p class="text-sm text-olive-600 font-normal">Receba resumos consolidados de vagas via e-mail</p>
                 </div>
 
-                <div style="max-width: 500px;">
-                    <!-- E-mail -->
-                    <div class="notif-card">
-                        <div class="notif-header">
-                            <div class="notif-title-group">
-                                <span>E-mail Consolidado</span>
-                                <button type="button" class="btn-info-icon" onclick="abrirModalInfo('email')" title="Ajuda do E-mail">i</button>
-                            </div>
-                            <label class="switch"><input type="checkbox" id="checkEmailAtivo"><span class="slider"></span></label>
+                <div class="max-w-lg bg-olive-50 border border-olive-200 rounded-2xl p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2 font-medium text-sm text-olive-900">
+                            <i class="ph ph-envelope text-lg text-lime-600"></i>
+                            <span>E-mail consolidado</span>
+                            <button type="button" class="w-5 h-5 rounded-full bg-olive-200 hover:bg-lime-400 hover:text-olive-950 text-olive-700 text-xs font-medium flex items-center justify-center transition-colors" onclick="abrirModalInfo('email')" title="Ajuda">i</button>
                         </div>
-                        <input type="email" id="inputEmailDestinatario" class="input-text" placeholder="Seu E-mail de Destino">
-                        <input type="text" id="inputEmailSmtpHost" class="input-text" placeholder="smtp.gmail.com">
-                        <input type="text" id="inputEmailSmtpUser" class="input-text" placeholder="Usuário SMTP (Seu E-mail)">
-                        <input type="password" id="inputEmailSmtpPass" class="input-text" placeholder="Senha de App SMTP">
-                        <button class="btn btn-secondary btn-sm" onclick="testarNotificacao('email')">Testar Canal E-mail</button>
+                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                            <input type="checkbox" id="checkEmailAtivo" class="sr-only peer">
+                            <div class="w-9 h-5 bg-olive-300 rounded-full peer peer-checked:bg-lime-400 transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-transform peer-checked:after:translate-x-4"></div>
+                        </label>
                     </div>
+                    <input type="email" id="inputEmailDestinatario" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Seu e-mail de destino">
+                    <input type="text" id="inputEmailSmtpHost" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="smtp.gmail.com">
+                    <input type="text" id="inputEmailSmtpUser" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Usuário SMTP (Seu e-mail)">
+                    <input type="password" id="inputEmailSmtpPass" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Senha de app SMTP">
+                    <button class="px-3.5 py-2 bg-white border border-olive-200 hover:bg-olive-100 text-olive-800 font-medium text-sm rounded-xl transition-colors" onclick="testarNotificacao('email')">Testar canal e-mail</button>
                 </div>
             </div>
 
             <!-- Portais Monitorados -->
-            <div class="card grid-full">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Portais de Busca Monitorados</div>
-                        <div class="card-subtitle">Ative ou desative fontes para varredura de vagas</div>
-                    </div>
+            <div class="md:col-span-2 bg-white border border-olive-200 rounded-2xl p-5 space-y-3">
+                <div>
+                    <h3 class="font-medium text-olive-900 text-lg">Portais de busca monitorados</h3>
+                    <p class="text-sm text-olive-600 font-normal">Ative ou desative fontes para varredura de vagas</p>
                 </div>
-                <div class="scrapers-grid" id="scrapersGrid">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3" id="scrapersGrid">
                     <!-- Via JS -->
                 </div>
             </div>
 
             <!-- Filtro de Pontuação Mínima para Recebimento de Vagas -->
-            <div class="card grid-full">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Pontuação Mínima para Recebimento de Vagas & Alertas</div>
-                        <div class="card-subtitle">Escolha o nível mínimo de pontuação das vagas que você deseja visualizar e receber em notificações</div>
-                    </div>
+            <div class="md:col-span-2 bg-white border border-olive-200 rounded-2xl p-5 space-y-3">
+                <div>
+                    <h3 class="font-medium text-olive-900 text-lg">Pontuação mínima para recebimento de vagas & alertas</h3>
+                    <p class="text-sm text-olive-600 font-normal">Escolha o nível mínimo de pontuação das vagas que você deseja visualizar e receber em notificações</p>
                 </div>
-                <div style="max-width: 440px;">
-                    <select id="selectScoreMinimoConfig" class="input-select" onchange="alterarScoreMinimoConfig(this.value)">
-                        <option value="todos">Todas as Pontuações (Receber todas as vagas)</option>
+                <div class="max-w-md">
+                    <select id="selectScoreMinimoConfig" class="w-full pl-3.5 pr-10 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all cursor-pointer font-normal" onchange="alterarScoreMinimoConfig(this.value)">
+                        <option value="todos">Todas as pontuações (Receber todas as vagas)</option>
                         <option value="5">Pontuação 5+ (Relevância média e alta — 5 a 10)</option>
                         <option value="8">Pontuação 8+ (Apenas alta relevância — 8 a 10)</option>
                     </select>
@@ -1312,47 +358,32 @@
         </div>
 
         <!-- Console de Execução -->
-        <div class="card" id="logsCard">
-            <div class="card-header" style="margin-bottom: 10px;">
-                <div class="card-title" style="font-size: 0.9rem;">Console de Execução</div>
-            </div>
-            <div class="log-box" id="logBox">Pronto para buscar vagas...</div>
+        <div class="bg-white border border-olive-200 rounded-2xl p-5 space-y-3" id="logsCard">
+            <h3 class="font-medium text-olive-900 text-lg">Console de execução</h3>
+            <div class="bg-olive-950 border border-olive-900 rounded-xl p-4 text-xs text-lime-400 font-normal max-h-56 overflow-y-auto whitespace-pre-wrap break-words leading-relaxed" id="logBox">Pronto para buscar vagas...</div>
         </div>
 
-        <div class="actions-bar">
-            <button class="btn btn-secondary" onclick="salvarConfiguracoes()">Salvar Configurações</button>
-            <button class="btn btn-primary" id="btnBuscarVagasConfig" onclick="salvarERodar()">Salvar e Buscar Vagas</button>
+        <div class="flex items-center justify-end pt-2">
+            <button class="px-5 py-2.5 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-medium text-sm rounded-xl transition-colors" onclick="salvarConfiguracoes()">Salvar configurações</button>
         </div>
     </div>
 </div>
 
-<!-- Navegação Inferior Mobile (Bottom Bar) -->
-<nav class="mobile-bottom-nav">
-    <button class="mobile-tab-item active" id="tabVagasMobile" onclick="mostrarPagina('vagas')">
-        <svg viewBox="0 0 24 24"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-        Vagas
-    </button>
-    <button class="mobile-scan-fab" id="btnBuscarVagasNav" onclick="salvarERodar()" title="Buscar Vagas">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-    </button>
-    <button class="mobile-tab-item" id="tabConfigMobile" onclick="mostrarPagina('config')">
-        <svg viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-        Configurações
-    </button>
-</nav>
+<!-- Toast -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-olive-950 text-white px-4 py-2 rounded-full font-medium text-sm shadow-lg hidden z-50 transition-all">
+    Salvo com sucesso!
+</div>
 
-<div class="toast" id="toast">Salvo com sucesso!</div>
-
-<!-- Janela Modal de Instruções -->
-<div class="modal-overlay" id="infoModalOverlay" onclick="fecharModalInfo(event)">
-    <div class="modal-card" onclick="event.stopPropagation()">
-        <div class="modal-header">
-            <h3 class="modal-title" id="modalInfoTitulo">Instruções de Configuração</h3>
-            <button type="button" class="modal-close" onclick="fecharModalInfo()">&times;</button>
+<!-- Modal -->
+<div id="infoModalOverlay" class="fixed inset-0 bg-olive-950/60 hidden items-center justify-center p-4 z-50" onclick="fecharModalInfo(event)">
+    <div class="bg-white border border-olive-200 rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-xl overflow-hidden" onclick="event.stopPropagation()">
+        <div class="px-5 py-4 border-b border-olive-200 flex items-center justify-between">
+            <h3 class="font-medium text-olive-900 text-lg" id="modalInfoTitulo">Instruções de configuração</h3>
+            <button type="button" class="text-olive-400 hover:text-olive-600 text-xl font-medium" onclick="fecharModalInfo()">&times;</button>
         </div>
-        <div class="modal-body" id="modalInfoCorpo"></div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="fecharModalInfo()">Fechar</button>
+        <div class="p-5 overflow-y-auto text-sm text-olive-700 font-normal leading-relaxed" id="modalInfoCorpo"></div>
+        <div class="px-5 py-3 border-t border-olive-200 bg-olive-50 flex justify-end">
+            <button type="button" class="px-4 py-2 bg-white border border-olive-200 hover:bg-olive-100 text-olive-800 font-medium text-sm rounded-xl transition-colors" onclick="fecharModalInfo()">Fechar</button>
         </div>
     </div>
 </div>
@@ -1373,32 +404,21 @@
     };
 
     let todasAsVagas = [];
+    let sortField = 'data'; // 'data' ou 'score' (padrão 'data')
+    let sortDirection = 'desc'; // 'desc' (mais recente/maior) ou 'asc'
 
     const instrucoesCanais = {
         email: {
             titulo: "Como configurar os Alertas por E-mail (Gmail / SMTP)",
             corpo: `
                 <p>O JobRadar enviará <strong>um único e-mail consolidado</strong> com todas as vagas organizadas por pontuação de relevância:</p>
-                <ol>
-                    <li>Acesse a área de segurança da sua conta Google: <a href="https://myaccount.google.com/security" target="_blank" style="color:var(--accent-primary);">Segurança da Conta Google</a>.</li>
+                <ol class="list-decimal ml-5 space-y-1 my-3">
+                    <li>Acesse a área de segurança da sua conta Google: <a href="https://myaccount.google.com/security" target="_blank" class="text-lime-700 hover:underline">Segurança da conta Google</a>.</li>
                     <li>Certifique-se de que a <strong>Verificação em duas etapas</strong> esteja ativada na sua conta.</li>
-                    <li>Acesse o gerador de senhas de aplicativo: <a href="https://myaccount.google.com/apppasswords" target="_blank" style="color:var(--accent-primary);">Gerar Senha de App Google</a>.</li>
+                    <li>Acesse o gerador de senhas de aplicativo: <a href="https://myaccount.google.com/apppasswords" target="_blank" class="text-lime-700 hover:underline">Gerar senha de app Google</a>.</li>
                     <li>Digite o nome <code>JobRadar</code> e clique em <strong>Criar</strong>. O Google exibirá um código de 16 caracteres.</li>
                     <li>Preencha os campos no JobRadar com seu e-mail, servidor <code>smtp.gmail.com</code> e a senha gerada.</li>
-                    <li>Clique em <strong>Testar Canal</strong> para validar o envio.</li>
-                </ol>
-            `
-        },
-        whatsapp: {
-            titulo: "Como configurar Alertas no WhatsApp (Green API - Gratuito)",
-            corpo: `
-                <p>A <strong>Green API</strong> oferece uma instância gratuita permanente para desenvolvedores enviarem mensagens e alertas no WhatsApp:</p>
-                <ol>
-                    <li>Acesse o site da Green API e crie sua conta gratuita: <a href="https://green-api.com" target="_blank" style="color:var(--accent-primary);">Acessar Green-API.com</a>.</li>
-                    <li>No painel da Green API, crie uma instância no plano <strong>Developer (Gratuito)</strong>.</li>
-                    <li>Escaneie o código QR exibido na tela usando o seu aplicativo do WhatsApp no celular.</li>
-                    <li>Copie o seu <strong>idInstance</strong> (ex: <code>1101000000</code>) e o seu <strong>apiTokenInstance</strong>.</li>
-                    <li>Cole os códigos nos campos correspondentes no JobRadar, digite seu número com DDD (ex: <code>5511999998888</code>) e clique em <strong>Testar Canal WhatsApp</strong>.</li>
+                    <li>Clique em <strong>Testar canal</strong> para validar o envio.</li>
                 </ol>
             `
         }
@@ -1426,27 +446,30 @@
     function mostrarPagina(nomePagina) {
         const pageVagas = document.getElementById("pageVagas");
         const pageConfig = document.getElementById("pageConfig");
-        const tabVagas = document.getElementById("tabVagas");
-        const tabConfig = document.getElementById("tabConfig");
-        const tabVagasMobile = document.getElementById("tabVagasMobile");
-        const tabConfigMobile = document.getElementById("tabConfigMobile");
+        const btnToggleNavText = document.getElementById("btnToggleNavText");
+        const btnToggleNavIcon = document.getElementById("btnToggleNavIcon");
 
         if (nomePagina === "config") {
-            pageVagas.style.display = "none";
-            pageConfig.style.display = "block";
-            if (tabVagas) tabVagas.classList.remove("active");
-            if (tabConfig) tabConfig.classList.add("active");
-            if (tabVagasMobile) tabVagasMobile.classList.remove("active");
-            if (tabConfigMobile) tabConfigMobile.classList.add("active");
+            pageVagas.classList.add("hidden");
+            pageConfig.classList.remove("hidden");
+            if (btnToggleNavText) btnToggleNavText.innerText = "Voltar para vagas";
+            if (btnToggleNavIcon) btnToggleNavIcon.className = "ph ph-arrow-left text-lg";
         } else {
-            pageVagas.style.display = "block";
-            pageConfig.style.display = "none";
-            if (tabVagas) tabVagas.classList.add("active");
-            if (tabConfig) tabConfig.classList.remove("active");
-            if (tabVagasMobile) tabVagasMobile.classList.add("active");
-            if (tabConfigMobile) tabConfigMobile.classList.remove("active");
+            pageVagas.classList.remove("hidden");
+            pageConfig.classList.add("hidden");
+            if (btnToggleNavText) btnToggleNavText.innerText = "Configurações";
+            if (btnToggleNavIcon) btnToggleNavIcon.className = "ph ph-gear text-lg";
         }
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function togglePagina() {
+        const pageConfig = document.getElementById("pageConfig");
+        if (pageConfig && pageConfig.classList.contains("hidden")) {
+            mostrarPagina("config");
+        } else {
+            mostrarPagina("vagas");
+        }
     }
 
     function abrirModalInfo(canal) {
@@ -1454,12 +477,15 @@
         if (!item) return;
         document.getElementById("modalInfoTitulo").innerText = item.titulo;
         document.getElementById("modalInfoCorpo").innerHTML = item.corpo;
-        document.getElementById("infoModalOverlay").style.display = "flex";
+        document.getElementById("infoModalOverlay").classList.remove("hidden");
+        document.getElementById("infoModalOverlay").classList.add("flex");
     }
 
     function fecharModalInfo(event) {
         if (event && event.target !== event.currentTarget && !event.target.classList.contains("modal-close")) return;
-        document.getElementById("infoModalOverlay").style.display = "none";
+        const modal = document.getElementById("infoModalOverlay");
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
     }
 
     document.addEventListener("keydown", (e) => {
@@ -1688,11 +714,12 @@
 
         list.forEach((item, index) => {
             const tag = document.createElement("span");
-            tag.className = "tag";
+            tag.className = "inline-flex items-center gap-1 px-2.5 py-1 bg-lime-100 border border-lime-300 text-olive-950 rounded-lg text-sm font-medium";
             
             const txtNode = document.createTextNode(item + " ");
-            const btnDelete = document.createElement("span");
-            btnDelete.className = "tag-remove";
+            const btnDelete = document.createElement("button");
+            btnDelete.type = "button";
+            btnDelete.className = "text-olive-700 hover:text-rose-600 transition-colors ml-0.5 font-medium";
             btnDelete.innerHTML = "&times;";
             btnDelete.onclick = (e) => {
                 e.stopPropagation();
@@ -1719,12 +746,12 @@
         Object.keys(scrapersNomes).forEach(key => {
             const active = state.scrapers_ativos[key] !== false;
             const item = document.createElement("div");
-            item.className = "scraper-toggle";
+            item.className = "flex items-center justify-between bg-olive-50 border border-olive-200 p-3 rounded-xl text-sm font-medium text-olive-800";
             item.innerHTML = `
                 <span>${scrapersNomes[key]}</span>
-                <label class="switch">
-                    <input type="checkbox" ${active ? "checked" : ""} onchange="toggleScraper('${key}', this.checked)">
-                    <span class="slider"></span>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input type="checkbox" ${active ? "checked" : ""} onchange="toggleScraper('${key}', this.checked)" class="sr-only peer">
+                    <div class="w-9 h-5 bg-olive-300 rounded-full peer peer-checked:bg-lime-400 transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-transform peer-checked:after:translate-x-4"></div>
                 </label>
             `;
             grid.appendChild(item);
@@ -1848,37 +875,18 @@
             const progressBar = document.getElementById("searchProgressBar");
             const progressText = document.getElementById("progressText");
             const logBox = document.getElementById("logBox");
-            const btnBuscar = document.getElementById("btnBuscarVagas");
-            const btnBuscarConfig = document.getElementById("btnBuscarVagasConfig");
-            const statusBadge = document.getElementById("radarStatusBadge");
+            const btnBuscarLabel = document.getElementById("btnBuscarVagasLabel");
+            const btnBuscarIcon = document.getElementById("btnBuscarVagasIcon");
 
             if (data.is_running) {
                 wasRunning = true;
-                if (progressBar) progressBar.style.display = "block";
+                if (progressBar) progressBar.classList.remove("hidden");
                 if (progressText) progressText.innerText = "Executando varredura...";
-                if (statusBadge) {
-                    statusBadge.innerText = "Buscando...";
-                    statusBadge.style.color = "#b45309";
-                    statusBadge.style.backgroundColor = "#fef3c7";
-                }
 
-                if (btnBuscar) {
-                    btnBuscar.innerText = "Parar Busca";
-                    btnBuscar.className = "btn btn-secondary btn-sm";
-                    btnBuscar.onclick = () => cancelarBusca();
-                }
-                if (btnBuscarConfig) {
-                    btnBuscarConfig.innerText = "Parar Busca";
-                    btnBuscarConfig.className = "btn btn-secondary";
-                    btnBuscarConfig.onclick = () => cancelarBusca();
-                }
+                if (btnBuscarLabel) btnBuscarLabel.innerText = "Parar busca";
+                if (btnBuscarIcon) btnBuscarIcon.className = "ph ph-stop font-medium text-olive-950 text-base";
             } else {
-                if (progressBar) progressBar.style.display = "none";
-                if (statusBadge) {
-                    statusBadge.innerText = "Ativo";
-                    statusBadge.style.color = "var(--accent-primary)";
-                    statusBadge.style.backgroundColor = "var(--accent-primary-subtle)";
-                }
+                if (progressBar) progressBar.classList.add("hidden");
 
                 if (wasRunning) {
                     wasRunning = false;
@@ -1886,16 +894,8 @@
                     showToast("Busca concluída! Vagas atualizadas.");
                 }
 
-                if (btnBuscar) {
-                    btnBuscar.innerText = "Buscar Vagas";
-                    btnBuscar.className = "btn btn-primary btn-sm";
-                    btnBuscar.onclick = () => salvarERodar();
-                }
-                if (btnBuscarConfig) {
-                    btnBuscarConfig.innerText = "Salvar e Buscar Vagas";
-                    btnBuscarConfig.className = "btn btn-primary";
-                    btnBuscarConfig.onclick = () => salvarERodar();
-                }
+                if (btnBuscarLabel) btnBuscarLabel.innerText = "Buscar vagas";
+                if (btnBuscarIcon) btnBuscarIcon.className = "ph ph-magnifying-glass font-medium text-olive-950 text-base";
             }
 
             if (data.logs && data.logs.length > 0) {
@@ -1931,7 +931,90 @@
         aplicarFiltrosTabela();
     }
 
+    function alterarOrdenacao(val) {
+        if (val === "data_desc") {
+            sortField = 'data';
+            sortDirection = 'desc';
+        } else if (val === "data_asc") {
+            sortField = 'data';
+            sortDirection = 'asc';
+        } else if (val === "score_desc") {
+            sortField = 'score';
+            sortDirection = 'desc';
+        } else if (val === "score_asc") {
+            sortField = 'score';
+            sortDirection = 'asc';
+        }
+        aplicarFiltrosTabela();
+    }
+
+    function syncOrdenacaoSelect() {
+        const select = document.getElementById("selectOrdenacao");
+        if (!select) return;
+        if (sortField === 'data' && sortDirection === 'desc') select.value = "data_desc";
+        else if (sortField === 'data' && sortDirection === 'asc') select.value = "data_asc";
+        else if (sortField === 'score' && sortDirection === 'desc') select.value = "score_desc";
+        else if (sortField === 'score' && sortDirection === 'asc') select.value = "score_asc";
+    }
+
+    function toggleSort(field) {
+        if (sortField === field) {
+            sortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
+        } else {
+            sortField = field;
+            sortDirection = 'desc';
+        }
+        syncOrdenacaoSelect();
+        aplicarFiltrosTabela();
+    }
+
+    function updateSortIcons() {
+        const scoreIcon = document.getElementById("sortScoreIcon");
+        const dateIcon = document.getElementById("sortDateIcon");
+
+        const getIconClass = (field) => {
+            if (sortField !== field) return "ph-arrows-down-up text-olive-300";
+            return sortDirection === 'desc' ? "ph-caret-down font-medium text-lime-600" : "ph-caret-up font-medium text-lime-600";
+        };
+
+        if (scoreIcon) scoreIcon.className = "ph text-base " + getIconClass('score');
+        if (dateIcon) dateIcon.className = "ph text-base " + getIconClass('data');
+    }
+
+    function extrairDataFormatada(vaga) {
+        let raw = vaga.publicado_em || vaga.criado_em || "";
+        if (!raw) return "Recente";
+        let limpo = raw.replace(/publicada\s+em:\s*/gi, "").trim();
+        return limpo || "Recente";
+    }
+
+    function getVagaTimestamp(vaga) {
+        const dataStr = extrairDataFormatada(vaga);
+        if (dataStr === "Recente") return Date.now();
+
+        const matchPt = dataStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+        if (matchPt) {
+            const day = parseInt(matchPt[1], 10);
+            const month = parseInt(matchPt[2], 10) - 1;
+            const year = parseInt(matchPt[3], 10);
+            return new Date(year, month, day).getTime();
+        }
+
+        const parsed = Date.parse(dataStr);
+        if (!isNaN(parsed)) return parsed;
+
+        if (vaga.criado_em) {
+            const parsedCriado = Date.parse(vaga.criado_em);
+            if (!isNaN(parsedCriado)) return parsedCriado;
+        }
+
+        return 0;
+    }
+
     function aplicarFiltrosTabela() {
+        updateSortIcons();
+        syncOrdenacaoSelect();
+
         const scoreFiltro = document.getElementById("filtroScore").value;
         const modFiltro = document.getElementById("filtroModalidade").value;
         const localFiltro = document.getElementById("filtroLocal").value.toLowerCase().trim();
@@ -1977,67 +1060,93 @@
         });
 
         if (vagasFiltradas.length === 0) {
-            const emptyHtml = `<div style="text-align: center; padding: 48px 16px; background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px dashed var(--border-default); margin-top: 10px;">
-                <div style="font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text-primary);">Nenhuma vaga encontrada</div>
-                <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px;">Tente ajustar os filtros de busca ou clique em <strong>Buscar Vagas</strong> para atualizar a lista.</div>
+            const emptyHtml = `<div class="text-center py-12 px-4 bg-white border border-dashed border-olive-200 rounded-2xl space-y-1">
+                <div class="font-medium text-olive-900 text-sm">Nenhuma vaga encontrada</div>
+                <div class="text-sm text-olive-600 font-normal">Tente ajustar os filtros ou clique em <strong>Buscar vagas</strong> para atualizar a lista.</div>
             </div>`;
             cardsContainer.innerHTML = emptyHtml;
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 24px; color: var(--text-muted);">Nenhuma vaga encontrada com os filtros selecionados.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-olive-400 font-normal text-sm">Nenhuma vaga encontrada com os filtros selecionados.</td></tr>`;
             return;
         }
 
-        vagasFiltradas.sort((a, b) => (b.score || 0) - (a.score || 0));
+        // Ordenação Dinâmica (Padrão: Data decrescente)
+        vagasFiltradas.sort((a, b) => {
+            if (sortField === 'score') {
+                const scoreA = a.score !== undefined && a.score !== null ? a.score : 0;
+                const scoreB = b.score !== undefined && b.score !== null ? b.score : 0;
+                if (scoreA !== scoreB) {
+                    return sortDirection === 'desc' ? scoreB - scoreA : scoreA - scoreB;
+                }
+                return getVagaTimestamp(b) - getVagaTimestamp(a);
+            } else {
+                const timeA = getVagaTimestamp(a);
+                const timeB = getVagaTimestamp(b);
+                if (timeA !== timeB) {
+                    return sortDirection === 'desc' ? timeB - timeA : timeA - timeB;
+                }
+                const scoreA = a.score !== undefined && a.score !== null ? a.score : 0;
+                const scoreB = b.score !== undefined && b.score !== null ? b.score : 0;
+                return scoreB - scoreA;
+            }
+        });
 
         vagasFiltradas.forEach(vaga => {
             const scoreVal = vaga.score !== undefined && vaga.score !== null ? vaga.score : 5;
             
-            let scoreClass = "score-low";
-            if (scoreVal >= 8) scoreClass = "score-high";
-            else if (scoreVal >= 5) scoreClass = "score-mid";
+            let scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-olive-100 text-olive-700 border border-olive-200 font-medium text-sm inline-flex items-center";
+            if (scoreVal >= 8) {
+                scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-lime-100 text-olive-950 border border-lime-300 font-medium text-sm inline-flex items-center";
+            } else if (scoreVal >= 5) {
+                scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 font-medium text-sm inline-flex items-center";
+            }
 
             const modalidadeTexto = vaga.modalidade || (vaga.local && vaga.local.toLowerCase().includes("remoto") ? "Remoto" : "Presencial");
-            const divulgadaEm = vaga.publicado_em || "Recente";
+            const divulgadaEm = extrairDataFormatada(vaga);
 
-            // 1. Render Mobile Job Card (Modo Light, sem gradientes ou emojis)
+            // 1. Mobile Card (Box do ícone Lime 400 no hover com texto oklch(15.3% 0.006 107.1))
             const cardEl = document.createElement("div");
-            cardEl.className = "job-card";
+            cardEl.className = "bg-white border border-olive-200 rounded-2xl p-4 space-y-2";
             cardEl.innerHTML = `
-                <div class="job-card-top">
+                <div class="flex items-start justify-between gap-3">
                     <div>
-                        <h3 class="job-title">${vaga.titulo}</h3>
-                        <div class="job-company">
-                            ${vaga.empresa || 'Empresa Confidencial'}
-                        </div>
+                        <h3 class="font-medium text-olive-900 text-sm leading-snug">${vaga.titulo}</h3>
+                        <p class="text-sm font-normal text-olive-600 mt-0.5">${vaga.empresa || 'Empresa Confidencial'}</p>
                     </div>
-                    <span class="score-pill ${scoreClass}">Pontuação ${scoreVal}/10</span>
-                </div>
-                
-                <div class="job-card-meta">
-                    <span class="badge badge-modality">${modalidadeTexto}</span>
-                    ${vaga.local ? `<span class="badge badge-location">${vaga.local}</span>` : ''}
-                    <span class="badge badge-source">${vaga.fonte}</span>
-                </div>
-
-                <div class="job-card-footer">
-                    <span class="job-date">Divulgada em: ${divulgadaEm}</span>
-                    <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="job-link-btn">
-                        Ver Vaga
+                    <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-xl border border-olive-200 bg-white hover:bg-lime-400 hover:border-lime-400 text-olive-600 hover:text-[oklch(15.3%_0.006_107.1)] flex items-center justify-center transition-all shrink-0" title="Ver vaga">
+                        <i class="ph ph-arrow-up-right text-base"></i>
                     </a>
+                </div>
+                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-olive-600 pt-1">
+                    <span class="${scoreTagClass}">${scoreVal}/10</span>
+                    <span>•</span>
+                    <span>${modalidadeTexto}</span>
+                    ${vaga.local ? `<span>•</span><span>${vaga.local}</span>` : ''}
+                    <span>•</span>
+                    <span>${vaga.fonte}</span>
+                    <span>•</span>
+                    <span class="text-xs text-olive-400 font-normal">${divulgadaEm}</span>
                 </div>
             `;
             cardsContainer.appendChild(cardEl);
 
-            // 2. Render Desktop Table Row
+            // 2. Desktop Table Row (Box do ícone Lime 400 no hover com texto oklch(15.3% 0.006 107.1))
             const tr = document.createElement("tr");
+            tr.className = "hover:bg-olive-50/80 transition-colors";
             tr.innerHTML = `
-                <td><span class="score-pill ${scoreClass}">${scoreVal}/10</span></td>
-                <td><strong>${vaga.titulo}</strong></td>
-                <td>${vaga.empresa || '-'}</td>
-                <td><span style="font-size: 0.8rem; color: var(--text-secondary); font-family: var(--font-mono);">${divulgadaEm}</span></td>
-                <td><span class="badge badge-modality">${modalidadeTexto}</span></td>
-                <td>${vaga.local || '-'}</td>
-                <td><span class="badge badge-source">${vaga.fonte}</span></td>
-                <td><a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="job-link-btn" style="padding: 4px 10px; font-size: 0.75rem;">Ver Vaga</a></td>
+                <td class="py-3.5 px-4">
+                    <span class="${scoreTagClass}">${scoreVal}/10</span>
+                </td>
+                <td class="py-3.5 px-4 font-medium text-olive-900">${vaga.titulo}</td>
+                <td class="py-3.5 px-4 text-olive-700 font-normal">${vaga.empresa || '-'}</td>
+                <td class="py-3.5 px-4 text-olive-600 text-xs font-normal">${divulgadaEm}</td>
+                <td class="py-3.5 px-4 text-olive-700 font-normal">${modalidadeTexto}</td>
+                <td class="py-3.5 px-4 text-olive-700 font-normal">${vaga.local || '-'}</td>
+                <td class="py-3.5 px-4 text-olive-600 text-sm font-normal">${vaga.fonte}</td>
+                <td class="py-3.5 px-4 text-right">
+                    <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-xl border border-olive-200 bg-white hover:bg-lime-400 hover:border-lime-400 text-olive-600 hover:text-[oklch(15.3%_0.006_107.1)] inline-flex items-center justify-center transition-all" title="Ver vaga">
+                        <i class="ph ph-arrow-up-right text-base"></i>
+                    </a>
+                </td>
             `;
             tbody.appendChild(tr);
         });
@@ -2046,8 +1155,8 @@
     function showToast(msg) {
         const toast = document.getElementById("toast");
         toast.innerText = msg;
-        toast.style.display = "block";
-        setTimeout(() => toast.style.display = "none", 3000);
+        toast.classList.remove("hidden");
+        setTimeout(() => toast.classList.add("hidden"), 3000);
     }
 </script>
 
