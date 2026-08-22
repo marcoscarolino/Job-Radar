@@ -187,8 +187,10 @@ CASOS_PUBLICACAO_ANTIGA = [
     ("anos-plural", "há 2 anos", True),
     ("ano-singular", "há 1 ano", True),
     ("dias-nao-e-antiga", "há 3 dias", False),
-    ("dias-mais-7-antiga", "há 10 dias", True),
-    ("semanas-antiga", "há 2 semanas", True),
+    ("dias-dentro-limite", "há 10 dias", False),
+    ("dias-mais-14-antiga", "há 15 dias", True),
+    ("semanas-dentro-limite", "há 2 semanas", False),
+    ("semanas-mais-2-antiga", "há 3 semanas", True),
     ("hoje-nao-e-antiga", "hoje", False),
     ("ontem-nao-e-antiga", "ontem", False),
     # Sem dado nenhum (fonte não expõe) -- não dá pra afirmar "antiga" por
