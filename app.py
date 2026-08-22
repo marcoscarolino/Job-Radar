@@ -108,8 +108,15 @@ def update_config():
         return jsonify({"success": False, "error": "Payload JSON ausente"}), 400
 
     config_salva = salvar_config(novos_dados)
+    try:
+        from database.database import expurgar_vagas_incompativeis, exportar_jobs_json
+        expurgar_vagas_incompativeis()
+        exportar_jobs_json()
+    except Exception:
+        pass
+
     sincronizar_configuracao_github()
-    return jsonify({"success": True, "config": config_salva, "message": "Configurações salvas e sincronizadas com o GitHub Actions!"})
+    return jsonify({"success": True, "config": config_salva, "message": "Configurações salvas, vagas legadas expurgadas e sincronizadas com o GitHub!"})
 
 
 @app.route("/api/jobs", methods=["GET"])

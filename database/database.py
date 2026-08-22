@@ -315,10 +315,50 @@ def limpar_banco_vagas():
     exportar_jobs_json()
 
 
+def expurgar_vagas_incompativeis():
+    """Remove do SQLite data/jobs.db e data/jobs.json todas as vagas salvas que não combinam mais com as regras ativas do usuário."""
+    from pathlib import Path
+    if not Path(DB_PATH).exists():
+        return
+
+    import json
+    from perfis import obter_regras_perfil
+    from job import Job
+
+    regras = obter_regras_perfil("brasil")
+
+    with _conectar() as conn:
+        cursor = conn.execute("SELECT id, titulo, empresa, local, link, site, modalidade, publicado_em FROM vagas_vistas")
+        linhas = cursor.fetchall()
+        ids_para_remover = []
+
+        for row in linhas:
+            j_id, tit, emp, loc, lnk, st, mod, pub = row
+            j = Job(
+                titulo=tit or "",
+                empresa=emp or "",
+                local=loc or "",
+                link=lnk or "",
+                site=st or "",
+                modalidade=mod or "",
+                publicado_em=pub or "",
+            )
+            if not j.combina_com(regras):
+                ids_para_remover.append(j_id)
+
+        if ids_para_remover:
+            conn.executemany("DELETE FROM vagas_vistas WHERE id = ?", [(i,) for i in ids_para_remover])
+
+
 def exportar_jobs_json(caminho_json=None) -> str:
     """Exporta as vagas mais recentes registradas em vagas_vistas para um arquivo JSON estático."""
     import json
     from pathlib import Path
+    from perfis import obter_regras_perfil
+    from job import Job
+
+    regras = obter_regras_perfil("brasil")
+
     if caminho_json is None:
         caminho_json = Path(__file__).parent.parent / "data" / "jobs.json"
     else:
@@ -335,18 +375,29 @@ def exportar_jobs_json(caminho_json=None) -> str:
                    publicado_em
             FROM vagas_vistas
             ORDER BY encontrada_em DESC, ROWID DESC
-            LIMIT 100
             """
         )
         colunas = [col[0] for col in cursor.description]
         vagas = []
         for row in cursor.fetchall():
             d = dict(zip(colunas, row))
-            if d.get("score") is None:
-                d["score"] = 5
-            if not d.get("publicado_em"):
-                d["publicado_em"] = "Recente"
-            vagas.append(d)
+            j = Job(
+                titulo=d.get("titulo") or "",
+                empresa=d.get("empresa") or "",
+                local=d.get("local") or "",
+                link=d.get("url") or "",
+                site=d.get("fonte") or "",
+                modalidade=d.get("modalidade") or "",
+                publicado_em=d.get("publicado_em") or "",
+            )
+            if j.combina_com(regras):
+                if d.get("score") is None or d.get("score") == 0:
+                    d["score"] = j.pontuar_relevancia(regras)
+                if not d.get("publicado_em"):
+                    d["publicado_em"] = "Recente"
+                vagas.append(d)
+                if len(vagas) >= 100:
+                    break
 
     with open(caminho_json, "w", encoding="utf-8") as f:
         json.dump({"success": True, "vagas": vagas}, f, ensure_ascii=False, indent=2)
