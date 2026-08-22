@@ -834,19 +834,6 @@
         } catch (err) {}
 
         try {
-            const resRemote = await fetch("./data/user_config.json?v=" + Date.now());
-            if (resRemote.ok) {
-                const remoteConfig = await resRemote.json();
-                if (remoteConfig && typeof remoteConfig === "object" && remoteConfig.cargos_fortes) {
-                    state = remoteConfig;
-                    salvarEstadoEmLocalStorage();
-                    render();
-                    return;
-                }
-            }
-        } catch (err) {}
-
-        try {
             const saved = localStorage.getItem("jobradar_config");
             if (saved) {
                 state = JSON.parse(saved);
@@ -1365,8 +1352,8 @@
                 if (!searchHaystack.includes(searchTxt)) return false;
             }
 
-            // Filtro dinâmico pelos Cargos Alvo do perfil do usuário ativo
-            if (state && state.cargos_fortes && state.cargos_fortes.length > 0) {
+            // Filtro dinâmico pelos Cargos Alvo do perfil do usuário ativo (apenas quando logado)
+            if (currentUser && state && state.cargos_fortes && state.cargos_fortes.length > 0) {
                 const cargosAlvo = [...(state.cargos_fortes || []), ...(state.cargos_ambiguos || [])]
                     .map(c => c.toLowerCase().trim())
                     .filter(c => c.length > 0);

@@ -3,8 +3,9 @@ import json
 import os
 from pathlib import Path
 
-# Caminho para o arquivo JSON de configuração personalizada
+# Caminhos para arquivos JSON de configuração
 CONFIG_PATH = Path(__file__).parent / "data" / "user_config.json"
+LOCAL_CONFIG_PATH = Path(__file__).parent / "data" / "local_user_config.json"
 
 DEFAULT_CONFIG = {
     "score_minimo": "todos",  # "todos", "5", "8"
@@ -18,6 +19,8 @@ DEFAULT_CONFIG = {
     "cargos_fortes": [
         "Gerente de Projetos",
         "Project Manager",
+        "Product Designer",
+        "Analista de Dados",
     ],
     "cargos_ambiguos": [
         "Coordenador de Projetos",
@@ -39,6 +42,8 @@ DEFAULT_CONFIG = {
     "cidades": [
         "São Paulo",
         "Recife",
+        "Rio de Janeiro",
+        "Brasil",
     ],
     "aceitar_remoto": True,
     "canais_notificacao": {
@@ -66,14 +71,15 @@ DEFAULT_CONFIG = {
 
 
 def carregar_config() -> dict:
-    """Carrega as configurações salvas em data/user_config.json.
+    """Carrega as configurações salvas em local_user_config.json ou user_config.json.
     Se o arquivo não existir, retorna as configurações padrão (DEFAULT_CONFIG).
     """
-    if not CONFIG_PATH.exists():
+    target_path = LOCAL_CONFIG_PATH if LOCAL_CONFIG_PATH.exists() else CONFIG_PATH
+    if not target_path.exists():
         return copy.deepcopy(DEFAULT_CONFIG)
 
     try:
-        with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+        with open(target_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         config_completa = copy.deepcopy(DEFAULT_CONFIG)
@@ -105,8 +111,9 @@ def carregar_config() -> dict:
 
 
 def salvar_config(novas_config: dict) -> dict:
-    """Valida e salva as novas configurações do usuário em data/user_config.json."""
-    CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    """Valida e salva as novas configurações locais do usuário em data/local_user_config.json."""
+    target_path = LOCAL_CONFIG_PATH if CONFIG_PATH == (Path(__file__).parent / "data" / "user_config.json") else CONFIG_PATH
+    target_path.parent.mkdir(parents=True, exist_ok=True)
 
     config_atual = carregar_config()
     for k in DEFAULT_CONFIG.keys():
@@ -116,7 +123,7 @@ def salvar_config(novas_config: dict) -> dict:
             else:
                 config_atual[k] = novas_config[k]
 
-    with open(CONFIG_PATH, "w", encoding="utf-8") as f:
+    with open(target_path, "w", encoding="utf-8") as f:
         json.dump(config_atual, f, ensure_ascii=False, indent=2)
 
     return config_atual

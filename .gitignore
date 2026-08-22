@@ -7,5 +7,7 @@ __pycache__/
 data/*.db-journal
 data/*.db-wal
 data/*.db-shm
+data/local_user_config.json
+data/user_config.json
 .DS_Store
 

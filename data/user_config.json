@@ -1,22 +1,26 @@
 {
-  "score_minimo": "5",
+  "score_minimo": "todos",
   "modalidades_aceitas": {
     "remoto": true,
-    "hibrido": false,
-    "presencial": false
+    "hibrido": true,
+    "presencial": true
   },
   "preferencia_modalidade": "remoto",
   "senioridades_alvo": [
+    "Júnior",
+    "Pleno",
+    "Sênior",
     "Especialista/Liderança"
   ],
   "cargos_fortes": [
-    "PMO",
-    "Gerente de projetos",
-    "Project Manager"
+    "Gerente de Projetos",
+    "Project Manager",
+    "Scrum Master",
+    "Product Designer",
+    "Analista de Dados"
   ],
   "cargos_ambiguos": [
-    "Coordenador de Projetos",
-    "Scrum Master"
+    "Coordenador de Projetos"
   ],
   "ferramentas": [],
   "qualificadores_dados": [
@@ -24,41 +28,23 @@
     "scrum",
     "agile",
     "gestão",
-    "projetos",
-    "certificação",
-    "curso"
+    "projetos"
   ],
   "cidades": [
     "Brasil",
-    "Brasília",
     "São Paulo",
     "Rio de Janeiro",
-    "Minas Gerais",
-    "Santa Catarina"
+    "Belo Horizonte"
   ],
   "aceitar_remoto": true,
   "canais_notificacao": {
     "email": {
-      "ativo": true,
-      "destinatario": "contato.marcoscarolino@gmail.com",
+      "ativo": false,
+      "destinatario": "",
       "smtp_host": "smtp.gmail.com",
       "smtp_port": 587,
-      "smtp_user": "contato.marcoscarolino@gmail.com",
-      "smtp_pass": "jsdz xalk hadj xqhm"
-    },
-    "telegram": {
-      "ativo": false,
-      "bot_token": "",
-      "chat_id": ""
-    },
-    "whatsapp": {
-      "api_key": "",
-      "ativo": false,
-      "numero": ""
-    },
-    "webhook": {
-      "ativo": false,
-      "url": ""
+      "smtp_user": "",
+      "smtp_pass": ""
     }
   },
   "scrapers_ativos": {
@@ -70,7 +56,7 @@
     "geekhunter": true,
     "trampos": true,
     "jobs99": true,
-    "weworkremotely": false,
+    "weworkremotely": true,
     "linkedin_intl": false
   }
 }

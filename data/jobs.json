@@ -2,6 +2,102 @@
   "success": true,
   "vagas": [
     {
+      "id": "49c0f8374bf8c97b636300ea66f7ed65",
+      "titulo": "Product Designer - Especialista",
+      "empresa": "VENHA SER #SANGUELARANJA 🧡🚀",
+      "local": "Não informado",
+      "url": "https://fcamara.gupy.io/job/eyJqb2JJZCI6MTIwNTc3MjUsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
+      "fonte": "Gupy",
+      "criado_em": "2026-08-22 19:32:05",
+      "modalidade": "Remoto",
+      "score": 9,
+      "publicado_em": "Publicada em: 12/08/2026"
+    },
+    {
+      "id": "80c7b40a2025d5ca9b7e1ad08416293f",
+      "titulo": "Product Designer Pl",
+      "empresa": "Vivo Digital",
+      "local": "Não informado",
+      "url": "https://vivodigital.gupy.io/job/eyJqb2JJZCI6MTIwNzU0MTAsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
+      "fonte": "Gupy",
+      "criado_em": "2026-08-22 19:32:05",
+      "modalidade": "Remoto",
+      "score": 5,
+      "publicado_em": "Publicada em: 13/08/2026"
+    },
+    {
+      "id": "bad091ea30c3146b61ff8be6599c1762",
+      "titulo": "Product Designer Sr.",
+      "empresa": "Vivo Digital",
+      "local": "Não informado",
+      "url": "https://vivodigital.gupy.io/job/eyJqb2JJZCI6MTIwODAxOTAsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
+      "fonte": "Gupy",
+      "criado_em": "2026-08-22 19:32:05",
+      "modalidade": "Remoto",
+      "score": 5,
+      "publicado_em": "Publicada em: 13/08/2026"
+    },
+    {
+      "id": "d55e38d65cb1841ee828974bc77186bb",
+      "titulo": "Product Designer I (ERP Omie)",
+      "empresa": "Omie",
+      "local": "Não informado",
+      "url": "https://carreirasomie.gupy.io/job/eyJqb2JJZCI6MTIwMzg2MDcsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
+      "fonte": "Gupy",
+      "criado_em": "2026-08-22 19:32:05",
+      "modalidade": "Remoto",
+      "score": 8,
+      "publicado_em": "Publicada em: 17/08/2026"
+    },
+    {
+      "id": "8dbe83020be7e636a6563dbab139c830",
+      "titulo": "Pessoa Product Designer Pl (Remoto) - 9740",
+      "empresa": "Starian",
+      "local": "Não informado",
+      "url": "https://starian.gupy.io/job/eyJqb2JJZCI6MTIwNTk3NDAsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
+      "fonte": "Gupy",
+      "criado_em": "2026-08-22 19:32:05",
+      "modalidade": "Remoto",
+      "score": 5,
+      "publicado_em": "Publicada em: 19/08/2026"
+    },
+    {
+      "id": "56a522fceb90c5e5d7761aa29b65ad2a",
+      "titulo": "Scrum Master (4761)",
+      "empresa": "Keep Simple",
+      "local": "Não informado",
+      "url": "https://keepsimple.gupy.io/job/eyJqb2JJZCI6MTIwNDUyNjEsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
+      "fonte": "Gupy",
+      "criado_em": "2026-08-22 19:23:55",
+      "modalidade": "Remoto",
+      "score": 7,
+      "publicado_em": "Publicada em: 11/08/2026"
+    },
+    {
+      "id": "c50c5e3f0dbcc1ab9e9942a78c45c975",
+      "titulo": "SCRUM MASTER - RHA3312",
+      "empresa": "Spread Tecnologia",
+      "local": "Não informado",
+      "url": "https://spread.gupy.io/job/eyJqb2JJZCI6MTIwOTQzNzYsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
+      "fonte": "Gupy",
+      "criado_em": "2026-08-22 19:23:55",
+      "modalidade": "Remoto",
+      "score": 7,
+      "publicado_em": "Publicada em: 14/08/2026"
+    },
+    {
+      "id": "39f089917f66828068de66daa0945604",
+      "titulo": "SCRUM MASTER - RHA3313",
+      "empresa": "Spread Tecnologia",
+      "local": "Não informado",
+      "url": "https://spread.gupy.io/job/eyJqb2JJZCI6MTIwOTQzNzMsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
+      "fonte": "Gupy",
+      "criado_em": "2026-08-22 19:23:55",
+      "modalidade": "Remoto",
+      "score": 7,
+      "publicado_em": "Publicada em: 14/08/2026"
+    },
+    {
       "id": "9550b6529819cb0b7b5d5b53aed0d85e",
       "titulo": "Scrum Master",
       "empresa": "Techne",
@@ -35,30 +131,6 @@
       "criado_em": "2026-08-22 17:11:20",
       "modalidade": "Remoto",
       "score": 4,
-      "publicado_em": "Publicada em: 21/08/2026"
-    },
-    {
-      "id": "7578944fef9ba5b1c56e901f839ee161",
-      "titulo": "Project Manager Sênior - REMOTO",
-      "empresa": "#Sejaveriter",
-      "local": "Não informado",
-      "url": "https://verity.gupy.io/job/eyJqb2JJZCI6MTIxOTc2NTcsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
-      "fonte": "Gupy",
-      "criado_em": "2026-08-22 17:11:20",
-      "modalidade": "Remoto",
-      "score": 9,
-      "publicado_em": "Publicada em: 20/08/2026"
-    },
-    {
-      "id": "9f4e0ed8bcb6a666bfbff8df679e05cf",
-      "titulo": "12185884 - GERENTE DE PROJETOS DE TI",
-      "empresa": "Quality Digital",
-      "local": "Não informado",
-      "url": "https://qualitydigital.gupy.io/job/eyJqb2JJZCI6MTIxODU4ODQsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
-      "fonte": "Gupy",
-      "criado_em": "2026-08-22 17:11:20",
-      "modalidade": "Remoto",
-      "score": 9,
       "publicado_em": "Publicada em: 21/08/2026"
     }
   ]
