@@ -495,14 +495,14 @@
 <script>
     const API_BASE = window.location.hostname.includes("github.io") ? "http://127.0.0.1:5000" : "";
 
-    // Configuração do Firebase
+    // Configuração oficial do Firebase (Projeto Job Radar)
     const firebaseConfig = window.FIREBASE_CONFIG || {
-        apiKey: "AIzaSyDummyKeyForJobRadarWebDemo123456",
-        authDomain: "job-radar-app.firebaseapp.com",
-        projectId: "job-radar-app",
-        storageBucket: "job-radar-app.appspot.com",
-        messagingSenderId: "123456789012",
-        appId: "1:123456789012:web:abcdef1234567890"
+        apiKey: "AIzaSyCiA4QYuFBfsdX34Tc7S2hVfWiKe9gbMKo",
+        authDomain: "job-radar-778fe.firebaseapp.com",
+        projectId: "job-radar-778fe",
+        storageBucket: "job-radar-778fe.firebasestorage.app",
+        messagingSenderId: "489767932775",
+        appId: "1:489767932775:web:ac2ac335f8bbdbcdca15c2"
     };
 
     try {
@@ -630,28 +630,36 @@
         }
 
         try {
-            let parsed = null;
-            if (raw.includes("{")) {
-                const jsonStr = raw.substring(raw.indexOf("{"), raw.lastIndexOf("}") + 1);
-                const formatted = jsonStr
-                    .replace(/([a-zA-Z0-9_]+)\s*:/g, '"$1":')
-                    .replace(/'/g, '"')
-                    .replace(/,\s*}/g, '}');
-                parsed = JSON.parse(formatted);
-            } else {
-                parsed = JSON.parse(raw);
-            }
+            const extractField = (key) => {
+                const match = raw.match(new RegExp(`${key}\\s*:\\s*["']([^"']+)["']`));
+                return match ? match[1] : null;
+            };
 
-            if (parsed && (parsed.apiKey || parsed.projectId)) {
-                localStorage.setItem("jobradar_firebase_config", JSON.stringify(parsed));
-                showToast("Credenciais salvas! Reiniciando conexão...");
+            const apiKey = extractField("apiKey");
+            const projectId = extractField("projectId");
+            const authDomain = extractField("authDomain") || (projectId ? `${projectId}.firebaseapp.com` : null);
+            const storageBucket = extractField("storageBucket") || (projectId ? `${projectId}.firebasestorage.app` : null);
+            const messagingSenderId = extractField("messagingSenderId");
+            const appId = extractField("appId");
+
+            if (apiKey && projectId) {
+                const configObj = {
+                    apiKey,
+                    authDomain,
+                    projectId,
+                    storageBucket,
+                    messagingSenderId,
+                    appId
+                };
+                localStorage.setItem("jobradar_firebase_config", JSON.stringify(configObj));
+                showToast("Credenciais salvas! Conectando ao Firebase...");
                 fecharModalFirebase();
-                setTimeout(() => window.location.reload(), 600);
+                setTimeout(() => window.location.reload(), 500);
             } else {
-                alert("Não foi possível identificar apiKey ou projectId no texto informado.");
+                alert("Não foi possível identificar apiKey ou projectId no texto colado.");
             }
         } catch (e) {
-            alert("Formato inválido. Cole o objeto firebaseConfig exatamente como mostrado no Firebase Console.");
+            alert("Erro ao ler configuração: " + e.message);
         }
     }
 
