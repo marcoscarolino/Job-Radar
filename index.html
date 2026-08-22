@@ -127,9 +127,12 @@
                     </select>
                 </div>
 
+                <!-- Cidade / Local (Dropdown das cidades escolhidas pelo usuário) -->
                 <div class="flex-1 min-w-[130px]">
                     <label class="block text-sm font-medium text-olive-800 mb-1.5">Cidade / Local</label>
-                    <input type="text" id="filtroLocal" class="w-full px-3.5 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Ex: São Paulo" oninput="aplicarFiltrosTabela()">
+                    <select id="filtroLocal" class="w-full pl-3.5 pr-10 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all cursor-pointer font-normal" onchange="aplicarFiltrosTabela()">
+                        <option value="todas">Todas</option>
+                    </select>
                 </div>
 
                 <div class="flex-1 min-w-[130px]">
@@ -555,6 +558,28 @@
         render();
     }
 
+    function atualizarFiltroLocalDropdown() {
+        const select = document.getElementById("filtroLocal");
+        if (!select) return;
+        const valorAtual = select.value;
+
+        select.innerHTML = '<option value="todas">Todas</option>';
+        const cidades = state.cidades || [];
+
+        cidades.forEach(cidade => {
+            const opt = document.createElement("option");
+            opt.value = cidade.toLowerCase().trim();
+            opt.textContent = cidade;
+            select.appendChild(opt);
+        });
+
+        if (valorAtual && Array.from(select.options).some(o => o.value === valorAtual)) {
+            select.value = valorAtual;
+        } else {
+            select.value = "todas";
+        }
+    }
+
     function render() {
         renderCargosFortes();
         renderFerramentas();
@@ -703,7 +728,10 @@
 
     function adicionarCidade() { adicionarItemLista("cidades", "inputCidade", renderCidades); }
     function removerCidade(index) { removerItemLista("cidades", index, renderCidades); }
-    function renderCidades() { renderTagsLista("cidadesTagsList", state.cidades || [], removerCidade); }
+    function renderCidades() {
+        renderTagsLista("cidadesTagsList", state.cidades || [], removerCidade);
+        atualizarFiltroLocalDropdown();
+    }
 
     function renderTagsLista(containerId, list, removerFn) {
         const container = document.getElementById(containerId);
@@ -1038,7 +1066,10 @@
                 if (modFiltro === "presencial" && !modNorm.includes("presenc") && !modNorm.includes("site")) return false;
             }
 
-            if (localFiltro && ! (vaga.local || "").toLowerCase().includes(localFiltro)) return false;
+            if (localFiltro !== "todas") {
+                const vagaLocalNorm = (vaga.local || "").toLowerCase();
+                if (!vagaLocalNorm.includes(localFiltro)) return false;
+            }
 
             if (fonteFiltro !== "todas") {
                 const fonteNorm = (vaga.fonte || "").toLowerCase();
