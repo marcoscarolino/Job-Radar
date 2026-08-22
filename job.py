@@ -855,7 +855,7 @@ class Job:
 
     @property
     def publicacao_antiga(self) -> bool:
-        """True quando a vaga foi publicada há mais de 7 dias (mais de 1 semana)."""
+        """True quando a vaga foi publicada há mais de 14 dias (mais de 2 semanas)."""
         texto = _normalizar(self.publicado_em)
         if not texto:
             return False
@@ -865,7 +865,7 @@ class Job:
         if m_dt:
             try:
                 d_pub = date(int(m_dt.group(3)), int(m_dt.group(2)), int(m_dt.group(1)))
-                if (date.today() - d_pub).days > 7:
+                if (date.today() - d_pub).days > 14:
                     return True
             except Exception:
                 pass
@@ -874,7 +874,7 @@ class Job:
         if m_iso:
             try:
                 d_pub = date(int(m_iso.group(1)), int(m_iso.group(2)), int(m_iso.group(3)))
-                if (date.today() - d_pub).days > 7:
+                if (date.today() - d_pub).days > 14:
                     return True
             except Exception:
                 pass
@@ -884,14 +884,11 @@ class Job:
 
         m_dia = re.search(r"(\d+)\s*(?:dia|d\b)", texto)
         if m_dia:
-            return int(m_dia.group(1)) > 7
+            return int(m_dia.group(1)) > 14
 
         m_sem = re.search(r"(\d+)\s*(?:semana|sem\b|w\b)", texto)
         if m_sem:
-            return int(m_sem.group(1)) > 1
-
-        if "semana" in texto and not re.search(r"\b1\b|uma\b", texto):
-            return True
+            return int(m_sem.group(1)) > 2
 
         return False
 
