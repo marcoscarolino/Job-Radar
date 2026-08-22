@@ -2,22 +2,18 @@
   "score_minimo": "5",
   "modalidades_aceitas": {
     "remoto": true,
-    "hibrido": true,
-    "presencial": true
+    "hibrido": false,
+    "presencial": false
   },
   "preferencia_modalidade": "remoto",
   "senioridades_alvo": [
-    "Júnior",
-    "Pleno",
     "Sênior",
     "Especialista/Liderança"
   ],
   "cargos_fortes": [
-    "product design",
-    "product designer",
-    "ux designer",
-    "ui designer",
-    "designer de produto"
+    "PMO",
+    "Gerente de Projetos",
+    "Project Manager"
   ],
   "cargos_ambiguos": [
     "Coordenador de Projetos",
@@ -36,7 +32,10 @@
   "cidades": [
     "Brasil",
     "Brasília",
-    "São Paulo"
+    "São Paulo",
+    "Rio de Janeiro",
+    "Minas Gerais",
+    "Santa Catarina"
   ],
   "aceitar_remoto": true,
   "canais_notificacao": {
