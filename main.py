@@ -357,7 +357,52 @@ def _rodar_um_ciclo_de_cada(perfis: list[Perfil]):
             colunas = [col[0] for col in cursor.description]
             vagas = [dict(zip(colunas, r)) for r in cursor.fetchall()]
 
-        if vagas:
+        usuarios_firebase = []
+        try:
+            from firebase_service import is_firebase_disponivel, obter_todos_usuarios_ativos, deve_enviar_alerta, atualizar_ultimo_envio
+            if is_firebase_disponivel():
+                usuarios_firebase = obter_todos_usuarios_ativos()
+        except Exception as e:
+            logger.debug(f"[Multi-User] Verificação do Firebase: {e}")
+
+        if usuarios_firebase:
+            from perfis import criar_regras_usuario
+            from job import Job
+            from notifier.dispatcher import enviar_digest_email_para_usuario
+
+            logger.info(f"[Multi-User] Processando alertas para {len(usuarios_firebase)} usuário(s) do Firebase...")
+            for usr in usuarios_firebase:
+                uid = usr.get("uid")
+                freq = usr.get("frequencia_alerta", "a_cada_3_horas")
+                ultimo_envio = usr.get("ultimo_envio_email")
+
+                if not deve_enviar_alerta(freq, ultimo_envio):
+                    logger.info(f"[Multi-User] Usuário {usr.get('email_destinatario')} fora da janela de disparo (frequência: {freq}).")
+                    continue
+
+                regras_usr = criar_regras_usuario(usr)
+                vagas_usr = []
+                for v_raw in vagas:
+                    j = Job(
+                        titulo=v_raw.get("titulo") or "",
+                        empresa=v_raw.get("empresa") or "",
+                        local=v_raw.get("local") or "",
+                        link=v_raw.get("url") or "",
+                        site=v_raw.get("fonte") or "",
+                        publicado_em=v_raw.get("publicado_em") or "",
+                        modalidade=v_raw.get("modalidade") or "",
+                    )
+                    if j.combina_com(regras_usr):
+                        v_copy = dict(v_raw)
+                        v_copy["score"] = j.pontuar_relevancia(regras_usr)
+                        vagas_usr.append(v_copy)
+
+                if vagas_usr:
+                    ok = enviar_digest_email_para_usuario(usr, vagas_usr)
+                    if ok and uid:
+                        atualizar_ultimo_envio(uid)
+                        logger.info(f"[Multi-User] Digest enviado para {usr.get('email_destinatario')} ({len(vagas_usr)} vagas).")
+        elif vagas:
             from notifier.dispatcher import enviar_digest_email_multicanal
             enviar_digest_email_multicanal(vagas)
     except Exception as e:
@@ -368,6 +413,7 @@ def _rodar_um_ciclo_de_cada(perfis: list[Perfil]):
         exportar_jobs_json()
     except Exception as e:
         logger.warning(f"Erro ao exportar data/jobs.json: {e}")
+
 
 
 

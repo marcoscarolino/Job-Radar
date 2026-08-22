@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Configurações personalizadas por usuário
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      match /config/{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // Coleção pública de vagas para leitura pelo frontend se necessário
+    match /vagas/{vagaId} {
+      allow read: if true;
+      allow write: if false; // Apenas backend via Firebase Admin SDK
+    }
+  }
+}

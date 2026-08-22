@@ -144,8 +144,11 @@ def construir_digest_html(vagas: list[dict]) -> str:
                 </tr>
                 <!-- Rodapé -->
                 <tr>
-                    <td align="center" style="padding-top: 24px; border-top: 1px solid #f0f2ea; font-size: 12px; font-weight: 400; color: #768456;">
-                        Alertas automáticos gerados pelo JobRadar
+                    <td align="center" style="padding-top: 24px; border-top: 1px solid #f0f2ea; font-size: 12px; font-weight: 400; color: #768456; line-height: 1.6;">
+                        Alertas automáticos gerados pelo JobRadar<br>
+                        <span style="font-size: 11px; color: #94a273;">
+                            Desenvolvido por <a href="https://www.linkedin.com/in/marcoscarolino/" target="_blank" style="color: #5c6743; text-decoration: underline; font-weight: 500;">Marcos Carolino</a>
+                        </span>
                     </td>
                 </tr>
             </table>

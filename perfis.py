@@ -200,16 +200,11 @@ def obter_scrapers_dinamicos(perfil_chave: str = "brasil") -> list[DefinicaoScra
     return scrapers_filtrados
 
 
-def obter_regras_perfil(perfil_chave: str = "brasil") -> RegrasFiltro:
-    """Retorna o objeto RegrasFiltro re-lendo data/user_config.json dinamicamente."""
-    if perfil_chave == "internacional":
-        return _REGRAS_INTL
-
-    usr_cfg = carregar_config()
+def criar_regras_usuario(usr_cfg: dict) -> RegrasFiltro:
+    """Gera um objeto RegrasFiltro a partir do dicionário de configurações de qualquer usuário."""
     scrapers_act = usr_cfg.get("scrapers_ativos", {})
     linkedin_intl_ativo = scrapers_act.get("linkedin_intl", False)
 
-    # Se as opções internacionais estiverem desativadas, só aceita o mercado "Brasil"
     mercados = MERCADOS_REMOTO_ACEITOS if linkedin_intl_ativo else ["Brasil"]
 
     cargos_fortes = usr_cfg.get("cargos_fortes", ["Gerente de Projetos", "Project Manager"])
@@ -235,17 +230,43 @@ def obter_regras_perfil(perfil_chave: str = "brasil") -> RegrasFiltro:
     )
 
 
+def obter_regras_perfil(perfil_chave: str = "brasil") -> RegrasFiltro:
+    """Retorna o objeto RegrasFiltro re-lendo data/user_config.json dinamicamente."""
+    if perfil_chave == "internacional":
+        return _REGRAS_INTL
+
+    usr_cfg = carregar_config()
+    return criar_regras_usuario(usr_cfg)
+
+
+
 def obter_termos_busca_perfil(perfil_chave: str = "brasil") -> list[str]:
-    """Retorna os termos de busca re-lendo data/user_config.json dinamicamente."""
+    """Retorna os termos de busca consolidando as buscas de todos os usuários do Firebase ou do config local."""
     if perfil_chave == "internacional":
         return TERMOS_BUSCA_INTL
 
-    usr_cfg = carregar_config()
-    cargos_fortes = usr_cfg.get("cargos_fortes", ["Gerente de Projetos", "Project Manager"])
-    cargos_ambiguos = usr_cfg.get("cargos_ambiguos", ["Coordenador de Projetos", "Scrum Master"])
-    ferramentas = usr_cfg.get("ferramentas", [])
+    termos = set()
+    try:
+        from firebase_service import is_firebase_disponivel, obter_todos_usuarios_ativos
+        if is_firebase_disponivel():
+            usuarios = obter_todos_usuarios_ativos()
+            for u in usuarios:
+                cf = u.get("cargos_fortes") or []
+                ca = u.get("cargos_ambiguos") or []
+                fer = u.get("ferramentas") or []
+                for k in cf + ca + fer:
+                    if k and isinstance(k, str) and k.strip():
+                        termos.add(k.strip().lower())
+    except Exception:
+        pass
 
-    termos = set(k.lower() for k in (cargos_fortes + cargos_ambiguos)) | set(f.lower() for f in ferramentas)
+    if not termos:
+        usr_cfg = carregar_config()
+        cargos_fortes = usr_cfg.get("cargos_fortes", ["Gerente de Projetos", "Project Manager"])
+        cargos_ambiguos = usr_cfg.get("cargos_ambiguos", ["Coordenador de Projetos", "Scrum Master"])
+        ferramentas = usr_cfg.get("ferramentas", [])
+        termos = set(k.lower() for k in (cargos_fortes + cargos_ambiguos)) | set(f.lower() for f in ferramentas)
+
     res = sorted(termos)
     return res if res else TERMOS_BUSCA
 

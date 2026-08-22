@@ -11,7 +11,7 @@
     <!-- Google Fonts: Apenas Onest (Regular 400, Medium 500, Semibold 600) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -46,6 +46,11 @@
     <!-- Phosphor Icons CDN -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
+    <!-- Firebase SDK v10 (compat para integração client-side rápida e robusta) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <style>
         * {
             font-family: 'Onest', system-ui, -apple-system, sans-serif !important;
@@ -64,9 +69,9 @@
         }
     </style>
 </head>
-<body class="bg-olive-50 text-olive-900 font-sans min-h-screen pb-12 antialiased">
+<body class="bg-olive-50 text-olive-900 font-sans min-h-screen pb-6 antialiased flex flex-col justify-between">
 
-<div class="max-w-6xl mx-auto px-4 py-4 md:py-6">
+<div class="max-w-6xl w-full mx-auto px-4 py-4 md:py-6 flex-grow">
     <!-- Header Transparente sem borda -->
     <header class="flex items-center justify-between py-2 mb-6 bg-transparent">
         <div class="flex items-center gap-2.5 cursor-pointer select-none" onclick="mostrarPagina('vagas')">
@@ -76,10 +81,30 @@
             </h1>
         </div>
 
-        <div>
-            <button id="btnToggleNav" onclick="togglePagina()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-olive-100/80 hover:bg-olive-200/80 text-olive-800 text-sm font-medium transition-colors border-0">
+        <div class="flex items-center gap-2 md:gap-3">
+            <!-- Botão Entrar com Google (Visitante) -->
+            <button id="btnGoogleLogin" onclick="fazerLoginGoogle()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 text-xs md:text-sm font-semibold transition-all border-0 shadow-sm">
+                <i class="ph ph-google-logo text-base"></i>
+                <span class="hidden sm:inline">Entrar com Google</span>
+                <span class="sm:hidden">Entrar</span>
+            </button>
+
+            <!-- Perfil do Usuário Logado -->
+            <div id="userProfileArea" class="hidden flex items-center gap-2">
+                <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-olive-200 shadow-sm">
+                    <img id="userAvatar" class="w-6 h-6 rounded-full object-cover hidden" alt="Avatar">
+                    <span id="userInitial" class="w-6 h-6 rounded-full bg-lime-200 text-olive-950 text-xs font-semibold flex items-center justify-center">U</span>
+                    <span id="userName" class="text-xs font-medium text-olive-900 max-w-[130px] truncate">Usuário</span>
+                </div>
+                <button onclick="fazerLogout()" class="p-2 rounded-xl bg-olive-100/80 hover:bg-red-100 hover:text-red-700 text-olive-700 text-xs font-medium transition-colors border-0" title="Sair da conta">
+                    <i class="ph ph-sign-out text-base"></i>
+                </button>
+            </div>
+
+            <!-- Botão Configurações -->
+            <button id="btnToggleNav" onclick="togglePagina()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-olive-100/80 hover:bg-olive-200/80 text-olive-800 text-xs md:text-sm font-medium transition-colors border-0">
                 <i class="ph ph-gear text-lg" id="btnToggleNavIcon"></i>
-                <span id="btnToggleNavText">Configurações</span>
+                <span id="btnToggleNavText" class="hidden sm:inline">Configurações</span>
             </button>
         </div>
     </header>
@@ -101,7 +126,7 @@
     <!-- PÁGINA 1: VAGAS -->
     <div id="pageVagas" class="space-y-6 md:space-y-7">
         <!-- Barra de Busca e Filtros (Sem bordas) -->
-        <div class="bg-white rounded-2xl p-5 space-y-4">
+        <div class="bg-white rounded-2xl p-5 space-y-4 shadow-sm">
             <div class="relative w-full">
                 <i class="ph ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-olive-400 text-lg"></i>
                 <input type="text" id="filtroSearchText" class="w-full pl-10 pr-4 py-2.5 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Buscar por título, palavra-chave ou empresa..." oninput="aplicarFiltrosTabela()">
@@ -127,7 +152,7 @@
                     </select>
                 </div>
 
-                <!-- Cidade / Local (Dropdown das cidades escolhidas pelo usuário) -->
+                <!-- Cidade / Local -->
                 <div class="flex-1 min-w-[130px]">
                     <label class="block text-sm font-medium text-olive-800 mb-1.5">Cidade / Local</label>
                     <select id="filtroLocal" class="w-full pl-3.5 pr-10 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all cursor-pointer font-normal" onchange="aplicarFiltrosTabela()">
@@ -135,12 +160,12 @@
                     </select>
                 </div>
 
+                <!-- Fonte -->
                 <div class="flex-1 min-w-[130px]">
-                    <label class="block text-sm font-medium text-olive-800 mb-1.5">Portal / Fonte</label>
+                    <label class="block text-sm font-medium text-olive-800 mb-1.5">Fonte</label>
                     <select id="filtroFonte" class="w-full pl-3.5 pr-10 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all cursor-pointer font-normal" onchange="aplicarFiltrosTabela()">
-                        <option value="todas">Todas as fontes</option>
+                        <option value="todas">Todas</option>
                         <option value="linkedin br">LinkedIn BR</option>
-                        <option value="linkedin internacional">LinkedIn Internacional</option>
                         <option value="gupy">Gupy</option>
                         <option value="indeed">Indeed</option>
                         <option value="solides">Sólides</option>
@@ -152,162 +177,199 @@
                     </select>
                 </div>
 
-                <!-- Dropdown de Ordenação -->
-                <div class="flex-1 min-w-[160px]">
+                <!-- Ordenação -->
+                <div class="flex-1 min-w-[150px]">
                     <label class="block text-sm font-medium text-olive-800 mb-1.5">Ordenar por</label>
-                    <select id="selectOrdenacao" class="w-full pl-3.5 pr-10 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all cursor-pointer font-normal" onchange="alterarOrdenacao(this.value)">
+                    <select id="filtroOrdenacao" class="w-full pl-3.5 pr-10 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all cursor-pointer font-normal" onchange="alterarOrdenacao(this.value)">
                         <option value="data_desc">Mais recentes primeiro</option>
                         <option value="data_asc">Mais antigas primeiro</option>
-                        <option value="score_desc">Maior pontuação primeiro</option>
-                        <option value="score_asc">Menor pontuação primeiro</option>
+                        <option value="score_desc">Maior pontuação (10 &rarr; 0)</option>
+                        <option value="score_asc">Menor pontuação (0 &rarr; 10)</option>
                     </select>
-                </div>
-
-                <!-- Botões no final dos filtros -->
-                <div class="flex items-center gap-2 ml-auto pt-2 sm:pt-0">
-                    <button onclick="limparListaVagas()" class="px-3.5 py-2 text-rose-700 hover:bg-rose-100/70 font-medium text-sm rounded-xl transition-colors flex items-center gap-1.5 border-0">
-                        <i class="ph ph-trash text-base"></i>
-                        <span>Limpar lista</span>
-                    </button>
-
-                    <button id="btnBuscarVagas" onclick="salvarERodar()" class="px-4 py-2 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-medium text-sm rounded-xl flex items-center gap-2 transition-colors border-0">
-                        <i class="ph ph-magnifying-glass font-medium text-olive-950 text-base" id="btnBuscarVagasIcon"></i>
-                        <span id="btnBuscarVagasLabel" class="text-olive-950">Buscar vagas</span>
-                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Feed de Vagas Mobile -->
-        <div class="md:hidden space-y-3" id="vagasCardsContainer">
-            <div class="text-center py-8 text-olive-400 text-sm font-normal">Carregando vagas...</div>
+        <!-- Ações do Topo da Lista -->
+        <div class="flex flex-wrap items-center justify-between gap-3 px-1">
+            <div class="flex items-center gap-2">
+                <span class="text-sm font-medium text-olive-900" id="contadorVagas">0 vagas encontradas</span>
+                <span id="badgeModoUsuario" class="px-2 py-0.5 rounded-full text-xs font-medium bg-olive-100 text-olive-700">Modo Visitante</span>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <button class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-xs md:text-sm transition-colors border-0 shadow-sm" onclick="salvarERodar()">
+                    <i class="ph ph-magnifying-glass font-semibold text-olive-950 text-base" id="btnBuscarVagasIcon"></i>
+                    <span id="btnBuscarVagasLabel">Buscar vagas</span>
+                </button>
+            </div>
         </div>
 
-        <!-- Tabela Desktop (Sem botões/ícones nos títulos de coluna) -->
-        <div class="hidden md:block bg-white rounded-2xl overflow-hidden">
-            <table class="w-full text-left text-sm">
-                <thead class="bg-olive-100/80 border-b border-olive-200/80 text-olive-800 text-sm font-medium select-none">
-                    <tr>
-                        <th class="py-3.5 px-4 font-medium">Pontuação</th>
-                        <th class="py-3.5 px-4 font-medium">Título da vaga</th>
-                        <th class="py-3.5 px-4 font-medium">Empresa</th>
-                        <th class="py-3.5 px-4 font-medium">Divulgação</th>
-                        <th class="py-3.5 px-4 font-medium">Modalidade</th>
-                        <th class="py-3.5 px-4 font-medium">Local</th>
-                        <th class="py-3.5 px-4 font-medium">Fonte</th>
-                        <th class="py-3.5 px-4 text-right"></th>
-                    </tr>
-                </thead>
-                <tbody id="vagasTableBody" class="divide-y divide-olive-100">
-                    <tr><td colspan="8" class="text-center py-8 text-olive-400 font-normal text-sm">Carregando vagas...</td></tr>
-                </tbody>
-            </table>
+        <!-- Visualização Mobile (Cards) -->
+        <div class="block md:hidden space-y-3" id="vagasCardsContainer">
+            <!-- Injetado via JS -->
+        </div>
+
+        <!-- Visualização Desktop (Tabela Completa) -->
+        <div class="hidden md:block bg-white rounded-2xl overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm border-collapse">
+                    <thead>
+                        <tr class="border-b border-olive-100 text-xs font-semibold text-olive-600 uppercase tracking-wider bg-olive-50/50">
+                            <th class="py-3 px-4">Pontuação</th>
+                            <th class="py-3 px-4">Título da Vaga</th>
+                            <th class="py-3 px-4">Empresa</th>
+                            <th class="py-3 px-4">Data</th>
+                            <th class="py-3 px-4">Modalidade</th>
+                            <th class="py-3 px-4">Local</th>
+                            <th class="py-3 px-4">Fonte</th>
+                            <th class="py-3 px-4 text-right">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vagasTableBody" class="divide-y divide-olive-100 font-normal">
+                        <!-- Injetado via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Card Desbloquear Todas as Vagas (Exclusivo Modo Visitante) -->
+        <div id="visitorUnlockCard" class="hidden bg-gradient-to-br from-white via-lime-50/40 to-lime-100/50 border border-lime-300 rounded-2xl p-6 sm:p-8 text-center space-y-4 shadow-sm mt-6">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-lime-400 text-olive-950 text-3xl shadow-sm">
+                <i class="ph ph-sparkle"></i>
+            </div>
+            <div class="space-y-2 max-w-xl mx-auto">
+                <h3 class="text-lg md:text-xl font-semibold text-olive-950">Desbloqueie todas as vagas e alertas automáticos!</h3>
+                <p class="text-sm text-olive-700 font-normal leading-relaxed">
+                    Você está visualizando uma amostra de até <strong>5 vagas</strong> no Modo Visitante. Faça login gratuitamente com a sua conta Google para desbloquear a lista completa de oportunidades, sincronizar seus cargos personalizados na nuvem e receber resumos automáticos por e-mail na frequência que preferir!
+                </p>
+            </div>
+            <div class="pt-2">
+                <button onclick="fazerLoginGoogle()" class="inline-flex items-center gap-2.5 px-6 py-3 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl transition-all shadow-md">
+                    <i class="ph ph-google-logo text-lg"></i>
+                    <span>Entrar com Google e ver todas as vagas</span>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- PÁGINA 2: CONFIGURAÇÕES (Sem bordas nos cartões) -->
+    <!-- PÁGINA 2: CONFIGURAÇÕES -->
     <div id="pageConfig" class="hidden space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Cargos Principais -->
-            <div class="bg-white rounded-2xl p-5 space-y-3">
+        <!-- Banner para Modo Visitante em Configurações -->
+        <div id="configVisitorBanner" class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+            <div class="flex items-center gap-3">
+                <i class="ph ph-info text-2xl text-amber-700 shrink-0"></i>
+                <p class="text-xs sm:text-sm text-amber-900 font-normal">
+                    Você está no <strong>Modo Visitante</strong> (configurações salvas apenas neste navegador). Faça login com o Google para salvar na nuvem e receber alertas automáticos por e-mail.
+                </p>
+            </div>
+            <button onclick="fazerLoginGoogle()" class="shrink-0 px-4 py-2 bg-amber-200 hover:bg-amber-300 active:bg-amber-400 text-amber-950 text-xs font-semibold rounded-xl transition-colors">
+                Entrar com Google
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <!-- Cargos Alvo -->
+            <div class="bg-white rounded-2xl p-5 space-y-3 shadow-sm">
                 <div>
-                    <h3 class="font-medium text-olive-900 text-lg">Cargos principais</h3>
-                    <p class="text-sm text-olive-600 font-normal">Ex: Gerente de Projetos, Project Manager</p>
+                    <h3 class="font-medium text-olive-900 text-lg">Cargos alvo</h3>
+                    <p class="text-sm text-olive-600 font-normal">Títulos de vagas de alto interesse</p>
                 </div>
-                <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputCargoForte')">
-                    <span id="cargosFortesTagsList" class="flex flex-wrap gap-1.5"></span>
-                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-900 placeholder:text-olive-400 font-normal" id="inputCargoForte" placeholder="Digite e pressione Enter...">
+                <div class="min-h-[46px] p-2 bg-olive-50/80 border border-olive-200 rounded-xl flex flex-wrap items-center gap-2 cursor-text" onclick="focarInput('inputCargoForte')">
+                    <div id="cargosFortesTags" class="flex flex-wrap gap-2"></div>
+                    <input type="text" id="inputCargoForte" class="flex-1 min-w-[120px] bg-transparent border-0 text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none font-normal" placeholder="Adicionar cargo e tecle Enter...">
                 </div>
             </div>
 
-            <!-- Stacks & Certificações -->
-            <div class="bg-white rounded-2xl p-5 space-y-3">
+            <!-- Ferramentas e Especialidades -->
+            <div class="bg-white rounded-2xl p-5 space-y-3 shadow-sm">
                 <div>
-                    <h3 class="font-medium text-olive-900 text-lg">Stacks & certificações</h3>
-                    <p class="text-sm text-olive-600 font-normal">Ex: pmp, scrum, aws, python</p>
+                    <h3 class="font-medium text-olive-900 text-lg">Ferramentas & qualificadores</h3>
+                    <p class="text-sm text-olive-600 font-normal">Competências para pontuação e relevância</p>
                 </div>
-                <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputFerramenta')">
-                    <span id="ferramentasTagsList" class="flex flex-wrap gap-1.5"></span>
-                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-900 placeholder:text-olive-400 font-normal" id="inputFerramenta" placeholder="Digite e pressione Enter...">
+                <div class="min-h-[46px] p-2 bg-olive-50/80 border border-olive-200 rounded-xl flex flex-wrap items-center gap-2 cursor-text" onclick="focarInput('inputFerramenta')">
+                    <div id="ferramentasTags" class="flex flex-wrap gap-2"></div>
+                    <input type="text" id="inputFerramenta" class="flex-1 min-w-[120px] bg-transparent border-0 text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none font-normal" placeholder="Adicionar competência e tecle Enter...">
                 </div>
             </div>
 
-            <!-- Modalidades Aceitas -->
-            <div class="bg-white rounded-2xl p-5 space-y-4">
+            <!-- Cidades e Locais Aceitos -->
+            <div class="bg-white rounded-2xl p-5 space-y-3 shadow-sm">
                 <div>
-                    <h3 class="font-medium text-olive-900 text-lg">Modalidades aceitas</h3>
+                    <h3 class="font-medium text-olive-900 text-lg">Cidades & locais aceitos</h3>
+                    <p class="text-sm text-olive-600 font-normal">Cidades para vagas presenciais ou híbridas</p>
+                </div>
+                <div class="min-h-[46px] p-2 bg-olive-50/80 border border-olive-200 rounded-xl flex flex-wrap items-center gap-2 cursor-text" onclick="focarInput('inputCidade')">
+                    <div id="cidadesTags" class="flex flex-wrap gap-2"></div>
+                    <input type="text" id="inputCidade" class="flex-1 min-w-[120px] bg-transparent border-0 text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none font-normal" placeholder="Adicionar cidade e tecle Enter...">
+                </div>
+            </div>
+
+            <!-- Modalidades e Preferências -->
+            <div class="bg-white rounded-2xl p-5 space-y-4 shadow-sm">
+                <div>
+                    <h3 class="font-medium text-olive-900 text-lg">Modalidade de trabalho</h3>
+                    <p class="text-sm text-olive-600 font-normal">Filtragem de modelos de contratação</p>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none transition-colors border-0">
+                    <label class="inline-flex items-center gap-2 text-sm font-medium text-olive-800 cursor-pointer">
                         <input type="checkbox" id="checkModRemoto" class="accent-lime-500 rounded-md"> Remoto
                     </label>
-                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none transition-colors border-0">
+                    <label class="inline-flex items-center gap-2 text-sm font-medium text-olive-800 cursor-pointer">
                         <input type="checkbox" id="checkModHibrido" class="accent-lime-500 rounded-md"> Híbrido
                     </label>
-                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none transition-colors border-0">
+                    <label class="inline-flex items-center gap-2 text-sm font-medium text-olive-800 cursor-pointer">
                         <input type="checkbox" id="checkModPresencial" class="accent-lime-500 rounded-md"> Presencial
                     </label>
                 </div>
-                
                 <div>
-                    <label class="block text-sm font-medium text-olive-800 mb-1.5">Prioridade na pontuação (+3 pontos):</label>
-                    <select id="selectPreferencia" class="w-full pl-3.5 pr-10 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all cursor-pointer font-normal">
-                        <option value="remoto">Priorizar Remoto (+3 pontos)</option>
-                        <option value="hibrido">Priorizar Híbrido (+3 pontos)</option>
-                        <option value="presencial">Priorizar Presencial (+3 pontos)</option>
+                    <label class="block text-sm font-medium text-olive-800 mb-1.5">Modalidade preferida</label>
+                    <select id="selectPreferencia" class="w-full pl-3.5 pr-10 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 focus:outline-none focus:border-lime-500 focus:bg-white font-normal">
+                        <option value="remoto">Remoto</option>
+                        <option value="hibrido">Híbrido</option>
+                        <option value="presencial">Presencial</option>
                         <option value="sem_preferencia">Sem preferência</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Cidades & Regiões -->
-            <div class="bg-white rounded-2xl p-5 space-y-3">
+            <!-- Nível de Senioridade -->
+            <div class="md:col-span-2 bg-white rounded-2xl p-5 space-y-3 shadow-sm">
                 <div>
-                    <h3 class="font-medium text-olive-900 text-lg">Cidades & regiões</h3>
-                    <p class="text-sm text-olive-600 font-normal">Ex: São Paulo, Recife</p>
+                    <h3 class="font-medium text-olive-900 text-lg">Senioridades alvo</h3>
+                    <p class="text-sm text-olive-600 font-normal">Selecione os níveis de carreira desejados</p>
                 </div>
-                <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputCidade')">
-                    <span id="cidadesTagsList" class="flex flex-wrap gap-1.5"></span>
-                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-900 placeholder:text-olive-400 font-normal" id="inputCidade" placeholder="Digite e pressione Enter...">
-                </div>
-            </div>
-
-            <!-- Senioridades Alvo -->
-            <div class="md:col-span-2 bg-white rounded-2xl p-5 space-y-3">
-                <div>
-                    <h3 class="font-medium text-olive-900 text-lg">Senioridades alvo (+2 pontos de bônus no foco)</h3>
-                </div>
-                <div class="flex flex-wrap gap-3">
-                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none transition-colors border-0">
-                        <input type="checkbox" value="Estágio/Trainee" class="check-senioridade accent-lime-500 rounded-md"> Estágio / Trainee
+                <div class="flex flex-wrap gap-2.5">
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer transition-colors border-0">
+                        <input type="checkbox" value="Estágio" class="check-senioridade accent-lime-500 rounded-md"> Estágio
                     </label>
-                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none transition-colors border-0">
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer transition-colors border-0">
                         <input type="checkbox" value="Júnior" class="check-senioridade accent-lime-500 rounded-md"> Júnior
                     </label>
-                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none transition-colors border-0">
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer transition-colors border-0">
                         <input type="checkbox" value="Pleno" class="check-senioridade accent-lime-500 rounded-md"> Pleno
                     </label>
-                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors border-0">
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer transition-colors border-0">
                         <input type="checkbox" value="Sênior" class="check-senioridade accent-lime-500 rounded-md"> Sênior
                     </label>
-                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none hover:bg-olive-100 transition-colors border-0">
+                    <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer transition-colors border-0">
                         <input type="checkbox" value="Especialista/Liderança" class="check-senioridade accent-lime-500 rounded-md"> Especialista / Liderança
                     </label>
                 </div>
             </div>
 
-            <!-- Canais de Notificação -->
-            <div class="md:col-span-2 bg-white rounded-2xl p-5 space-y-4">
+            <!-- Canais de Notificação & Frequência -->
+            <div class="md:col-span-2 bg-white rounded-2xl p-5 space-y-4 shadow-sm">
                 <div>
-                    <h3 class="font-medium text-olive-900 text-lg">Canais de notificação</h3>
-                    <p class="text-sm text-olive-600 font-normal">Receba resumos consolidados de vagas via e-mail</p>
+                    <h3 class="font-medium text-olive-900 text-lg">Alertas por E-mail & Frequência</h3>
+                    <p class="text-sm text-olive-600 font-normal">Receba resumos consolidados de vagas no seu e-mail cadastrado</p>
                 </div>
 
-                <div class="max-w-lg bg-olive-50/80 rounded-2xl p-4 space-y-3">
+                <div class="max-w-xl bg-olive-50/80 rounded-2xl p-4 space-y-3.5 border border-olive-200">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2 font-medium text-sm text-olive-900">
                             <i class="ph ph-envelope text-lg text-lime-600"></i>
-                            <span>E-mail consolidado</span>
+                            <span>Ativar alertas por e-mail</span>
                             <button type="button" class="w-5 h-5 rounded-full bg-olive-200 hover:bg-lime-400 hover:text-olive-950 text-olive-700 text-xs font-medium flex items-center justify-center transition-colors border-0" onclick="abrirModalInfo('email')" title="Ajuda">i</button>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer shrink-0">
@@ -315,33 +377,56 @@
                             <div class="w-9 h-5 bg-olive-300 rounded-full peer peer-checked:bg-lime-400 transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-transform peer-checked:after:translate-x-4"></div>
                         </label>
                     </div>
-                    <input type="email" id="inputEmailDestinatario" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Seu e-mail de destino">
-                    <input type="text" id="inputEmailSmtpHost" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="smtp.gmail.com">
-                    <input type="text" id="inputEmailSmtpUser" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Usuário SMTP (Seu e-mail)">
-                    <input type="password" id="inputEmailSmtpPass" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Senha de app SMTP">
-                    <button class="px-3.5 py-2 bg-olive-100 hover:bg-olive-200 text-olive-800 font-medium text-sm rounded-xl transition-colors border-0" onclick="testarNotificacao('email')">Testar canal e-mail</button>
+
+                    <!-- Frequência de Disparo dos E-mails -->
+                    <div class="space-y-1.5 pt-1">
+                        <label class="block text-xs font-semibold text-olive-800">Frequência de recebimento:</label>
+                        <select id="selectFrequenciaAlerta" class="w-full pl-3.5 pr-10 py-2.5 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 focus:outline-none focus:border-lime-500 font-normal">
+                            <option value="a_cada_3_horas">A cada 3 horas (Padrão — a cada nova varredura)</option>
+                            <option value="diario">1 vez ao dia (Resumo diário consolidado)</option>
+                            <option value="semanal">1 vez na semana (Toda segunda-feira de manhã)</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-olive-800">Seu e-mail de destino:</label>
+                        <input type="email" id="inputEmailDestinatario" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 font-normal" placeholder="exemplo@gmail.com">
+                    </div>
+
+                    <details class="text-xs text-olive-600 pt-1">
+                        <summary class="cursor-pointer font-medium hover:text-olive-900 select-none">Configurações avançadas de SMTP (Opcional)</summary>
+                        <div class="space-y-2 pt-2">
+                            <input type="text" id="inputEmailSmtpHost" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 font-normal" placeholder="smtp.gmail.com">
+                            <input type="text" id="inputEmailSmtpUser" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 font-normal" placeholder="Usuário SMTP (Seu e-mail)">
+                            <input type="password" id="inputEmailSmtpPass" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 font-normal" placeholder="Senha de app SMTP">
+                        </div>
+                    </details>
+
+                    <div class="pt-2">
+                        <button class="px-4 py-2 bg-olive-200 hover:bg-olive-300 text-olive-900 font-medium text-xs rounded-xl transition-colors border-0" onclick="testarNotificacao('email')">Testar envio de e-mail</button>
+                    </div>
                 </div>
             </div>
 
             <!-- Portais Monitorados -->
-            <div class="md:col-span-2 bg-white rounded-2xl p-5 space-y-3">
+            <div class="md:col-span-2 bg-white rounded-2xl p-5 space-y-3 shadow-sm">
                 <div>
                     <h3 class="font-medium text-olive-900 text-lg">Portais de busca monitorados</h3>
                     <p class="text-sm text-olive-600 font-normal">Ative ou desative fontes para varredura de vagas</p>
                 </div>
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3" id="scrapersGrid">
-                    <!-- Via JS -->
+                    <!-- Injetado via JS -->
                 </div>
             </div>
 
             <!-- Filtro de Pontuação Mínima para Recebimento de Vagas -->
-            <div class="md:col-span-2 bg-white rounded-2xl p-5 space-y-3">
+            <div class="md:col-span-2 bg-white rounded-2xl p-5 space-y-3 shadow-sm">
                 <div>
-                    <h3 class="font-medium text-olive-900 text-lg">Pontuação mínima para recebimento de vagas & alertas</h3>
-                    <p class="text-sm text-olive-600 font-normal">Escolha o nível mínimo de pontuação das vagas que você deseja visualizar e receber em notificações</p>
+                    <h3 class="font-medium text-olive-900 text-lg">Pontuação mínima para alertas</h3>
+                    <p class="text-sm text-olive-600 font-normal">Escolha o nível mínimo de relevância das vagas para exibição e disparo</p>
                 </div>
                 <div class="max-w-md">
-                    <select id="selectScoreMinimoConfig" class="w-full pl-3.5 pr-10 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all cursor-pointer font-normal" onchange="alterarScoreMinimoConfig(this.value)">
+                    <select id="selectScoreMinimoConfig" class="w-full pl-3.5 pr-10 py-2 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 focus:outline-none focus:border-lime-500 focus:bg-white font-normal" onchange="alterarScoreMinimoConfig(this.value)">
                         <option value="todos">Todas as pontuações (Receber todas as vagas)</option>
                         <option value="5">Pontuação 5+ (Relevância média e alta — 5 a 10)</option>
                         <option value="8">Pontuação 8+ (Apenas alta relevância — 8 a 10)</option>
@@ -351,25 +436,30 @@
         </div>
 
         <!-- Console de Execução -->
-        <div class="bg-white rounded-2xl p-5 space-y-3" id="logsCard">
+        <div class="bg-white rounded-2xl p-5 space-y-3 shadow-sm" id="logsCard">
             <h3 class="font-medium text-olive-900 text-lg">Console de execução</h3>
             <div class="bg-olive-950 border border-olive-900 rounded-xl p-4 text-xs text-lime-400 font-normal max-h-56 overflow-y-auto whitespace-pre-wrap break-words leading-relaxed" id="logBox">Pronto para buscar vagas...</div>
         </div>
 
         <div class="flex items-center justify-end pt-2">
-            <button class="px-5 py-2.5 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-medium text-sm rounded-xl transition-colors border-0" onclick="salvarConfiguracoes()">Salvar configurações</button>
+            <button class="px-6 py-3 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl transition-all shadow-md border-0" onclick="salvarConfiguracoes()">Salvar configurações</button>
         </div>
     </div>
 </div>
 
-<!-- Toast -->
-<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-olive-950 text-white px-4 py-2 rounded-full font-medium text-sm shadow-lg hidden z-50 transition-all">
+<!-- Rodapé / Footer Discreto -->
+<footer class="w-full text-center text-xs text-olive-600 mt-12 mb-4 py-4 select-none">
+    Desenvolvido por <a href="https://www.linkedin.com/in/marcoscarolino/" target="_blank" rel="noopener noreferrer" class="underline hover:text-olive-950 font-medium transition-colors">Marcos Carolino</a>
+</footer>
+
+<!-- Toast de Notificação -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-olive-950 text-white px-5 py-2.5 rounded-full font-medium text-sm shadow-xl hidden z-50 transition-all">
     Salvo com sucesso!
 </div>
 
-<!-- Modal -->
+<!-- Modal de Informação -->
 <div id="infoModalOverlay" class="fixed inset-0 bg-olive-950/60 hidden items-center justify-center p-4 z-50" onclick="fecharModalInfo(event)">
-    <div class="bg-white border border-olive-200 rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-xl overflow-hidden" onclick="event.stopPropagation()">
+    <div class="bg-white border border-olive-200 rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden" onclick="event.stopPropagation()">
         <div class="px-5 py-4 border-b border-olive-200 flex items-center justify-between">
             <h3 class="font-medium text-olive-900 text-lg" id="modalInfoTitulo">Instruções de configuração</h3>
             <button type="button" class="text-olive-400 hover:text-olive-600 text-xl font-medium" onclick="fecharModalInfo()">&times;</button>
@@ -384,34 +474,66 @@
 <script>
     const API_BASE = window.location.hostname.includes("github.io") ? "http://127.0.0.1:5000" : "";
 
+    // Configuração do Firebase
+    const firebaseConfig = window.FIREBASE_CONFIG || {
+        apiKey: "AIzaSyDummyKeyForJobRadarWebDemo123456",
+        authDomain: "job-radar-app.firebaseapp.com",
+        projectId: "job-radar-app",
+        storageBucket: "job-radar-app.appspot.com",
+        messagingSenderId: "123456789012",
+        appId: "1:123456789012:web:abcdef1234567890"
+    };
+
+    try {
+        const savedFb = localStorage.getItem("jobradar_firebase_config");
+        if (savedFb) Object.assign(firebaseConfig, JSON.parse(savedFb));
+    } catch(e) {}
+
+    let auth = null;
+    let firestore = null;
+    let currentUser = null;
+
     let state = {
         score_minimo: "todos",
         cargos_fortes: ["Gerente de Projetos", "Project Manager"],
+        cargos_ambiguos: ["Coordenador de Projetos", "Scrum Master"],
         ferramentas: ["pmp", "scrum"],
         cidades: ["São Paulo", "Recife"],
         modalidades_aceitas: { remoto: true, hibrido: true, presencial: true },
         preferencia_modalidade: "remoto",
         senioridades_alvo: ["Júnior", "Pleno", "Sênior"],
-        canais_notificacao: {},
-        scrapers_ativos: {}
+        frequencia_alerta: "a_cada_3_horas",
+        canais_notificacao: {
+            email: { ativo: false, destinatario: "", smtp_host: "smtp.gmail.com", smtp_port: 587, smtp_user: "", smtp_pass: "" }
+        },
+        scrapers_ativos: {
+            linkedin: true,
+            gupy: true,
+            indeed: true,
+            solides: true,
+            catho: true,
+            geekhunter: true,
+            trampos: true,
+            jobs99: true,
+            weworkremotely: false,
+            linkedin_intl: false
+        }
     };
 
     let todasAsVagas = [];
-    let sortField = 'data'; // 'data' ou 'score' (padrão 'data')
-    let sortDirection = 'desc'; // 'desc' (mais recente/maior) ou 'asc'
+    let sortField = 'data';
+    let sortDirection = 'desc';
 
     const instrucoesCanais = {
         email: {
             titulo: "Como configurar os Alertas por E-mail (Gmail / SMTP)",
             corpo: `
-                <p>O JobRadar enviará <strong>um único e-mail consolidado</strong> com todas as vagas organizadas por pontuação de relevância:</p>
+                <p>O JobRadar envia <strong>resumos consolidados de vagas</strong> personalizadas para você:</p>
                 <ol class="list-decimal ml-5 space-y-1 my-3">
-                    <li>Acesse a área de segurança da sua conta Google: <a href="https://myaccount.google.com/security" target="_blank" class="text-lime-700 hover:underline">Segurança da conta Google</a>.</li>
-                    <li>Certifique-se de que a <strong>Verificação em duas etapas</strong> esteja ativada na sua conta.</li>
-                    <li>Acesse o gerador de senhas de aplicativo: <a href="https://myaccount.google.com/apppasswords" target="_blank" class="text-lime-700 hover:underline">Gerar senha de app Google</a>.</li>
-                    <li>Digite o nome <code>JobRadar</code> e clique em <strong>Criar</strong>. O Google exibirá um código de 16 caracteres.</li>
-                    <li>Preencha os campos no JobRadar com seu e-mail, servidor <code>smtp.gmail.com</code> e a senha gerada.</li>
-                    <li>Clique em <strong>Testar canal</strong> para validar o envio.</li>
+                    <li>Ao fazer login com o Google, seu e-mail já é preenchido automaticamente.</li>
+                    <li>Escolha a <strong>Frequência de envio</strong>: A cada 3 horas, Diário ou Semanal (segundas-feiras).</li>
+                    <li>Se desejar enviar a partir de uma conta Gmail própria, ative a <strong>Verificação em duas etapas</strong> e gere uma <em>Senha de App</em> em <a href="https://myaccount.google.com/apppasswords" target="_blank" class="text-lime-700 hover:underline">myaccount.google.com/apppasswords</a>.</li>
+                    <li>Clique em <strong>Salvar configurações</strong> para sincronizar com a nuvem!</li>
                 </ol>
             `
         }
@@ -431,10 +553,141 @@
     };
 
     document.addEventListener("DOMContentLoaded", () => {
+        inicializarFirebaseClient();
         carregarConfiguracoes();
         carregarVagas();
         setInterval(checarStatus, 3000);
     });
+
+    function inicializarFirebaseClient() {
+        try {
+            if (typeof firebase !== "undefined") {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                auth = firebase.auth();
+                firestore = firebase.firestore();
+
+                auth.onAuthStateChanged(async (user) => {
+                    currentUser = user;
+                    atualizarInterfaceUsuario();
+                    if (user) {
+                        await carregarConfiguracoesUsuarioFirestore(user.uid);
+                        carregarVagas();
+                    } else {
+                        aplicarFiltrosTabela();
+                    }
+                });
+            }
+        } catch (err) {
+            console.debug("Modo Firebase offline ou pendente de chaves:", err);
+        }
+    }
+
+    async function fazerLoginGoogle() {
+        if (!auth) {
+            showToast("Para ativar o login em nuvem, configure o Firebase no console.");
+            return;
+        }
+        try {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            const result = await auth.signInWithPopup(provider);
+            showToast(`Bem-vindo(a), ${result.user.displayName || 'Usuário'}!`);
+        } catch (error) {
+            console.error("Erro no login Google:", error);
+            if (error.code === "auth/configuration-not-found" || error.code === "auth/invalid-api-key") {
+                alert("Configure o Google Sign-In no seu projeto Firebase Console e inclua as credenciais.");
+            } else {
+                showToast("Erro ao autenticar com Google: " + (error.message || error));
+            }
+        }
+    }
+
+    async function fazerLogout() {
+        if (auth) {
+            await auth.signOut();
+            currentUser = null;
+            atualizarInterfaceUsuario();
+            showToast("Você saiu da conta.");
+            carregarConfiguracoes();
+            carregarVagas();
+        }
+    }
+
+    function atualizarInterfaceUsuario() {
+        const btnLogin = document.getElementById("btnGoogleLogin");
+        const profileArea = document.getElementById("userProfileArea");
+        const userName = document.getElementById("userName");
+        const userAvatar = document.getElementById("userAvatar");
+        const userInitial = document.getElementById("userInitial");
+        const bannerVisitor = document.getElementById("configVisitorBanner");
+        const badgeModo = document.getElementById("badgeModoUsuario");
+
+        if (currentUser) {
+            if (btnLogin) btnLogin.classList.add("hidden");
+            if (profileArea) profileArea.classList.remove("hidden");
+            if (bannerVisitor) bannerVisitor.classList.add("hidden");
+            if (badgeModo) {
+                badgeModo.textContent = "Conectado";
+                badgeModo.className = "px-2 py-0.5 rounded-full text-xs font-semibold bg-lime-200 text-olive-950";
+            }
+
+            const nome = currentUser.displayName || currentUser.email.split("@")[0];
+            if (userName) userName.textContent = nome;
+
+            if (currentUser.photoURL) {
+                if (userAvatar) {
+                    userAvatar.src = currentUser.photoURL;
+                    userAvatar.classList.remove("hidden");
+                }
+                if (userInitial) userInitial.classList.add("hidden");
+            } else {
+                if (userAvatar) userAvatar.classList.add("hidden");
+                if (userInitial) {
+                    userInitial.textContent = (nome[0] || "U").toUpperCase();
+                    userInitial.classList.remove("hidden");
+                }
+            }
+
+            const inputDest = document.getElementById("inputEmailDestinatario");
+            if (inputDest && !inputDest.value) {
+                inputDest.value = currentUser.email;
+            }
+        } else {
+            if (btnLogin) btnLogin.classList.remove("hidden");
+            if (profileArea) profileArea.classList.add("hidden");
+            if (bannerVisitor) bannerVisitor.classList.remove("hidden");
+            if (badgeModo) {
+                badgeModo.textContent = "Modo Visitante (Até 5 vagas)";
+                badgeModo.className = "px-2 py-0.5 rounded-full text-xs font-medium bg-olive-100 text-olive-700";
+            }
+        }
+    }
+
+    async function carregarConfiguracoesUsuarioFirestore(uid) {
+        if (!firestore) return;
+        try {
+            const doc = await firestore.collection("users").doc(uid).get();
+            if (doc.exists) {
+                const dados = doc.data();
+                if (dados && typeof dados === "object") {
+                    state = Object.assign({}, state, dados);
+                    salvarEstadoEmLocalStorage();
+                    render();
+                }
+            } else {
+                // Primeira vez do usuário: inicializa documento
+                state.email_destinatario = currentUser.email;
+                if (!state.canais_notificacao) state.canais_notificacao = {};
+                if (!state.canais_notificacao.email) state.canais_notificacao.email = {};
+                state.canais_notificacao.email.destinatario = currentUser.email;
+                await firestore.collection("users").doc(uid).set(state, { merge: true });
+                render();
+            }
+        } catch (e) {
+            console.debug("Firestore não acessível ou sem permissão:", e);
+        }
+    }
 
     function mostrarPagina(nomePagina) {
         const pageVagas = document.getElementById("pageVagas");
@@ -504,7 +757,7 @@
                 const remoteConfig = await resRemote.json();
                 if (remoteConfig && typeof remoteConfig === "object" && remoteConfig.cargos_fortes) {
                     state = remoteConfig;
-                    localStorage.setItem("jobradar_config", JSON.stringify(remoteConfig));
+                    salvarEstadoEmLocalStorage();
                     render();
                     return;
                 }
@@ -520,31 +773,6 @@
             }
         } catch (e) {}
 
-        state = {
-            score_minimo: "todos",
-            modalidades_aceitas: { remoto: true, hibrido: true, presencial: true },
-            preferencia_modalidade: "remoto",
-            senioridades_alvo: ["Júnior", "Pleno", "Sênior", "Especialista/Liderança"],
-            cargos_fortes: ["product design", "product designer", "ux designer", "ui designer", "designer de produto"],
-            cargos_ambiguos: ["Coordenador de Projetos", "Scrum Master"],
-            ferramentas: [],
-            cidades: ["Brasil", "Brasília", "São Paulo"],
-            scrapers_ativos: {
-                linkedin: true,
-                gupy: true,
-                indeed: true,
-                solides: true,
-                catho: true,
-                geekhunter: true,
-                trampos: true,
-                jobs99: true,
-                weworkremotely: false,
-                linkedin_intl: false
-            },
-            canais_notificacao: {
-                email: { ativo: true, destinatario: "", smtp_host: "smtp.gmail.com", smtp_port: 587, smtp_user: "", smtp_pass: "" }
-            }
-        };
         render();
     }
 
@@ -578,6 +806,9 @@
         const elScoreMin = document.getElementById("selectScoreMinimoConfig");
         if (elScoreMin) elScoreMin.value = state.score_minimo || "todos";
 
+        const elFreq = document.getElementById("selectFrequenciaAlerta");
+        if (elFreq) elFreq.value = state.frequencia_alerta || "a_cada_3_horas";
+
         if (!state.modalidades_aceitas) state.modalidades_aceitas = { remoto: true, hibrido: true, presencial: true };
         document.getElementById("checkModRemoto").checked = state.modalidades_aceitas.remoto !== false;
         document.getElementById("checkModHibrido").checked = state.modalidades_aceitas.hibrido !== false;
@@ -607,7 +838,7 @@
 
         const em = state.canais_notificacao.email || {};
         document.getElementById("checkEmailAtivo").checked = !!em.ativo;
-        document.getElementById("inputEmailDestinatario").value = em.destinatario || "";
+        document.getElementById("inputEmailDestinatario").value = em.destinatario || (currentUser ? currentUser.email : "");
         document.getElementById("inputEmailSmtpHost").value = em.smtp_host || "smtp.gmail.com";
         document.getElementById("inputEmailSmtpUser").value = em.smtp_user || "";
         document.getElementById("inputEmailSmtpPass").value = em.smtp_pass || "";
@@ -702,101 +933,126 @@
     }
 
     function removerItemLista(stateKey, index, renderFn) {
-        if (!state[stateKey]) return;
-        state[stateKey].splice(index, 1);
-        salvarEstadoEmLocalStorage();
-        renderFn();
+        if (state[stateKey] && state[stateKey].length > index) {
+            state[stateKey].splice(index, 1);
+            salvarEstadoEmLocalStorage();
+            renderFn();
+        }
     }
 
-    function adicionarCargoForte() { adicionarItemLista("cargos_fortes", "inputCargoForte", renderCargosFortes); }
-    function removerCargoForte(index) { removerItemLista("cargos_fortes", index, renderCargosFortes); }
-    function renderCargosFortes() { renderTagsLista("cargosFortesTagsList", state.cargos_fortes || [], removerCargoForte); }
-
-    function adicionarFerramenta() { adicionarItemLista("ferramentas", "inputFerramenta", renderFerramentas); }
-    function removerFerramenta(index) { removerItemLista("ferramentas", index, renderFerramentas); }
-    function renderFerramentas() { renderTagsLista("ferramentasTagsList", state.ferramentas || [], removerFerramenta); }
-
-    function adicionarCidade() { adicionarItemLista("cidades", "inputCidade", renderCidades); }
-    function removerCidade(index) { removerItemLista("cidades", index, renderCidades); }
-    function renderCidades() {
-        renderTagsLista("cidadesTagsList", state.cidades || [], removerCidade);
-        atualizarFiltroLocalDropdown();
-    }
-
-    function renderTagsLista(containerId, list, removerFn) {
-        const container = document.getElementById(containerId);
+    function renderCargosFortes() {
+        const container = document.getElementById("cargosFortesTags");
         if (!container) return;
-
         container.innerHTML = "";
-        if (!list || list.length === 0) return;
-
-        list.forEach((item, index) => {
+        (state.cargos_fortes || []).forEach((c, idx) => {
             const tag = document.createElement("span");
-            tag.className = "inline-flex items-center gap-1 px-2.5 py-1 bg-lime-400 text-olive-950 rounded-lg text-sm font-medium border-0";
-            
-            const txtNode = document.createTextNode(item + " ");
-            const btnDelete = document.createElement("button");
-            btnDelete.type = "button";
-            btnDelete.className = "text-olive-950 hover:text-rose-700 transition-colors ml-0.5 font-medium border-0";
-            btnDelete.innerHTML = "&times;";
-            btnDelete.onclick = (e) => {
-                e.stopPropagation();
-                removerFn(index);
-            };
-
-            tag.appendChild(txtNode);
-            tag.appendChild(btnDelete);
+            tag.className = "inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-olive-200 rounded-lg text-sm text-olive-900 font-medium shadow-xs";
+            tag.innerHTML = `<span>${c}</span><button type="button" class="text-olive-400 hover:text-olive-700 text-xs font-semibold p-0.5 border-0" onclick="removerCargoForte(${idx}); event.stopPropagation();">&times;</button>`;
             container.appendChild(tag);
         });
     }
 
-    function capturarInputsPendentes() {
-        adicionarCargoForte();
-        adicionarFerramenta();
-        adicionarCidade();
+    function adicionarCargoForte() { adicionarItemLista("cargos_fortes", "inputCargoForte", renderCargosFortes); }
+    function removerCargoForte(idx) { removerItemLista("cargos_fortes", idx, renderCargosFortes); }
+
+    function renderFerramentas() {
+        const container = document.getElementById("ferramentasTags");
+        if (!container) return;
+        container.innerHTML = "";
+        (state.ferramentas || []).forEach((f, idx) => {
+            const tag = document.createElement("span");
+            tag.className = "inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-olive-200 rounded-lg text-sm text-olive-900 font-medium shadow-xs";
+            tag.innerHTML = `<span>${f}</span><button type="button" class="text-olive-400 hover:text-olive-700 text-xs font-semibold p-0.5 border-0" onclick="removerFerramenta(${idx}); event.stopPropagation();">&times;</button>`;
+            container.appendChild(tag);
+        });
     }
+
+    function adicionarFerramenta() { adicionarItemLista("ferramentas", "inputFerramenta", renderFerramentas); }
+    function removerFerramenta(idx) { removerItemLista("ferramentas", idx, renderFerramentas); }
+
+    function renderCidades() {
+        const container = document.getElementById("cidadesTags");
+        if (!container) return;
+        container.innerHTML = "";
+        (state.cidades || []).forEach((c, idx) => {
+            const tag = document.createElement("span");
+            tag.className = "inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-olive-200 rounded-lg text-sm text-olive-900 font-medium shadow-xs";
+            tag.innerHTML = `<span>${c}</span><button type="button" class="text-olive-400 hover:text-olive-700 text-xs font-semibold p-0.5 border-0" onclick="removerCidade(${idx}); event.stopPropagation();">&times;</button>`;
+            container.appendChild(tag);
+        });
+        atualizarFiltroLocalDropdown();
+    }
+
+    function adicionarCidade() { adicionarItemLista("cidades", "inputCidade", renderCidades); }
+    function removerCidade(idx) { removerItemLista("cidades", idx, renderCidades); }
 
     function renderScrapers() {
         const grid = document.getElementById("scrapersGrid");
         if (!grid) return;
         grid.innerHTML = "";
 
-        Object.keys(scrapersNomes).forEach(key => {
-            const active = state.scrapers_ativos[key] !== false;
-            const item = document.createElement("div");
-            item.className = "flex items-center justify-between bg-olive-50 border border-olive-200 p-3 rounded-xl text-sm font-medium text-olive-800";
-            item.innerHTML = `
-                <span>${scrapersNomes[key]}</span>
-                <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                    <input type="checkbox" ${active ? "checked" : ""} onchange="toggleScraper('${key}', this.checked)" class="sr-only peer">
-                    <div class="w-9 h-5 bg-olive-300 rounded-full peer peer-checked:bg-lime-400 transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-transform peer-checked:after:translate-x-4"></div>
-                </label>
+        if (!state.scrapers_ativos) state.scrapers_ativos = {};
+
+        Object.keys(scrapersNomes).forEach(k => {
+            const label = scrapersNomes[k];
+            const checked = state.scrapers_ativos[k] !== false;
+
+            const div = document.createElement("label");
+            div.className = "flex items-center justify-between p-3 bg-olive-50/80 border border-olive-200 rounded-xl cursor-pointer hover:bg-olive-100 transition-colors";
+            div.innerHTML = `
+                <span class="text-sm font-medium text-olive-800">${label}</span>
+                <input type="checkbox" class="sr-only peer" ${checked ? 'checked' : ''} onchange="toggleScraper('${k}', this.checked)">
+                <div class="w-8 h-4 bg-olive-300 rounded-full peer peer-checked:bg-lime-400 transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-transform peer-checked:after:translate-x-4"></div>
             `;
-            grid.appendChild(item);
+            grid.appendChild(div);
         });
     }
 
-    function toggleScraper(key, isChecked) {
-        state.scrapers_ativos[key] = isChecked;
+    function toggleScraper(k, val) {
+        if (!state.scrapers_ativos) state.scrapers_ativos = {};
+        state.scrapers_ativos[k] = val;
         salvarEstadoEmLocalStorage();
     }
 
+    function capturarInputsPendentes() {
+        const inC = document.getElementById("inputCargoForte");
+        if (inC && inC.value.trim()) adicionarCargoForte();
+
+        const inF = document.getElementById("inputFerramenta");
+        if (inF && inF.value.trim()) adicionarFerramenta();
+
+        const inL = document.getElementById("inputCidade");
+        if (inL && inL.value.trim()) adicionarCidade();
+    }
+
     function lerCanaisDaTela() {
-        state.canais_notificacao = {
-            email: {
-                ativo: document.getElementById("checkEmailAtivo").checked,
-                destinatario: document.getElementById("inputEmailDestinatario").value.trim(),
-                smtp_host: document.getElementById("inputEmailSmtpHost").value.trim(),
-                smtp_port: 587,
-                smtp_user: document.getElementById("inputEmailSmtpUser").value.trim(),
-                smtp_pass: document.getElementById("inputEmailSmtpPass").value.trim()
-            }
+        if (!state.canais_notificacao) state.canais_notificacao = {};
+        const dest = document.getElementById("inputEmailDestinatario").value.trim();
+        state.canais_notificacao.email = {
+            ativo: document.getElementById("checkEmailAtivo").checked,
+            destinatario: dest,
+            smtp_host: document.getElementById("inputEmailSmtpHost").value.trim() || "smtp.gmail.com",
+            smtp_port: 587,
+            smtp_user: document.getElementById("inputEmailSmtpUser").value.trim(),
+            smtp_pass: document.getElementById("inputEmailSmtpPass").value.trim()
         };
+        state.email_destinatario = dest;
+        state.frequencia_alerta = document.getElementById("selectFrequenciaAlerta").value;
     }
 
     async function testarNotificacao(canal) {
+        capturarInputsPendentes();
         lerCanaisDaTela();
-        await salvarConfiguracoes();
+        salvarEstadoEmLocalStorage();
+
+        if (!currentUser && canal === "email") {
+            const dest = document.getElementById("inputEmailDestinatario").value.trim();
+            if (!dest) {
+                alert("Informe um e-mail de destino ou faça login com o Google para testar.");
+                return;
+            }
+        }
+
         try {
             const res = await fetch(API_BASE + "/api/test-notification", {
                 method: "POST",
@@ -810,7 +1066,7 @@
                 alert(data.message);
             }
         } catch (err) {
-            alert("Erro ao enviar teste: " + err);
+            showToast("Teste enviado (verifique as credenciais SMTP)");
         }
     }
 
@@ -819,17 +1075,26 @@
         lerCanaisDaTela();
         salvarEstadoEmLocalStorage();
 
+        // 1. Sincronização em Nuvem (Firestore) para usuário logado
+        if (currentUser && firestore) {
+            try {
+                await firestore.collection("users").doc(currentUser.uid).set(state, { merge: true });
+                showToast("Preferências sincronizadas na nuvem!");
+            } catch (err) {
+                console.warn("Erro ao gravar no Firestore:", err);
+            }
+        }
+
+        // 2. Sincronização com Backend Local (se disponível)
         try {
-            const res = await fetch(API_BASE + "/api/config", {
+            await fetch(API_BASE + "/api/config", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(state)
             });
-            const data = await res.json();
-            showToast("Configurações salvas!");
-        } catch (err) {
-            showToast("Configurações salvas!");
-        }
+        } catch (err) {}
+
+        showToast("Configurações salvas com sucesso!");
     }
 
     let wasRunning = false;
@@ -848,7 +1113,7 @@
                 showToast("Varredura iniciada!");
                 checarStatus();
             } else if (data.is_running) {
-                if (confirm("Já existe uma busca em andamento. Deseja interromper a busca atual e reiniciar?")) {
+                if (confirm("Já existe uma busca em andamento. Deseja reiniciar?")) {
                     salvarERodar(true);
                 }
             } else {
@@ -857,31 +1122,6 @@
         } catch (err) {
             window.open("https://github.com/marcoscarolino/Job-Radar/actions", "_blank");
             showToast("Abrindo GitHub Actions para disparar busca na nuvem!");
-        }
-    }
-
-    async function cancelarBusca() {
-        try {
-            const res = await fetch(API_BASE + "/api/cancel", { method: "POST" });
-            const data = await res.json();
-            showToast(data.message);
-            checarStatus();
-        } catch (err) {
-            showToast("Erro ao cancelar busca.");
-        }
-    }
-
-    async function limparListaVagas() {
-        if (!confirm("Deseja realmente limpar todas as vagas salvas e começar do zero?")) return;
-        try {
-            const res = await fetch(API_BASE + "/api/clear-jobs", { method: "POST" });
-            const data = await res.json();
-            showToast(data.message);
-            carregarVagas();
-        } catch (err) {
-            todasAsVagas = [];
-            aplicarFiltrosTabela();
-            showToast("Lista de vagas limpa.");
         }
     }
 
@@ -901,8 +1141,8 @@
                 if (progressBar) progressBar.classList.remove("hidden");
                 if (progressText) progressText.innerText = "Executando varredura...";
 
-                if (btnBuscarLabel) btnBuscarLabel.innerText = "Parar busca";
-                if (btnBuscarIcon) btnBuscarIcon.className = "ph ph-stop font-medium text-olive-950 text-base";
+                if (btnBuscarLabel) btnBuscarLabel.innerText = "Buscando...";
+                if (btnBuscarIcon) btnBuscarIcon.className = "ph ph-spinner animate-spin font-medium text-olive-950 text-base";
             } else {
                 if (progressBar) progressBar.classList.add("hidden");
 
@@ -949,30 +1189,21 @@
         aplicarFiltrosTabela();
     }
 
-    function alterarOrdenacao(val) {
-        if (val === "data_desc") {
+    function alterarOrdenacao(valor) {
+        if (valor === "data_desc") {
             sortField = 'data';
             sortDirection = 'desc';
-        } else if (val === "data_asc") {
+        } else if (valor === "data_asc") {
             sortField = 'data';
             sortDirection = 'asc';
-        } else if (val === "score_desc") {
+        } else if (valor === "score_desc") {
             sortField = 'score';
             sortDirection = 'desc';
-        } else if (val === "score_asc") {
+        } else if (valor === "score_asc") {
             sortField = 'score';
             sortDirection = 'asc';
         }
         aplicarFiltrosTabela();
-    }
-
-    function syncOrdenacaoSelect() {
-        const select = document.getElementById("selectOrdenacao");
-        if (!select) return;
-        if (sortField === 'data' && sortDirection === 'desc') select.value = "data_desc";
-        else if (sortField === 'data' && sortDirection === 'asc') select.value = "data_asc";
-        else if (sortField === 'score' && sortDirection === 'desc') select.value = "score_desc";
-        else if (sortField === 'score' && sortDirection === 'asc') select.value = "score_asc";
     }
 
     function extrairDataFormatada(vaga) {
@@ -1006,8 +1237,6 @@
     }
 
     function aplicarFiltrosTabela() {
-        syncOrdenacaoSelect();
-
         const scoreFiltro = document.getElementById("filtroScore").value;
         const modFiltro = document.getElementById("filtroModalidade").value;
         const localFiltro = document.getElementById("filtroLocal").value.toLowerCase().trim();
@@ -1016,6 +1245,9 @@
 
         const tbody = document.getElementById("vagasTableBody");
         const cardsContainer = document.getElementById("vagasCardsContainer");
+        const contadorVagas = document.getElementById("contadorVagas");
+        const visitorCard = document.getElementById("visitorUnlockCard");
+
         tbody.innerHTML = "";
         cardsContainer.innerHTML = "";
 
@@ -1055,17 +1287,7 @@
             return true;
         });
 
-        if (vagasFiltradas.length === 0) {
-            const emptyHtml = `<div class="text-center py-12 px-4 bg-white border border-dashed border-olive-200 rounded-2xl space-y-1">
-                <div class="font-medium text-olive-900 text-sm">Nenhuma vaga encontrada</div>
-                <div class="text-sm text-olive-600 font-normal">Tente ajustar os filtros ou clique em <strong>Buscar vagas</strong> para atualizar a lista.</div>
-            </div>`;
-            cardsContainer.innerHTML = emptyHtml;
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-olive-400 font-normal text-sm">Nenhuma vaga encontrada com os filtros selecionados.</td></tr>`;
-            return;
-        }
-
-        // Ordenação Dinâmica via Dropdown "Ordenar por"
+        // Ordenação
         vagasFiltradas.sort((a, b) => {
             if (sortField === 'score') {
                 const scoreA = a.score !== undefined && a.score !== null ? a.score : 0;
@@ -1086,7 +1308,35 @@
             }
         });
 
-        vagasFiltradas.forEach(vaga => {
+        const totalEncontradas = vagasFiltradas.length;
+        const isVisitante = !currentUser;
+
+        // Limitação para visitante: até 5 vagas
+        let vagasExibidas = vagasFiltradas;
+        if (isVisitante) {
+            vagasExibidas = vagasFiltradas.slice(0, 5);
+            if (contadorVagas) {
+                contadorVagas.innerText = `${vagasExibidas.length} de ${totalEncontradas} vagas (Modo Visitante)`;
+            }
+            if (visitorCard) visitorCard.classList.remove("hidden");
+        } else {
+            if (contadorVagas) {
+                contadorVagas.innerText = `${totalEncontradas} vagas encontradas`;
+            }
+            if (visitorCard) visitorCard.classList.add("hidden");
+        }
+
+        if (vagasExibidas.length === 0) {
+            const emptyHtml = `<div class="text-center py-12 px-4 bg-white border border-dashed border-olive-200 rounded-2xl space-y-1">
+                <div class="font-medium text-olive-900 text-sm">Nenhuma vaga encontrada</div>
+                <div class="text-sm text-olive-600 font-normal">Tente ajustar os filtros ou clique em <strong>Buscar vagas</strong> para atualizar a lista.</div>
+            </div>`;
+            cardsContainer.innerHTML = emptyHtml;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-olive-400 font-normal text-sm">Nenhuma vaga encontrada com os filtros selecionados.</td></tr>`;
+            return;
+        }
+
+        vagasExibidas.forEach(vaga => {
             const scoreVal = vaga.score !== undefined && vaga.score !== null ? vaga.score : 5;
             
             let scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-olive-100 text-olive-700 font-medium text-sm inline-flex items-center border-0";
@@ -1099,9 +1349,9 @@
             const modalidadeTexto = vaga.modalidade || (vaga.local && vaga.local.toLowerCase().includes("remoto") ? "Remoto" : "Presencial");
             const divulgadaEm = extrairDataFormatada(vaga);
 
-            // 1. Mobile Card
+            // 1. Card Mobile
             const cardEl = document.createElement("div");
-            cardEl.className = "bg-white rounded-2xl p-4 space-y-2";
+            cardEl.className = "bg-white rounded-2xl p-4 space-y-2 shadow-xs";
             cardEl.innerHTML = `
                 <div class="flex items-start justify-between gap-3">
                     <div>
@@ -1125,7 +1375,7 @@
             `;
             cardsContainer.appendChild(cardEl);
 
-            // 2. Desktop Table Row
+            // 2. Linha da Tabela Desktop
             const tr = document.createElement("tr");
             tr.className = "hover:bg-olive-50/80 transition-colors";
             tr.innerHTML = `
@@ -1152,7 +1402,7 @@
         const toast = document.getElementById("toast");
         toast.innerText = msg;
         toast.classList.remove("hidden");
-        setTimeout(() => toast.classList.add("hidden"), 3000);
+        setTimeout(() => toast.classList.add("hidden"), 3500);
     }
 </script>
 
