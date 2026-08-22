@@ -1366,6 +1366,23 @@
                 if (!searchHaystack.includes(searchTxt)) return false;
             }
 
+            // Filtro dinâmico pelos Cargos Alvo do perfil do usuário ativo
+            if (state && state.cargos_fortes && state.cargos_fortes.length > 0) {
+                const cargosAlvo = [...(state.cargos_fortes || []), ...(state.cargos_ambiguos || [])]
+                    .map(c => c.toLowerCase().trim())
+                    .filter(c => c.length > 0);
+
+                if (cargosAlvo.length > 0) {
+                    const tituloNorm = (vaga.titulo || "").toLowerCase();
+                    const combinaCargo = cargosAlvo.some(cargo => {
+                        if (tituloNorm.includes(cargo)) return true;
+                        const palavrasCargo = cargo.split(" ").filter(t => t.length > 3);
+                        return palavrasCargo.length > 0 && palavrasCargo.some(p => tituloNorm.includes(p));
+                    });
+                    if (!combinaCargo) return false;
+                }
+            }
+
             return true;
         });
 
