@@ -159,29 +159,46 @@ _REGRAS_BR_IBERIA = RegrasFiltro(
 # internacional, sem nada daquele perfil hardcoded. Sem medição própria
 # ainda pra essa combinação (fonte + termos em português) — FREQUENCIA_BAIXA
 # até medir rendimento real.
-_scrapers_act = _usr_cfg_perfis.get("scrapers_ativos", {})
+def obter_scrapers_dinamicos(perfil_chave: str = "brasil") -> list[DefinicaoScraper]:
+    """Retorna os scrapers re-lendo as configurações do usuário dinamicamente em tempo de execução."""
+    usr_cfg = carregar_config()
+    scrapers_act = usr_cfg.get("scrapers_ativos", {})
 
-_TODOS_SCRAPERS_MAP = {
-    "gupy": DefinicaoScraper(GupyScraper, FREQUENCIA_ALTA),
-    "linkedin": DefinicaoScraper(LinkedInScraper, FREQUENCIA_ALTA),
-    "linkedin_intl": DefinicaoScraper(LinkedInIntlScraper, FREQUENCIA_ALTA, {"locations": LOCATIONS_INTL}),
-    "solides": DefinicaoScraper(SolidesScraper, FREQUENCIA_ALTA),
-    "indeed": DefinicaoScraper(IndeedScraper, FREQUENCIA_ALTA),
-    "catho": DefinicaoScraper(CathoScraper, FREQUENCIA_BAIXA),
-    "geekhunter": DefinicaoScraper(GeekHunterScraper, FREQUENCIA_BAIXA),
-    "jobs99": DefinicaoScraper(Jobs99Scraper, FREQUENCIA_BAIXA),
-    "trampos": DefinicaoScraper(TramposScraper, FREQUENCIA_BAIXA),
-    "weworkremotely": DefinicaoScraper(WeWorkRemotelyIntlScraper, FREQUENCIA_BAIXA),
-}
+    if perfil_chave == "internacional":
+        return [
+            DefinicaoScraper(LinkedInIntlScraper, FREQUENCIA_ALTA, {"locations": LOCATIONS_INTL}),
+            DefinicaoScraper(IndeedIntlScraper, FREQUENCIA_ALTA, {"dominios": DOMINIOS_INDEED_INTL}),
+            DefinicaoScraper(WeWorkRemotelyIntlScraper, FREQUENCIA_ALTA),
+        ]
 
-_SCRAPERS_BR = [
-    def_scraper
-    for chave, def_scraper in _TODOS_SCRAPERS_MAP.items()
-    if _scrapers_act.get(chave, True)
-]
+    # Para o perfil BR: se linkedin_intl não estiver ativo, desativa busca remota internacional no LinkedIn BR
+    linkedin_intl_ativo = scrapers_act.get("linkedin_intl", False)
+    locations_remoto = LOCATIONS_LINKEDIN_REMOTO_APENAS if linkedin_intl_ativo else []
 
-if not _SCRAPERS_BR:
-    _SCRAPERS_BR = [DefinicaoScraper(GupyScraper, FREQUENCIA_ALTA)]
+    scrapers_map = {
+        "gupy": DefinicaoScraper(GupyScraper, FREQUENCIA_ALTA),
+        "linkedin": DefinicaoScraper(LinkedInScraper, FREQUENCIA_ALTA, {"locations_remoto_apenas": locations_remoto}),
+        "linkedin_intl": DefinicaoScraper(LinkedInIntlScraper, FREQUENCIA_ALTA, {"locations": LOCATIONS_INTL}),
+        "solides": DefinicaoScraper(SolidesScraper, FREQUENCIA_ALTA),
+        "indeed": DefinicaoScraper(IndeedScraper, FREQUENCIA_ALTA),
+        "catho": DefinicaoScraper(CathoScraper, FREQUENCIA_BAIXA),
+        "geekhunter": DefinicaoScraper(GeekHunterScraper, FREQUENCIA_BAIXA),
+        "jobs99": DefinicaoScraper(Jobs99Scraper, FREQUENCIA_BAIXA),
+        "trampos": DefinicaoScraper(TramposScraper, FREQUENCIA_BAIXA),
+        "weworkremotely": DefinicaoScraper(WeWorkRemotelyIntlScraper, FREQUENCIA_BAIXA),
+    }
+
+    scrapers_filtrados = [
+        def_sc
+        for chave, def_sc in scrapers_map.items()
+        if scrapers_act.get(chave, True)
+    ]
+
+    if not scrapers_filtrados:
+        scrapers_filtrados = [DefinicaoScraper(GupyScraper, FREQUENCIA_ALTA)]
+
+    return scrapers_filtrados
+
 
 PERFIL_BR = Perfil(
     chave="brasil",
@@ -194,7 +211,7 @@ PERFIL_BR = Perfil(
     eixo_secundario_rotulo="Ibéria",
     termos_busca=TERMOS_BUSCA,
     termos_por_ciclo=TERMOS_POR_CICLO,
-    definicao_scrapers=_SCRAPERS_BR,
+    definicao_scrapers=[],
     max_scrapers_concorrentes=4,
 )
 

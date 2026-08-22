@@ -47,10 +47,11 @@ def _fontes_baixa_frequencia_ja_rodaram_hoje(perfil: Perfil) -> bool:
 # na mesma execução sem um pisar na cadência do outro.
 def _construir_scrapers(perfil: Perfil, termos_busca: list[str]):
     rodar_baixa_frequencia = not _fontes_baixa_frequencia_ja_rodaram_hoje(perfil)
+    definicoes = obter_scrapers_dinamicos(perfil.chave)
 
     scrapers = [
         definicao.classe(termos_busca=termos_busca, **definicao.kwargs_extras)
-        for definicao in perfil.definicao_scrapers
+        for definicao in definicoes
         if definicao.frequencia == FREQUENCIA_ALTA or rodar_baixa_frequencia
     ]
 
