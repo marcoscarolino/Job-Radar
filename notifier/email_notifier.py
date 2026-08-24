@@ -10,7 +10,7 @@ logger = get_logger()
 
 def construir_digest_html(vagas: list[dict]) -> str:
     """Monta o HTML do e-mail consolidando todas as vagas agrupadas por pontuação de relevância,
-    seguindo rigorosamente a identidade visual do JobRadar (Onest, Olive & Lime 400, Target Icon).
+    seguindo a identidade visual do JobRadar (Onest, Olive, Lime 100 claro para 8-10, Amber 100 para 5-7).
     Usa apenas ícones vetoriais em SVG sem emojis."""
     vagas_altas = [v for v in vagas if (v.get("score") or v.get("relevancia") or 5) >= 8]
     vagas_medias = [v for v in vagas if 5 <= (v.get("score") or v.get("relevancia") or 5) < 8]
@@ -38,7 +38,15 @@ def construir_digest_html(vagas: list[dict]) -> str:
             divulgada_em = extrair_data(v)
 
             mod_texto = f" • {modalidade}" if modalidade else ""
-            score_badge_style = "background-color: #f0f2ea; color: #4b5338; border: 0;"
+
+            # Cores diferenciadas por nível de pontuação (8-10 Lime claro, 5-7 Amber claro, <5 Olive claro)
+            if score_val >= 8:
+                score_badge_style = "background-color: #ecfccb; color: #365314; border: 0;"
+            elif score_val >= 5:
+                score_badge_style = "background-color: #fef3c7; color: #78350f; border: 0;"
+            else:
+                score_badge_style = "background-color: #f0f2ea; color: #4b5338; border: 0;"
+
             vaga_id = v.get("id") or ""
 
             # Ícones vetoriais SVG (Thumbs Up, Thumbs Down, Arrow Up Right)
