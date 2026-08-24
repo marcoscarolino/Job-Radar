@@ -51,12 +51,12 @@
             font-family: 'Onest', system-ui, -apple-system, sans-serif !important;
         }
 
-        /* Estilização moderna e espaçada para as setas dos dropdowns <select> */
+        /* Estilização moderna e espaçada para as setas dos dropdowns <select> com cor Olive 800 (#4b5338) */
         select {
             appearance: none !important;
             -webkit-appearance: none !important;
             -moz-appearance: none !important;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 256 256'%3E%3Cpath fill='%235c6743' d='M213.66 101.66l-80 80a8 8 0 0 1-11.32 0l-80-80a8 8 0 0 1 11.32-11.32L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32z'/%3E%3C/svg%3E") !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 256 256'%3E%3Cpath fill='%234b5338' d='M213.66 101.66l-80 80a8 8 0 0 1-11.32 0l-80-80a8 8 0 0 1 11.32-11.32L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32z'/%3E%3C/svg%3E") !important;
             background-repeat: no-repeat !important;
             background-position: right 0.85rem center !important;
             background-size: 1rem !important;
@@ -64,20 +64,20 @@
         }
     </style>
 </head>
-<body class="bg-olive-50 text-olive-900 font-sans min-h-screen pb-12 antialiased">
+<body class="bg-olive-50 text-olive-800 font-sans min-h-screen pb-12 antialiased">
 
 <div class="max-w-6xl mx-auto px-4 py-4 md:py-6">
     <!-- Header Transparente sem borda -->
     <header class="flex items-center justify-between py-2 mb-6 bg-transparent">
         <div class="flex items-center gap-2.5 cursor-pointer select-none" onclick="mostrarPagina('vagas')">
             <i class="ph ph-target text-2xl text-lime-600"></i>
-            <h1 class="text-2xl font-semibold tracking-tight text-olive-900">
+            <h1 class="text-2xl font-semibold tracking-tight text-olive-800">
                 JobRadar
             </h1>
         </div>
 
         <div>
-            <button id="btnToggleNav" onclick="togglePagina()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-olive-100/80 hover:bg-olive-200/80 text-olive-800 text-sm font-medium transition-colors border-0">
+            <button id="btnToggleNav" onclick="togglePagina()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-olive-100/80 hover:bg-olive-200/80 text-olive-800 text-sm font-semibold transition-colors border-0">
                 <i class="ph ph-gear text-lg" id="btnToggleNavIcon"></i>
                 <span id="btnToggleNavText">Configurações</span>
             </button>
@@ -86,12 +86,12 @@
 
     <!-- Barra de Progresso da Varredura -->
     <div id="searchProgressBar" class="hidden bg-white border border-lime-400 rounded-2xl p-4 mb-6">
-        <div class="flex items-center justify-between text-sm font-medium text-olive-950 mb-2">
+        <div class="flex items-center justify-between text-sm font-medium text-olive-800 mb-2">
             <span class="flex items-center gap-2">
                 <i class="ph ph-spinner animate-spin text-lg text-lime-600"></i>
                 Varredura de vagas em andamento...
             </span>
-            <span id="progressText" class="font-normal text-xs">Buscando...</span>
+            <span id="progressText" class="font-normal text-xs text-olive-600">Buscando...</span>
         </div>
         <div class="h-1.5 w-full bg-lime-100 rounded-full overflow-hidden">
             <div class="h-full bg-lime-400 rounded-full w-full animate-pulse"></div>
@@ -100,11 +100,11 @@
 
     <!-- PÁGINA 1: VAGAS -->
     <div id="pageVagas" class="space-y-6 md:space-y-7">
-        <!-- Barra de Busca e Filtros (Sem bordas) -->
+        <!-- Barra de Busca e Filtros -->
         <div class="bg-white rounded-2xl p-5 space-y-4">
             <div class="relative w-full">
-                <i class="ph ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-olive-400 text-lg"></i>
-                <input type="text" id="filtroSearchText" class="w-full pl-10 pr-4 py-2.5 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Buscar por título, palavra-chave ou empresa..." oninput="aplicarFiltrosTabela()">
+                <i class="ph ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-olive-600 text-lg"></i>
+                <input type="text" id="filtroSearchText" class="w-full pl-10 pr-4 py-2.5 bg-olive-50 border border-olive-200 rounded-xl text-sm text-olive-800 placeholder:text-olive-600 focus:outline-none focus:border-lime-500 focus:bg-white focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Buscar por título, palavra-chave ou empresa..." oninput="aplicarFiltrosTabela()">
             </div>
 
             <div class="flex flex-wrap items-end gap-3 pt-1">
@@ -165,14 +165,14 @@
 
                 <!-- Botões no final dos filtros -->
                 <div class="flex items-center gap-2 ml-auto pt-2 sm:pt-0">
-                    <button onclick="limparListaVagas()" class="px-3.5 py-2 text-rose-700 hover:bg-rose-100/70 font-medium text-sm rounded-xl transition-colors flex items-center gap-1.5 border-0">
+                    <button onclick="limparListaVagas()" class="px-3.5 py-2 text-rose-700 hover:bg-rose-100/70 font-semibold text-sm rounded-xl transition-colors flex items-center gap-1.5 border-0">
                         <i class="ph ph-trash text-base"></i>
                         <span>Limpar lista</span>
                     </button>
 
-                    <button id="btnBuscarVagas" onclick="salvarERodar()" class="px-4 py-2 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-medium text-sm rounded-xl flex items-center gap-2 transition-colors border-0">
-                        <i class="ph ph-magnifying-glass font-medium text-olive-950 text-base" id="btnBuscarVagasIcon"></i>
-                        <span id="btnBuscarVagasLabel" class="text-olive-950">Buscar vagas</span>
+                    <button id="btnBuscarVagas" onclick="salvarERodar()" class="px-4 py-2 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl flex items-center gap-2 transition-colors border-0">
+                        <i class="ph ph-magnifying-glass font-semibold text-olive-950 text-base" id="btnBuscarVagasIcon"></i>
+                        <span id="btnBuscarVagasLabel" class="text-olive-950 font-semibold">Buscar vagas</span>
                     </button>
                 </div>
             </div>
@@ -180,62 +180,62 @@
 
         <!-- Feed de Vagas Mobile -->
         <div class="md:hidden space-y-3" id="vagasCardsContainer">
-            <div class="text-center py-8 text-olive-400 text-sm font-normal">Carregando vagas...</div>
+            <div class="text-center py-8 text-olive-600 text-sm font-normal">Carregando vagas...</div>
         </div>
 
-        <!-- Tabela Desktop (Sem botões/ícones nos títulos de coluna) -->
+        <!-- Tabela Desktop -->
         <div class="hidden md:block bg-white rounded-2xl overflow-hidden">
             <table class="w-full text-left text-sm">
                 <thead class="bg-olive-100/80 border-b border-olive-200/80 text-olive-800 text-sm font-medium select-none">
                     <tr>
-                        <th class="py-3.5 px-4 font-medium">Pontuação</th>
-                        <th class="py-3.5 px-4 font-medium">Título da vaga</th>
-                        <th class="py-3.5 px-4 font-medium">Empresa</th>
-                        <th class="py-3.5 px-4 font-medium">Divulgação</th>
-                        <th class="py-3.5 px-4 font-medium">Modalidade</th>
-                        <th class="py-3.5 px-4 font-medium">Local</th>
-                        <th class="py-3.5 px-4 font-medium">Fonte</th>
+                        <th class="py-3.5 px-4 font-medium text-olive-800">Pontuação</th>
+                        <th class="py-3.5 px-4 font-medium text-olive-800">Título da vaga</th>
+                        <th class="py-3.5 px-4 font-medium text-olive-800">Empresa</th>
+                        <th class="py-3.5 px-4 font-medium text-olive-800">Divulgação</th>
+                        <th class="py-3.5 px-4 font-medium text-olive-800">Modalidade</th>
+                        <th class="py-3.5 px-4 font-medium text-olive-800">Local</th>
+                        <th class="py-3.5 px-4 font-medium text-olive-800">Fonte</th>
                         <th class="py-3.5 px-4 text-right"></th>
                     </tr>
                 </thead>
                 <tbody id="vagasTableBody" class="divide-y divide-olive-100">
-                    <tr><td colspan="8" class="text-center py-8 text-olive-400 font-normal text-sm">Carregando vagas...</td></tr>
+                    <tr><td colspan="8" class="text-center py-8 text-olive-600 font-normal text-sm">Carregando vagas...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- PÁGINA 2: CONFIGURAÇÕES (Sem bordas nos cartões) -->
+    <!-- PÁGINA 2: CONFIGURAÇÕES -->
     <div id="pageConfig" class="hidden space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Cargos Principais -->
             <div class="bg-white rounded-2xl p-5 space-y-3">
                 <div>
-                    <h3 class="font-medium text-olive-900 text-lg">Cargos principais</h3>
+                    <h3 class="font-medium text-olive-800 text-lg">Cargos principais</h3>
                     <p class="text-sm text-olive-600 font-normal">Ex: Gerente de Projetos, Project Manager</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputCargoForte')">
                     <span id="cargosFortesTagsList" class="flex flex-wrap gap-1.5"></span>
-                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-900 placeholder:text-olive-400 font-normal" id="inputCargoForte" placeholder="Digite e pressione Enter...">
+                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-800 placeholder:text-olive-600 font-normal" id="inputCargoForte" placeholder="Digite e pressione Enter...">
                 </div>
             </div>
 
             <!-- Stacks & Certificações -->
             <div class="bg-white rounded-2xl p-5 space-y-3">
                 <div>
-                    <h3 class="font-medium text-olive-900 text-lg">Stacks & certificações</h3>
+                    <h3 class="font-medium text-olive-800 text-lg">Stacks & certificações</h3>
                     <p class="text-sm text-olive-600 font-normal">Ex: pmp, scrum, aws, python</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputFerramenta')">
                     <span id="ferramentasTagsList" class="flex flex-wrap gap-1.5"></span>
-                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-900 placeholder:text-olive-400 font-normal" id="inputFerramenta" placeholder="Digite e pressione Enter...">
+                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-800 placeholder:text-olive-600 font-normal" id="inputFerramenta" placeholder="Digite e pressione Enter...">
                 </div>
             </div>
 
             <!-- Modalidades Aceitas -->
             <div class="bg-white rounded-2xl p-5 space-y-4">
                 <div>
-                    <h3 class="font-medium text-olive-900 text-lg">Modalidades aceitas</h3>
+                    <h3 class="font-medium text-olive-800 text-lg">Modalidades aceitas</h3>
                 </div>
                 <div class="flex flex-wrap gap-3">
                     <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none transition-colors border-0">
@@ -263,19 +263,19 @@
             <!-- Cidades & Regiões -->
             <div class="bg-white rounded-2xl p-5 space-y-3">
                 <div>
-                    <h3 class="font-medium text-olive-900 text-lg">Cidades & regiões</h3>
+                    <h3 class="font-medium text-olive-800 text-lg">Cidades & regiões</h3>
                     <p class="text-sm text-olive-600 font-normal">Ex: São Paulo, Recife</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputCidade')">
                     <span id="cidadesTagsList" class="flex flex-wrap gap-1.5"></span>
-                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-900 placeholder:text-olive-400 font-normal" id="inputCidade" placeholder="Digite e pressione Enter...">
+                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-800 placeholder:text-olive-600 font-normal" id="inputCidade" placeholder="Digite e pressione Enter...">
                 </div>
             </div>
 
             <!-- Senioridades Alvo -->
             <div class="md:col-span-2 bg-white rounded-2xl p-5 space-y-3">
                 <div>
-                    <h3 class="font-medium text-olive-900 text-lg">Senioridades alvo (+2 pontos de bônus no foco)</h3>
+                    <h3 class="font-medium text-olive-800 text-lg">Senioridades alvo (+2 pontos de bônus no foco)</h3>
                 </div>
                 <div class="flex flex-wrap gap-3">
                     <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-olive-100/70 hover:bg-olive-200/70 rounded-xl text-sm font-medium text-olive-800 cursor-pointer select-none transition-colors border-0">
@@ -296,73 +296,37 @@
                 </div>
             </div>
 
-            <!-- Empresas Bloqueadas -->
-            <div class="bg-white rounded-2xl p-5 space-y-3">
-                <div>
-                    <h3 class="font-medium text-olive-900 text-lg">Empresas bloqueadas</h3>
-                    <p class="text-sm text-olive-600 font-normal">Vagas destas empresas serão expurgadas e ignoradas</p>
-                </div>
-                <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputEmpresaBloqueada')">
-                    <span id="empresasBloqueadasTagsList" class="flex flex-wrap gap-1.5"></span>
-                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-900 placeholder:text-olive-400 font-normal" id="inputEmpresaBloqueada" placeholder="Digite a empresa e Enter...">
-                </div>
-            </div>
-
-            <!-- Títulos Bloqueados -->
-            <div class="bg-white rounded-2xl p-5 space-y-3">
-                <div>
-                    <h3 class="font-medium text-olive-900 text-lg">Títulos / Cargos bloqueados</h3>
-                    <p class="text-sm text-olive-600 font-normal">Ex: Estagiário, Trainee, Scrum Master</p>
-                </div>
-                <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputTituloBloqueado')">
-                    <span id="titulosBloqueadosTagsList" class="flex flex-wrap gap-1.5"></span>
-                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-900 placeholder:text-olive-400 font-normal" id="inputTituloBloqueado" placeholder="Digite o cargo e Enter...">
-                </div>
-            </div>
-
             <!-- Canais de Notificação -->
             <div class="md:col-span-2 bg-white rounded-2xl p-5 space-y-4">
                 <div>
-                    <h3 class="font-medium text-olive-900 text-lg">Canais de notificação</h3>
+                    <h3 class="font-medium text-olive-800 text-lg">Canais de notificação</h3>
                     <p class="text-sm text-olive-600 font-normal">Receba resumos consolidados de vagas via e-mail</p>
                 </div>
 
                 <div class="max-w-lg bg-olive-50/80 rounded-2xl p-4 space-y-3">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2 font-medium text-sm text-olive-900">
+                        <div class="flex items-center gap-2 font-medium text-sm text-olive-800">
                             <i class="ph ph-envelope text-lg text-lime-600"></i>
                             <span>E-mail consolidado</span>
-                            <button type="button" class="w-5 h-5 rounded-full bg-olive-200 hover:bg-lime-400 hover:text-olive-950 text-olive-700 text-xs font-medium flex items-center justify-center transition-colors border-0" onclick="abrirModalInfo('email')" title="Ajuda">i</button>
+                            <button type="button" class="w-5 h-5 rounded-full bg-olive-200 hover:bg-lime-400 hover:text-olive-950 text-olive-800 text-xs font-semibold flex items-center justify-center transition-colors border-0" onclick="abrirModalInfo('email')" title="Ajuda">i</button>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer shrink-0">
                             <input type="checkbox" id="checkEmailAtivo" class="sr-only peer">
                             <div class="w-9 h-5 bg-olive-300 rounded-full peer peer-checked:bg-lime-400 transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-transform peer-checked:after:translate-x-4"></div>
                         </label>
                     </div>
-                    <input type="email" id="inputEmailDestinatario" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Seu e-mail de destino (ex: email1@gmail.com, email2@gmail.com)">
-                    <input type="text" id="inputEmailSmtpHost" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="smtp.gmail.com">
-                    <input type="text" id="inputEmailSmtpUser" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Usuário SMTP (Seu e-mail)">
-                    <input type="password" id="inputEmailSmtpPass" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Senha de app SMTP">
-                    
-                    <div class="pt-1">
-                        <label class="block text-sm font-medium text-olive-800 mb-1.5">Frequência de envio por e-mail:</label>
-                        <select id="selectFrequenciaEmail" class="w-full pl-3.5 pr-10 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-800 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all cursor-pointer font-normal" onchange="alterarFrequenciaEmail(this.value)">
-                            <option value="a_cada_3_horas">A cada ciclo (a cada 3 horas)</option>
-                            <option value="duas_vezes_ao_dia">2 vezes ao dia (09:00 e 18:00)</option>
-                            <option value="uma_vez_ao_dia">1 vez ao dia (Diário)</option>
-                            <option value="a_cada_2_dias">A cada 2 dias (48 horas)</option>
-                            <option value="a_cada_1_semana">A cada 1 semana (Semanal)</option>
-                        </select>
-                    </div>
-
-                    <button class="px-3.5 py-2 bg-olive-100 hover:bg-olive-200 text-olive-800 font-medium text-sm rounded-xl transition-colors border-0" onclick="testarNotificacao('email')">Testar canal e-mail</button>
+                    <input type="email" id="inputEmailDestinatario" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-800 placeholder:text-olive-600 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Seu e-mail de destino">
+                    <input type="text" id="inputEmailSmtpHost" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-800 placeholder:text-olive-600 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="smtp.gmail.com">
+                    <input type="text" id="inputEmailSmtpUser" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-800 placeholder:text-olive-600 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Usuário SMTP (Seu e-mail)">
+                    <input type="password" id="inputEmailSmtpPass" class="w-full px-3.5 py-2 bg-white border border-olive-200 rounded-xl text-sm text-olive-800 placeholder:text-olive-600 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 transition-all font-normal" placeholder="Senha de app SMTP">
+                    <button class="px-3.5 py-2 bg-olive-100 hover:bg-olive-200 text-olive-800 font-semibold text-sm rounded-xl transition-colors border-0" onclick="testarNotificacao('email')">Testar canal e-mail</button>
                 </div>
             </div>
 
             <!-- Portais Monitorados -->
             <div class="md:col-span-2 bg-white rounded-2xl p-5 space-y-3">
                 <div>
-                    <h3 class="font-medium text-olive-900 text-lg">Portais de busca monitorados</h3>
+                    <h3 class="font-medium text-olive-800 text-lg">Portais de busca monitorados</h3>
                     <p class="text-sm text-olive-600 font-normal">Ative ou desative fontes para varredura de vagas</p>
                 </div>
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3" id="scrapersGrid">
@@ -373,7 +337,7 @@
             <!-- Filtro de Pontuação Mínima para Recebimento de Vagas -->
             <div class="md:col-span-2 bg-white rounded-2xl p-5 space-y-3">
                 <div>
-                    <h3 class="font-medium text-olive-900 text-lg">Pontuação mínima para recebimento de vagas & alertas</h3>
+                    <h3 class="font-medium text-olive-800 text-lg">Pontuação mínima para recebimento de vagas & alertas</h3>
                     <p class="text-sm text-olive-600 font-normal">Escolha o nível mínimo de pontuação das vagas que você deseja visualizar e receber em notificações</p>
                 </div>
                 <div class="max-w-md">
@@ -388,52 +352,31 @@
 
         <!-- Console de Execução -->
         <div class="bg-white rounded-2xl p-5 space-y-3" id="logsCard">
-            <h3 class="font-medium text-olive-900 text-lg">Console de execução</h3>
+            <h3 class="font-medium text-olive-800 text-lg">Console de execução</h3>
             <div class="bg-olive-950 border border-olive-900 rounded-xl p-4 text-xs text-lime-400 font-normal max-h-56 overflow-y-auto whitespace-pre-wrap break-words leading-relaxed" id="logBox">Pronto para buscar vagas...</div>
         </div>
 
         <div class="flex items-center justify-end pt-2">
-            <button class="px-5 py-2.5 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-medium text-sm rounded-xl transition-colors border-0" onclick="salvarConfiguracoes()">Salvar configurações</button>
+            <button class="px-5 py-2.5 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl transition-colors border-0" onclick="salvarConfiguracoes()">Salvar configurações</button>
         </div>
     </div>
 </div>
 
 <!-- Toast -->
-<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-olive-950 text-white px-4 py-2 rounded-full font-medium text-sm shadow-lg hidden z-50 transition-all">
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-olive-950 text-white px-4 py-2 rounded-full font-semibold text-sm shadow-lg hidden z-50 transition-all">
     Salvo com sucesso!
 </div>
 
 <!-- Modal -->
-<div id="infoModalOverlay" class="fixed inset-0 bg-olive-950/75 backdrop-blur-sm hidden items-center justify-center p-4 z-50" onclick="fecharModalInfo(event)">
+<div id="infoModalOverlay" class="fixed inset-0 bg-olive-950/60 hidden items-center justify-center p-4 z-50" onclick="fecharModalInfo(event)">
     <div class="bg-white border border-olive-200 rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-xl overflow-hidden" onclick="event.stopPropagation()">
         <div class="px-5 py-4 border-b border-olive-200 flex items-center justify-between">
-            <h3 class="font-medium text-olive-900 text-lg" id="modalInfoTitulo">Instruções de configuração</h3>
-            <button type="button" class="w-8 h-8 rounded-xl bg-olive-100/70 hover:bg-olive-200 text-olive-700 hover:text-olive-950 flex items-center justify-center transition-all border-0 font-medium text-lg modal-close" onclick="fecharModalInfo()">&times;</button>
+            <h3 class="font-medium text-olive-800 text-lg" id="modalInfoTitulo">Instruções de configuração</h3>
+            <button type="button" class="text-olive-600 hover:text-olive-800 text-xl font-semibold border-0" onclick="fecharModalInfo()">&times;</button>
         </div>
+        <div class="p-5 overflow-y-auto text-sm text-olive-600 font-normal leading-relaxed" id="modalInfoCorpo"></div>
         <div class="px-5 py-3 border-t border-olive-200 bg-olive-50 flex justify-end">
-            <button type="button" class="px-4 py-2 bg-olive-100 hover:bg-olive-200 text-olive-800 font-medium text-sm rounded-xl transition-colors border-0" onclick="fecharModalInfo()">Fechar</button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Feedback Thumbs Down -->
-<div id="feedbackModalOverlay" class="fixed inset-0 bg-olive-950/75 backdrop-blur-sm hidden items-center justify-center p-4 z-50" onclick="fecharModalFeedback(event)">
-    <div class="bg-white border border-olive-200 rounded-2xl max-w-lg w-full flex flex-col shadow-xl overflow-hidden" onclick="event.stopPropagation()">
-        <div class="px-5 py-4 border-b border-olive-200 flex items-center justify-between">
-            <h3 class="font-medium text-olive-900 text-lg">Avaliar vaga</h3>
-            <button type="button" class="w-8 h-8 rounded-xl bg-olive-100/70 hover:bg-olive-200 text-olive-700 hover:text-olive-950 flex items-center justify-center transition-all border-0 font-medium text-lg modal-close" onclick="fecharModalFeedback()">&times;</button>
-        </div>
-        <div class="p-5 space-y-3">
-            <div id="feedbackModalSubtitulo" class="text-sm font-medium text-olive-900 bg-olive-50 p-3 rounded-xl"></div>
-            <div>
-                <label class="block text-sm font-medium text-olive-800 mb-1.5">Por que essa vaga não é do seu interesse?</label>
-                <textarea id="inputComentarioFeedback" rows="3" class="w-full p-3 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 font-normal resize-none" placeholder="Ex: Não quero vagas dessa empresa / Não quero vagas do cargo de Scrum Master"></textarea>
-                <p class="text-xs text-olive-500 font-normal mt-1.5">Dica: Se citar o nome da empresa ou o cargo, o JobRadar aprenderá a filtrar e expurgar vagas semelhantes automaticamente!</p>
-            </div>
-        </div>
-        <div class="px-5 py-3 border-t border-olive-200 bg-olive-50 flex justify-end gap-2">
-            <button type="button" class="px-4 py-2 bg-olive-100 hover:bg-olive-200 text-olive-800 font-medium text-sm rounded-xl transition-colors border-0" onclick="fecharModalFeedback()">Cancelar</button>
-            <button type="button" class="px-4 py-2 bg-lime-400 hover:bg-lime-500 text-olive-950 font-medium text-sm rounded-xl transition-colors border-0" onclick="submeterFeedbackModal()">Enviar feedback</button>
+            <button type="button" class="px-4 py-2 bg-olive-100 hover:bg-olive-200 text-olive-800 font-semibold text-sm rounded-xl transition-colors border-0" onclick="fecharModalInfo()">Fechar</button>
         </div>
     </div>
 </div>
@@ -443,7 +386,6 @@
 
     let state = {
         score_minimo: "todos",
-        frequencia_email: "a_cada_3_horas",
         cargos_fortes: ["Gerente de Projetos", "Project Manager"],
         ferramentas: ["pmp", "scrum"],
         cidades: ["São Paulo", "Recife"],
@@ -454,7 +396,6 @@
         scrapers_ativos: {}
     };
 
-    let lastConfigHash = "";
     let todasAsVagas = [];
     let sortField = 'data'; // 'data' ou 'score' (padrão 'data')
     let sortDirection = 'desc'; // 'desc' (mais recente/maior) ou 'asc'
@@ -491,70 +432,9 @@
 
     document.addEventListener("DOMContentLoaded", () => {
         carregarConfiguracoes();
-        carregarVagas().then(() => {
-            checarParametrosUrlFeedback();
-        });
+        carregarVagas();
         setInterval(checarStatus, 3000);
-        setInterval(sincronizarSessaoSilenciosa, 4000);
-        window.addEventListener("focus", sincronizarSessaoSilenciosa);
-        document.addEventListener("visibilitychange", () => {
-            if (!document.hidden) sincronizarSessaoSilenciosa();
-        });
     });
-
-    async function checarParametrosUrlFeedback() {
-        const params = new URLSearchParams(window.location.search);
-        const jobId = params.get("job_id");
-        const fb = params.get("feedback");
-
-        if (jobId && fb) {
-            window.history.replaceState({}, document.title, window.location.pathname);
-            if (fb === "positivo") {
-                await enviarFeedback(jobId, "positivo");
-            } else if (fb === "negativo") {
-                setTimeout(() => abrirModalFeedback(jobId), 300);
-            }
-        }
-    }
-
-    async function sincronizarSessaoSilenciosa() {
-        const elAtivo = document.activeElement;
-        const estaDigitando = elAtivo && (elAtivo.tagName === "INPUT" || elAtivo.tagName === "TEXTAREA");
-
-        try {
-            const res = await fetch(API_BASE + "/api/config?t=" + Date.now());
-            if (res.ok) {
-                const data = await res.json();
-                if (data && data.success && data.config) {
-                    const novoHash = JSON.stringify(data.config);
-                    if (novoHash !== lastConfigHash) {
-                        lastConfigHash = novoHash;
-                        state = data.config;
-                        salvarEstadoEmLocalStorage();
-                        if (!estaDigitando) {
-                            render();
-                            atualizarFiltroLocalDropdown();
-                        }
-                    }
-                }
-            }
-        } catch (e) {}
-
-        try {
-            const resJobs = await fetch(API_BASE + "/api/jobs?t=" + Date.now());
-            if (resJobs.ok) {
-                const dataJobs = await resJobs.json();
-                if (dataJobs && dataJobs.vagas) {
-                    const jobsStr = JSON.stringify(dataJobs.vagas.map(v => v.id));
-                    const currentStr = JSON.stringify(todasAsVagas.map(v => v.id));
-                    if (jobsStr !== currentStr) {
-                        todasAsVagas = dataJobs.vagas;
-                        aplicarFiltrosTabela();
-                    }
-                }
-            }
-        } catch(e) {}
-    }
 
     function mostrarPagina(nomePagina) {
         const pageVagas = document.getElementById("pageVagas");
@@ -607,12 +487,11 @@
 
     async function carregarConfiguracoes() {
         try {
-            const res = await fetch(API_BASE + "/api/config?t=" + Date.now());
+            const res = await fetch(API_BASE + "/api/config");
             if (res.ok) {
                 const data = await res.json();
                 if (data && data.success && data.config) {
                     state = data.config;
-                    lastConfigHash = JSON.stringify(data.config);
                     render();
                     return;
                 }
@@ -625,7 +504,6 @@
                 const remoteConfig = await resRemote.json();
                 if (remoteConfig && typeof remoteConfig === "object" && remoteConfig.cargos_fortes) {
                     state = remoteConfig;
-                    lastConfigHash = JSON.stringify(remoteConfig);
                     localStorage.setItem("jobradar_config", JSON.stringify(remoteConfig));
                     render();
                     return;
@@ -637,7 +515,6 @@
             const saved = localStorage.getItem("jobradar_config");
             if (saved) {
                 state = JSON.parse(saved);
-                lastConfigHash = JSON.stringify(state);
                 render();
                 return;
             }
@@ -645,7 +522,6 @@
 
         state = {
             score_minimo: "todos",
-            frequencia_email: "a_cada_3_horas",
             modalidades_aceitas: { remoto: true, hibrido: true, presencial: true },
             preferencia_modalidade: "remoto",
             senioridades_alvo: ["Júnior", "Pleno", "Sênior", "Especialista/Liderança"],
@@ -669,7 +545,6 @@
                 email: { ativo: true, destinatario: "", smtp_host: "smtp.gmail.com", smtp_port: 587, smtp_user: "", smtp_pass: "" }
             }
         };
-        lastConfigHash = JSON.stringify(state);
         render();
     }
 
@@ -699,14 +574,9 @@
         renderCargosFortes();
         renderFerramentas();
         renderCidades();
-        renderEmpresasBloqueadas();
-        renderTitulosBloqueados();
 
         const elScoreMin = document.getElementById("selectScoreMinimoConfig");
         if (elScoreMin) elScoreMin.value = state.score_minimo || "todos";
-
-        const elFreq = document.getElementById("selectFrequenciaEmail");
-        if (elFreq) elFreq.value = state.frequencia_email || "a_cada_3_horas";
 
         if (!state.modalidades_aceitas) state.modalidades_aceitas = { remoto: true, hibrido: true, presencial: true };
         document.getElementById("checkModRemoto").checked = state.modalidades_aceitas.remoto !== false;
@@ -756,11 +626,6 @@
         salvarEstadoEmLocalStorage();
     }
 
-    function alterarFrequenciaEmail(val) {
-        state.frequencia_email = val;
-        salvarEstadoEmLocalStorage();
-    }
-
     function salvarEstadoEmLocalStorage() {
         try {
             localStorage.setItem("jobradar_config", JSON.stringify(state));
@@ -771,8 +636,6 @@
         bindInputTag("inputCargoForte", adicionarCargoForte);
         bindInputTag("inputFerramenta", adicionarFerramenta);
         bindInputTag("inputCidade", adicionarCidade);
-        bindInputTag("inputEmpresaBloqueada", adicionarEmpresaBloqueada);
-        bindInputTag("inputTituloBloqueado", adicionarTituloBloqueado);
     }
 
     function bindInputTag(inputId, actionFn) {
@@ -797,14 +660,6 @@
                     state.cidades.pop();
                     salvarEstadoEmLocalStorage();
                     renderCidades();
-                } else if (inputId === "inputEmpresaBloqueada" && state.empresas_bloqueadas && state.empresas_bloqueadas.length > 0) {
-                    state.empresas_bloqueadas.pop();
-                    salvarEstadoEmLocalStorage();
-                    renderEmpresasBloqueadas();
-                } else if (inputId === "inputTituloBloqueado" && state.titulos_bloqueados && state.titulos_bloqueados.length > 0) {
-                    state.titulos_bloqueados.pop();
-                    salvarEstadoEmLocalStorage();
-                    renderTitulosBloqueados();
                 }
             }
         };
@@ -868,14 +723,6 @@
         atualizarFiltroLocalDropdown();
     }
 
-    function adicionarEmpresaBloqueada() { adicionarItemLista("empresas_bloqueadas", "inputEmpresaBloqueada", renderEmpresasBloqueadas); }
-    function removerEmpresaBloqueada(index) { removerItemLista("empresas_bloqueadas", index, renderEmpresasBloqueadas); }
-    function renderEmpresasBloqueadas() { renderTagsLista("empresasBloqueadasTagsList", state.empresas_bloqueadas || [], removerEmpresaBloqueada); }
-
-    function adicionarTituloBloqueado() { adicionarItemLista("titulos_bloqueados", "inputTituloBloqueado", renderTitulosBloqueados); }
-    function removerTituloBloqueado(index) { removerItemLista("titulos_bloqueados", index, renderTitulosBloqueados); }
-    function renderTitulosBloqueados() { renderTagsLista("titulosBloqueadosTagsList", state.titulos_bloqueados || [], removerTituloBloqueado); }
-
     function renderTagsLista(containerId, list, removerFn) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -890,7 +737,7 @@
             const txtNode = document.createTextNode(item + " ");
             const btnDelete = document.createElement("button");
             btnDelete.type = "button";
-            btnDelete.className = "text-olive-950 hover:text-rose-700 transition-colors ml-0.5 font-medium border-0";
+            btnDelete.className = "text-olive-950 hover:text-rose-700 transition-colors ml-0.5 font-semibold border-0";
             btnDelete.innerHTML = "&times;";
             btnDelete.onclick = (e) => {
                 e.stopPropagation();
@@ -907,8 +754,6 @@
         adicionarCargoForte();
         adicionarFerramenta();
         adicionarCidade();
-        adicionarEmpresaBloqueada();
-        adicionarTituloBloqueado();
     }
 
     function renderScrapers() {
@@ -937,18 +782,11 @@
     }
 
     function lerCanaisDaTela() {
-        const elFreq = document.getElementById("selectFrequenciaEmail");
-        if (elFreq) {
-            state.frequencia_email = elFreq.value;
-        }
-        const hostInput = document.getElementById("inputEmailSmtpHost");
-        const hostVal = (hostInput ? hostInput.value.trim() : "") || "smtp.gmail.com";
-
         state.canais_notificacao = {
             email: {
                 ativo: document.getElementById("checkEmailAtivo").checked,
                 destinatario: document.getElementById("inputEmailDestinatario").value.trim(),
-                smtp_host: hostVal,
+                smtp_host: document.getElementById("inputEmailSmtpHost").value.trim(),
                 smtp_port: 587,
                 smtp_user: document.getElementById("inputEmailSmtpUser").value.trim(),
                 smtp_pass: document.getElementById("inputEmailSmtpPass").value.trim()
@@ -1017,7 +855,8 @@
                 showToast(data.message || "Não foi possível iniciar a busca.");
             }
         } catch (err) {
-            showToast("Vagas atualizadas!");
+            window.open("https://github.com/marcoscarolino/Job-Radar/actions", "_blank");
+            showToast("Abrindo GitHub Actions para disparar busca na nuvem!");
         }
     }
 
@@ -1063,7 +902,7 @@
                 if (progressText) progressText.innerText = "Executando varredura...";
 
                 if (btnBuscarLabel) btnBuscarLabel.innerText = "Parar busca";
-                if (btnBuscarIcon) btnBuscarIcon.className = "ph ph-stop font-medium text-olive-950 text-base";
+                if (btnBuscarIcon) btnBuscarIcon.className = "ph ph-stop font-semibold text-olive-950 text-base";
             } else {
                 if (progressBar) progressBar.classList.add("hidden");
 
@@ -1074,7 +913,7 @@
                 }
 
                 if (btnBuscarLabel) btnBuscarLabel.innerText = "Buscar vagas";
-                if (btnBuscarIcon) btnBuscarIcon.className = "ph ph-magnifying-glass font-medium text-olive-950 text-base";
+                if (btnBuscarIcon) btnBuscarIcon.className = "ph ph-magnifying-glass font-semibold text-olive-950 text-base";
             }
 
             if (data.logs && data.logs.length > 0) {
@@ -1084,27 +923,13 @@
         } catch (err) {}
     }
 
-    function mesclarVagas(novasVagas) {
-        if (!novasVagas || novasVagas.length === 0) return;
-        const existentesMap = new Map(todasAsVagas.map(v => [v.id, v]));
-        for (let i = novasVagas.length - 1; i >= 0; i--) {
-            const v = novasVagas[i];
-            if (!existentesMap.has(v.id)) {
-                todasAsVagas.unshift(v);
-                existentesMap.set(v.id, v);
-            } else {
-                Object.assign(existentesMap.get(v.id), v);
-            }
-        }
-    }
-
     async function carregarVagas() {
         try {
             let res = await fetch(API_BASE + "/api/jobs");
             if (res.ok) {
                 const data = await res.json();
                 if (data.vagas && data.vagas.length > 0) {
-                    mesclarVagas(data.vagas);
+                    todasAsVagas = data.vagas;
                     aplicarFiltrosTabela();
                     return;
                 }
@@ -1115,54 +940,13 @@
             let resStatic = await fetch("./data/jobs.json?t=" + Date.now());
             if (resStatic.ok) {
                 const dataStatic = await resStatic.json();
-                mesclarVagas(dataStatic.vagas || []);
+                todasAsVagas = dataStatic.vagas || [];
                 aplicarFiltrosTabela();
                 return;
             }
         } catch(e) {}
 
         aplicarFiltrosTabela();
-    }
-
-    let paginaAtual = 1;
-    const ITENS_POR_PAGINA = 20;
-
-    function renderizarPaginacao(totalItens) {
-        const totalPaginas = Math.ceil(totalItens / ITENS_POR_PAGINA) || 1;
-        if (paginaAtual > totalPaginas) paginaAtual = totalPaginas;
-        if (paginaAtual < 1) paginaAtual = 1;
-
-        const infoEl = document.getElementById("paginationInfo");
-        const controlsEl = document.getElementById("paginationControls");
-        if (!infoEl || !controlsEl) return;
-
-        const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA + 1;
-        const fim = Math.min(paginaAtual * ITENS_POR_PAGINA, totalItens);
-        infoEl.innerText = totalItens > 0 ? `Exibindo ${inicio}-${fim} de ${totalItens} vagas` : "Exibindo 0 vagas";
-
-        let html = "";
-        const desativarPrev = paginaAtual === 1;
-        html += `<button onclick="mudarPagina(${paginaAtual - 1})" ${desativarPrev ? "disabled" : ""} class="px-3 py-1.5 rounded-xl border text-xs font-medium transition-colors ${desativarPrev ? "border-olive-200 text-olive-300 cursor-not-allowed bg-olive-50" : "border-olive-200 bg-white text-olive-800 hover:bg-lime-400 hover:text-olive-950 shadow-sm"}">Anterior</button>`;
-
-        for (let p = 1; p <= totalPaginas; p++) {
-            if (p === 1 || p === totalPaginas || (p >= paginaAtual - 2 && p <= paginaAtual + 2)) {
-                const ativo = p === paginaAtual;
-                html += `<button onclick="mudarPagina(${p})" class="w-8 h-8 rounded-xl text-xs font-medium transition-colors ${ativo ? "bg-lime-400 text-olive-950 font-semibold shadow-sm" : "bg-white border border-olive-200 text-olive-800 hover:bg-olive-100"}">${p}</button>`;
-            } else if (p === paginaAtual - 3 || p === paginaAtual + 3) {
-                html += `<span class="px-1 text-olive-400 text-xs">...</span>`;
-            }
-        }
-
-        const desativarNext = paginaAtual === totalPaginas;
-        html += `<button onclick="mudarPagina(${paginaAtual + 1})" ${desativarNext ? "disabled" : ""} class="px-3 py-1.5 rounded-xl border text-xs font-medium transition-colors ${desativarNext ? "border-olive-200 text-olive-300 cursor-not-allowed bg-olive-50" : "border-olive-200 bg-white text-olive-800 hover:bg-lime-400 hover:text-olive-950 shadow-sm"}">Próxima</button>`;
-
-        controlsEl.innerHTML = html;
-    }
-
-    function mudarPagina(novaPagina) {
-        paginaAtual = novaPagina;
-        aplicarFiltrosTabela();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function alterarOrdenacao(val) {
@@ -1179,7 +963,6 @@
             sortField = 'score';
             sortDirection = 'asc';
         }
-        paginaAtual = 1;
         aplicarFiltrosTabela();
     }
 
@@ -1272,18 +1055,17 @@
             return true;
         });
 
-        renderizarPaginacao(vagasFiltradas.length);
-
         if (vagasFiltradas.length === 0) {
             const emptyHtml = `<div class="text-center py-12 px-4 bg-white border border-dashed border-olive-200 rounded-2xl space-y-1">
-                <div class="font-medium text-olive-900 text-sm">Nenhuma vaga encontrada</div>
+                <div class="font-medium text-olive-800 text-sm">Nenhuma vaga encontrada</div>
                 <div class="text-sm text-olive-600 font-normal">Tente ajustar os filtros ou clique em <strong>Buscar vagas</strong> para atualizar a lista.</div>
             </div>`;
             cardsContainer.innerHTML = emptyHtml;
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-olive-400 font-normal text-sm">Nenhuma vaga encontrada com os filtros selecionados.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-olive-600 font-normal text-sm">Nenhuma vaga encontrada com os filtros selecionados.</td></tr>`;
             return;
         }
 
+        // Ordenação Dinâmica via Dropdown "Ordenar por"
         vagasFiltradas.sort((a, b) => {
             if (sortField === 'score') {
                 const scoreA = a.score !== undefined && a.score !== null ? a.score : 0;
@@ -1304,15 +1086,12 @@
             }
         });
 
-        const inicioIndex = (paginaAtual - 1) * ITENS_POR_PAGINA;
-        const vagasDaPagina = vagasFiltradas.slice(inicioIndex, inicioIndex + ITENS_POR_PAGINA);
-
-        vagasDaPagina.forEach(vaga => {
+        vagasFiltradas.forEach(vaga => {
             const scoreVal = vaga.score !== undefined && vaga.score !== null ? vaga.score : 5;
             
-            let scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-olive-100 text-olive-700 font-medium text-sm inline-flex items-center border-0";
+            let scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-olive-100 text-olive-800 font-medium text-sm inline-flex items-center border-0";
             if (scoreVal >= 8) {
-                scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-lime-100 text-lime-900 font-medium text-sm inline-flex items-center border-0";
+                scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-lime-400 text-olive-950 font-medium text-sm inline-flex items-center border-0";
             } else if (scoreVal >= 5) {
                 scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-amber-100 text-amber-900 font-medium text-sm inline-flex items-center border-0";
             }
@@ -1320,37 +1099,18 @@
             const modalidadeTexto = vaga.modalidade || (vaga.local && vaga.local.toLowerCase().includes("remoto") ? "Remoto" : "Presencial");
             const divulgadaEm = extrairDataFormatada(vaga);
 
-            const feedbackPositivo = vaga.feedback === "positivo";
-            const feedbackNegativo = vaga.feedback === "negativo";
-
-            const btnUpClass = feedbackPositivo
-                ? "w-7 h-7 rounded-lg bg-lime-400 text-olive-950 font-bold flex items-center justify-center transition-all border-0 shadow-sm"
-                : "w-7 h-7 rounded-lg bg-olive-100/70 hover:bg-lime-200 text-olive-700 hover:text-olive-950 flex items-center justify-center transition-all border-0";
-
-            const btnDownClass = feedbackNegativo
-                ? "w-7 h-7 rounded-lg bg-rose-500 text-white font-bold flex items-center justify-center transition-all border-0 shadow-sm"
-                : "w-7 h-7 rounded-lg bg-olive-100/70 hover:bg-rose-100 text-olive-700 hover:text-rose-700 flex items-center justify-center transition-all border-0";
-
-            // 1. Mobile Card
+            // 1. Mobile Card (todas as fontes text-sm em olive-800 ou olive-600)
             const cardEl = document.createElement("div");
             cardEl.className = "bg-white rounded-2xl p-4 space-y-2";
             cardEl.innerHTML = `
                 <div class="flex items-start justify-between gap-3">
                     <div>
-                        <h3 class="font-medium text-olive-900 text-sm leading-snug">${vaga.titulo}</h3>
+                        <h3 class="font-medium text-olive-800 text-sm leading-snug">${vaga.titulo}</h3>
                         <p class="text-sm font-normal text-olive-600 mt-0.5">${vaga.empresa || 'Empresa Confidencial'}</p>
                     </div>
-                    <div class="flex items-center gap-1 shrink-0">
-                        <button type="button" class="${btnUpClass}" onclick="enviarFeedback('${vaga.id}', 'positivo')" title="Gostei dessa vaga">
-                            <i class="ph ph-thumbs-up text-xs"></i>
-                        </button>
-                        <button type="button" class="${btnDownClass}" onclick="abrirModalFeedback('${vaga.id}')" title="Não gostei">
-                            <i class="ph ph-thumbs-down text-xs"></i>
-                        </button>
-                        <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="w-7 h-7 rounded-lg bg-olive-100/60 hover:bg-lime-400 text-olive-600 hover:text-olive-950 flex items-center justify-center transition-all shrink-0 border-0 ml-1" title="Ver vaga">
-                            <i class="ph ph-arrow-up-right text-xs"></i>
-                        </a>
-                    </div>
+                    <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-xl bg-olive-100/60 hover:bg-lime-400 text-olive-800 hover:text-olive-950 flex items-center justify-center transition-all shrink-0 border-0 font-semibold" title="Ver vaga">
+                        <i class="ph ph-arrow-up-right text-base"></i>
+                    </a>
                 </div>
                 <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-olive-600 pt-1">
                     <span class="${scoreTagClass}">${scoreVal}/10</span>
@@ -1360,105 +1120,32 @@
                     <span>•</span>
                     <span>${vaga.fonte}</span>
                     <span>•</span>
-                    <span class="text-xs text-olive-400 font-normal">${divulgadaEm}</span>
+                    <span class="text-sm text-olive-600 font-normal">${divulgadaEm}</span>
                 </div>
             `;
             cardsContainer.appendChild(cardEl);
 
-            // 2. Desktop Table Row
+            // 2. Desktop Table Row (todas as fontes text-sm em olive-800 ou olive-600)
             const tr = document.createElement("tr");
             tr.className = "hover:bg-olive-50/80 transition-colors";
             tr.innerHTML = `
                 <td class="py-3.5 px-4">
                     <span class="${scoreTagClass}">${scoreVal}/10</span>
                 </td>
-                <td class="py-3.5 px-4 font-medium text-olive-900">${vaga.titulo}</td>
-                <td class="py-3.5 px-4 text-olive-700 font-normal">${vaga.empresa || '-'}</td>
-                <td class="py-3.5 px-4 text-olive-600 text-xs font-normal">${divulgadaEm}</td>
-                <td class="py-3.5 px-4 text-olive-700 font-normal">${modalidadeTexto}</td>
-                <td class="py-3.5 px-4 text-olive-700 font-normal">${vaga.local || '-'}</td>
-                <td class="py-3.5 px-4 text-olive-600 text-sm font-normal">${vaga.fonte}</td>
+                <td class="py-3.5 px-4 font-medium text-olive-800 text-sm">${vaga.titulo}</td>
+                <td class="py-3.5 px-4 text-olive-600 font-normal text-sm">${vaga.empresa || '-'}</td>
+                <td class="py-3.5 px-4 text-olive-600 font-normal text-sm">${divulgadaEm}</td>
+                <td class="py-3.5 px-4 text-olive-600 font-normal text-sm">${modalidadeTexto}</td>
+                <td class="py-3.5 px-4 text-olive-600 font-normal text-sm">${vaga.local || '-'}</td>
+                <td class="py-3.5 px-4 text-olive-600 font-normal text-sm">${vaga.fonte}</td>
                 <td class="py-3.5 px-4 text-right">
-                    <div class="inline-flex items-center gap-1.5 justify-end">
-                        <button type="button" class="${btnUpClass}" onclick="enviarFeedback('${vaga.id}', 'positivo')" title="Gostei dessa vaga">
-                            <i class="ph ph-thumbs-up text-xs"></i>
-                        </button>
-                        <button type="button" class="${btnDownClass}" onclick="abrirModalFeedback('${vaga.id}')" title="Não gostei">
-                            <i class="ph ph-thumbs-down text-xs"></i>
-                        </button>
-                        <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="w-7 h-7 rounded-lg bg-olive-100/60 hover:bg-lime-400 text-olive-600 hover:text-olive-950 inline-flex items-center justify-center transition-all border-0 ml-1" title="Ver vaga">
-                            <i class="ph ph-arrow-up-right text-xs"></i>
-                        </a>
-                    </div>
+                    <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-xl bg-olive-100/60 hover:bg-lime-400 text-olive-800 hover:text-olive-950 inline-flex items-center justify-center transition-all border-0 font-semibold" title="Ver vaga">
+                        <i class="ph ph-arrow-up-right text-base"></i>
+                    </a>
                 </td>
             `;
             tbody.appendChild(tr);
         });
-    }
-
-    let feedbackVagaIdAtual = null;
-
-    function abrirModalFeedback(jobId) {
-        feedbackVagaIdAtual = jobId;
-        const vaga = todasAsVagas.find(v => v.id === jobId);
-        const elSub = document.getElementById("feedbackModalSubtitulo");
-        const inputComent = document.getElementById("inputComentarioFeedback");
-
-        if (vaga && elSub) {
-            elSub.innerText = `${vaga.titulo} @ ${vaga.empresa || 'Empresa'}`;
-        }
-        if (inputComent) inputComent.value = "";
-
-        const modal = document.getElementById("feedbackModalOverlay");
-        if (modal) {
-            modal.classList.remove("hidden");
-            modal.classList.add("flex");
-            if (inputComent) inputComent.focus();
-        }
-    }
-
-    function fecharModalFeedback(event) {
-        if (event && event.target !== event.currentTarget && !event.target.classList.contains("modal-close")) return;
-        const modal = document.getElementById("feedbackModalOverlay");
-        if (modal) {
-            modal.classList.add("hidden");
-            modal.classList.remove("flex");
-        }
-        feedbackVagaIdAtual = null;
-    }
-
-    async function enviarFeedback(jobId, tipo, comentario = "") {
-        try {
-            const res = await fetch(API_BASE + "/api/feedback", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ job_id: jobId, tipo, comentario })
-            });
-            const data = await res.json();
-            if (data.success) {
-                showToast(data.message || "Feedback registrado!");
-                if (data.config) {
-                    state = data.config;
-                    render();
-                }
-                const vaga = todasAsVagas.find(v => v.id === jobId);
-                if (vaga) vaga.feedback = tipo;
-                carregarVagas();
-            } else {
-                showToast(data.message || "Erro ao registrar feedback.");
-            }
-        } catch (err) {
-            showToast("Feedback salvo!");
-        }
-    }
-
-    async function submeterFeedbackModal() {
-        if (!feedbackVagaIdAtual) return;
-        const inputComent = document.getElementById("inputComentarioFeedback");
-        const comentario = inputComent ? inputComent.value.trim() : "";
-        const idVaga = feedbackVagaIdAtual;
-        fecharModalFeedback();
-        await enviarFeedback(idVaga, "negativo", comentario);
     }
 
     function showToast(msg) {
