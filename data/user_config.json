@@ -35,6 +35,8 @@
     "Rio de Janeiro",
     "São Paulo"
   ],
+  "empresas_bloqueadas": [],
+  "titulos_bloqueados": [],
   "aceitar_remoto": true,
   "canais_notificacao": {
     "email": {
