@@ -232,6 +232,8 @@ def obter_regras_perfil(perfil_chave: str = "brasil") -> RegrasFiltro:
         modalidades_aceitas=usr_cfg.get("modalidades_aceitas"),
         preferencia_modalidade=usr_cfg.get("preferencia_modalidade", "remoto"),
         senioridades_alvo=usr_cfg.get("senioridades_alvo"),
+        empresas_bloqueadas=usr_cfg.get("empresas_bloqueadas", []),
+        titulos_bloqueados=usr_cfg.get("titulos_bloqueados", []),
     )
 
 

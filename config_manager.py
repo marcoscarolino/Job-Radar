@@ -41,6 +41,8 @@ DEFAULT_CONFIG = {
         "São Paulo",
         "Recife",
     ],
+    "empresas_bloqueadas": [],
+    "titulos_bloqueados": [],
     "aceitar_remoto": True,
     "canais_notificacao": {
         "email": {

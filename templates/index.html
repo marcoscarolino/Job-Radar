@@ -296,6 +296,30 @@
                 </div>
             </div>
 
+            <!-- Empresas Bloqueadas -->
+            <div class="bg-white rounded-2xl p-5 space-y-3">
+                <div>
+                    <h3 class="font-medium text-olive-900 text-lg">Empresas bloqueadas</h3>
+                    <p class="text-sm text-olive-600 font-normal">Vagas destas empresas serão expurgadas e ignoradas</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputEmpresaBloqueada')">
+                    <span id="empresasBloqueadasTagsList" class="flex flex-wrap gap-1.5"></span>
+                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-900 placeholder:text-olive-400 font-normal" id="inputEmpresaBloqueada" placeholder="Digite a empresa e Enter...">
+                </div>
+            </div>
+
+            <!-- Títulos Bloqueados -->
+            <div class="bg-white rounded-2xl p-5 space-y-3">
+                <div>
+                    <h3 class="font-medium text-olive-900 text-lg">Títulos / Cargos bloqueados</h3>
+                    <p class="text-sm text-olive-600 font-normal">Ex: Estagiário, Trainee, Scrum Master</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputTituloBloqueado')">
+                    <span id="titulosBloqueadosTagsList" class="flex flex-wrap gap-1.5"></span>
+                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-900 placeholder:text-olive-400 font-normal" id="inputTituloBloqueado" placeholder="Digite o cargo e Enter...">
+                </div>
+            </div>
+
             <!-- Canais de Notificação -->
             <div class="md:col-span-2 bg-white rounded-2xl p-5 space-y-4">
                 <div>
@@ -386,9 +410,30 @@
             <h3 class="font-medium text-olive-900 text-lg" id="modalInfoTitulo">Instruções de configuração</h3>
             <button type="button" class="text-olive-400 hover:text-olive-600 text-xl font-medium" onclick="fecharModalInfo()">&times;</button>
         </div>
-        <div class="p-5 overflow-y-auto text-sm text-olive-700 font-normal leading-relaxed" id="modalInfoCorpo"></div>
         <div class="px-5 py-3 border-t border-olive-200 bg-olive-50 flex justify-end">
             <button type="button" class="px-4 py-2 bg-olive-100 hover:bg-olive-200 text-olive-800 font-medium text-sm rounded-xl transition-colors border-0" onclick="fecharModalInfo()">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Feedback Thumbs Down -->
+<div id="feedbackModalOverlay" class="fixed inset-0 bg-olive-950/60 hidden items-center justify-center p-4 z-50" onclick="fecharModalFeedback(event)">
+    <div class="bg-white border border-olive-200 rounded-2xl max-w-lg w-full flex flex-col shadow-xl overflow-hidden" onclick="event.stopPropagation()">
+        <div class="px-5 py-4 border-b border-olive-200 flex items-center justify-between">
+            <h3 class="font-medium text-olive-900 text-lg">Avaliar vaga (👎)</h3>
+            <button type="button" class="text-olive-400 hover:text-olive-600 text-xl font-medium" onclick="fecharModalFeedback()">&times;</button>
+        </div>
+        <div class="p-5 space-y-3">
+            <div id="feedbackModalSubtitulo" class="text-sm font-medium text-olive-900 bg-olive-50 p-3 rounded-xl"></div>
+            <div>
+                <label class="block text-sm font-medium text-olive-800 mb-1.5">Por que essa vaga não é do seu interesse?</label>
+                <textarea id="inputComentarioFeedback" rows="3" class="w-full p-3 bg-white border border-olive-200 rounded-xl text-sm text-olive-900 placeholder:text-olive-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 font-normal resize-none" placeholder="Ex: Não quero vagas dessa empresa / Não quero vagas do cargo de Scrum Master"></textarea>
+                <p class="text-xs text-olive-500 font-normal mt-1.5">Dica: Se citar o nome da empresa ou o cargo, o JobRadar aprenderá a filtrar e expurgar vagas semelhantes automaticamente!</p>
+            </div>
+        </div>
+        <div class="px-5 py-3 border-t border-olive-200 bg-olive-50 flex justify-end gap-2">
+            <button type="button" class="px-4 py-2 bg-olive-100 hover:bg-olive-200 text-olive-800 font-medium text-sm rounded-xl transition-colors border-0" onclick="fecharModalFeedback()">Cancelar</button>
+            <button type="button" class="px-4 py-2 bg-lime-400 hover:bg-lime-500 text-olive-950 font-medium text-sm rounded-xl transition-colors border-0" onclick="submeterFeedbackModal()">Enviar feedback</button>
         </div>
     </div>
 </div>
@@ -637,6 +682,8 @@
         renderCargosFortes();
         renderFerramentas();
         renderCidades();
+        renderEmpresasBloqueadas();
+        renderTitulosBloqueados();
 
         const elScoreMin = document.getElementById("selectScoreMinimoConfig");
         if (elScoreMin) elScoreMin.value = state.score_minimo || "todos";
@@ -707,6 +754,8 @@
         bindInputTag("inputCargoForte", adicionarCargoForte);
         bindInputTag("inputFerramenta", adicionarFerramenta);
         bindInputTag("inputCidade", adicionarCidade);
+        bindInputTag("inputEmpresaBloqueada", adicionarEmpresaBloqueada);
+        bindInputTag("inputTituloBloqueado", adicionarTituloBloqueado);
     }
 
     function bindInputTag(inputId, actionFn) {
@@ -731,6 +780,14 @@
                     state.cidades.pop();
                     salvarEstadoEmLocalStorage();
                     renderCidades();
+                } else if (inputId === "inputEmpresaBloqueada" && state.empresas_bloqueadas && state.empresas_bloqueadas.length > 0) {
+                    state.empresas_bloqueadas.pop();
+                    salvarEstadoEmLocalStorage();
+                    renderEmpresasBloqueadas();
+                } else if (inputId === "inputTituloBloqueado" && state.titulos_bloqueados && state.titulos_bloqueados.length > 0) {
+                    state.titulos_bloqueados.pop();
+                    salvarEstadoEmLocalStorage();
+                    renderTitulosBloqueados();
                 }
             }
         };
@@ -794,6 +851,14 @@
         atualizarFiltroLocalDropdown();
     }
 
+    function adicionarEmpresaBloqueada() { adicionarItemLista("empresas_bloqueadas", "inputEmpresaBloqueada", renderEmpresasBloqueadas); }
+    function removerEmpresaBloqueada(index) { removerItemLista("empresas_bloqueadas", index, renderEmpresasBloqueadas); }
+    function renderEmpresasBloqueadas() { renderTagsLista("empresasBloqueadasTagsList", state.empresas_bloqueadas || [], removerEmpresaBloqueada); }
+
+    function adicionarTituloBloqueado() { adicionarItemLista("titulos_bloqueados", "inputTituloBloqueado", renderTitulosBloqueados); }
+    function removerTituloBloqueado(index) { removerItemLista("titulos_bloqueados", index, renderTitulosBloqueados); }
+    function renderTitulosBloqueados() { renderTagsLista("titulosBloqueadosTagsList", state.titulos_bloqueados || [], removerTituloBloqueado); }
+
     function renderTagsLista(containerId, list, removerFn) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -825,6 +890,8 @@
         adicionarCargoForte();
         adicionarFerramenta();
         adicionarCidade();
+        adicionarEmpresaBloqueada();
+        adicionarTituloBloqueado();
     }
 
     function renderScrapers() {
@@ -1177,6 +1244,17 @@
             const modalidadeTexto = vaga.modalidade || (vaga.local && vaga.local.toLowerCase().includes("remoto") ? "Remoto" : "Presencial");
             const divulgadaEm = extrairDataFormatada(vaga);
 
+            const feedbackPositivo = vaga.feedback === "positivo";
+            const feedbackNegativo = vaga.feedback === "negativo";
+
+            const btnUpClass = feedbackPositivo
+                ? "w-7 h-7 rounded-lg bg-lime-400 text-olive-950 font-bold flex items-center justify-center transition-all border-0 shadow-sm"
+                : "w-7 h-7 rounded-lg bg-olive-100/70 hover:bg-lime-200 text-olive-700 hover:text-olive-950 flex items-center justify-center transition-all border-0";
+
+            const btnDownClass = feedbackNegativo
+                ? "w-7 h-7 rounded-lg bg-rose-500 text-white font-bold flex items-center justify-center transition-all border-0 shadow-sm"
+                : "w-7 h-7 rounded-lg bg-olive-100/70 hover:bg-rose-100 text-olive-700 hover:text-rose-700 flex items-center justify-center transition-all border-0";
+
             // 1. Mobile Card
             const cardEl = document.createElement("div");
             cardEl.className = "bg-white rounded-2xl p-4 space-y-2";
@@ -1186,9 +1264,17 @@
                         <h3 class="font-medium text-olive-900 text-sm leading-snug">${vaga.titulo}</h3>
                         <p class="text-sm font-normal text-olive-600 mt-0.5">${vaga.empresa || 'Empresa Confidencial'}</p>
                     </div>
-                    <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-xl bg-olive-100/60 hover:bg-lime-400 text-olive-600 hover:text-olive-950 flex items-center justify-center transition-all shrink-0 border-0" title="Ver vaga">
-                        <i class="ph ph-arrow-up-right text-base"></i>
-                    </a>
+                    <div class="flex items-center gap-1 shrink-0">
+                        <button type="button" class="${btnUpClass}" onclick="enviarFeedback('${vaga.id}', 'positivo')" title="Gostei dessa vaga (👍)">
+                            <i class="ph ph-thumbs-up text-xs"></i>
+                        </button>
+                        <button type="button" class="${btnDownClass}" onclick="abrirModalFeedback('${vaga.id}')" title="Não gostei (👎)">
+                            <i class="ph ph-thumbs-down text-xs"></i>
+                        </button>
+                        <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="w-7 h-7 rounded-lg bg-olive-100/60 hover:bg-lime-400 text-olive-600 hover:text-olive-950 flex items-center justify-center transition-all shrink-0 border-0 ml-1" title="Ver vaga">
+                            <i class="ph ph-arrow-up-right text-xs"></i>
+                        </a>
+                    </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-olive-600 pt-1">
                     <span class="${scoreTagClass}">${scoreVal}/10</span>
@@ -1217,13 +1303,86 @@
                 <td class="py-3.5 px-4 text-olive-700 font-normal">${vaga.local || '-'}</td>
                 <td class="py-3.5 px-4 text-olive-600 text-sm font-normal">${vaga.fonte}</td>
                 <td class="py-3.5 px-4 text-right">
-                    <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-xl bg-olive-100/60 hover:bg-lime-400 text-olive-600 hover:text-olive-950 inline-flex items-center justify-center transition-all border-0" title="Ver vaga">
-                        <i class="ph ph-arrow-up-right text-base"></i>
-                    </a>
+                    <div class="inline-flex items-center gap-1.5 justify-end">
+                        <button type="button" class="${btnUpClass}" onclick="enviarFeedback('${vaga.id}', 'positivo')" title="Gostei dessa vaga (👍)">
+                            <i class="ph ph-thumbs-up text-xs"></i>
+                        </button>
+                        <button type="button" class="${btnDownClass}" onclick="abrirModalFeedback('${vaga.id}')" title="Não gostei (👎)">
+                            <i class="ph ph-thumbs-down text-xs"></i>
+                        </button>
+                        <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="w-7 h-7 rounded-lg bg-olive-100/60 hover:bg-lime-400 text-olive-600 hover:text-olive-950 inline-flex items-center justify-center transition-all border-0 ml-1" title="Ver vaga">
+                            <i class="ph ph-arrow-up-right text-xs"></i>
+                        </a>
+                    </div>
                 </td>
             `;
             tbody.appendChild(tr);
         });
+    }
+
+    let feedbackVagaIdAtual = null;
+
+    function abrirModalFeedback(jobId) {
+        feedbackVagaIdAtual = jobId;
+        const vaga = todasAsVagas.find(v => v.id === jobId);
+        const elSub = document.getElementById("feedbackModalSubtitulo");
+        const inputComent = document.getElementById("inputComentarioFeedback");
+
+        if (vaga && elSub) {
+            elSub.innerText = `${vaga.titulo} @ ${vaga.empresa || 'Empresa'}`;
+        }
+        if (inputComent) inputComent.value = "";
+
+        const modal = document.getElementById("feedbackModalOverlay");
+        if (modal) {
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            if (inputComent) inputComent.focus();
+        }
+    }
+
+    function fecharModalFeedback(event) {
+        if (event && event.target !== event.currentTarget && !event.target.classList.contains("modal-close")) return;
+        const modal = document.getElementById("feedbackModalOverlay");
+        if (modal) {
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+        feedbackVagaIdAtual = null;
+    }
+
+    async function enviarFeedback(jobId, tipo, comentario = "") {
+        try {
+            const res = await fetch(API_BASE + "/api/feedback", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ job_id: jobId, tipo, comentario })
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast(data.message || "Feedback registrado!");
+                if (data.config) {
+                    state = data.config;
+                    render();
+                }
+                const vaga = todasAsVagas.find(v => v.id === jobId);
+                if (vaga) vaga.feedback = tipo;
+                carregarVagas();
+            } else {
+                showToast(data.message || "Erro ao registrar feedback.");
+            }
+        } catch (err) {
+            showToast("Feedback salvo!");
+        }
+    }
+
+    async function submeterFeedbackModal() {
+        if (!feedbackVagaIdAtual) return;
+        const inputComent = document.getElementById("inputComentarioFeedback");
+        const comentario = inputComent ? inputComent.value.trim() : "";
+        const idVaga = feedbackVagaIdAtual;
+        fecharModalFeedback();
+        await enviarFeedback(idVaga, "negativo", comentario);
     }
 
     function showToast(msg) {

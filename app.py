@@ -126,6 +126,35 @@ def get_jobs():
     return jsonify({"success": True, "vagas": vagas, "total": len(vagas)})
 
 
+@app.route("/api/feedback", methods=["POST"])
+def post_feedback():
+    dados = request.get_json() or {}
+    job_id = dados.get("job_id")
+    tipo = dados.get("tipo")  # "positivo" ou "negativo"
+    comentario = dados.get("comentario", "").strip()
+
+    if not job_id or tipo not in ("positivo", "negativo"):
+        return jsonify({"success": False, "message": "Dados de feedback inválidos."}), 400
+
+    from database.database import definir_feedback, obter_vaga_por_id
+    definir_feedback(job_id, tipo, comentario)
+
+    res_analise = {"alterado": False, "mensagem": "Feedback registrado com sucesso!"}
+    if tipo == "negativo" and comentario:
+        vaga_dict = obter_vaga_por_id(job_id) or {}
+        from analisador_feedback import analisar_comentario_feedback
+        res_analise = analisar_comentario_feedback(vaga_dict, comentario)
+        if res_analise.get("alterado"):
+            sincronizar_configuracao_github()
+
+    config_atual = carregar_config()
+    return jsonify({
+        "success": True,
+        "message": res_analise.get("mensagem", "Feedback registrado com sucesso!"),
+        "config": config_atual
+    })
+
+
 @app.route("/api/run", methods=["POST"])
 def run_scraper():
     global RUNNING_PROCESS, LAST_RUN_LOGS

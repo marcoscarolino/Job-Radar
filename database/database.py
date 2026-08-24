@@ -148,6 +148,13 @@ def _garantir_coluna_email_enviado(conn):
         conn.execute("ALTER TABLE vagas_vistas ADD COLUMN email_enviado INTEGER DEFAULT 0")
 
 
+def _garantir_coluna_comentario_feedback(conn):
+    """Migração leve: campo de texto aberto para comentários de justificativa de feedback negativo."""
+    colunas = [linha[1] for linha in conn.execute("PRAGMA table_info(vagas_vistas)")]
+    if "comentario_feedback" not in colunas:
+        conn.execute("ALTER TABLE vagas_vistas ADD COLUMN comentario_feedback TEXT")
+
+
 class BancoVazioSuspeito(RuntimeError):
     """jobs.db já existia em disco (tinha conteúdo) mas a tabela veio vazia
     depois de iniciar_db() — não é primeiro uso, é banco perdido/corrompido/
@@ -179,6 +186,7 @@ def iniciar_db():
         _garantir_coluna_situacao(conn)
         _garantir_coluna_feedback(conn)
         _garantir_coluna_email_enviado(conn)
+        _garantir_coluna_comentario_feedback(conn)
         conn.execute(
             "CREATE INDEX IF NOT EXISTS idx_vagas_digest_pendente "
             "ON vagas_vistas (perfil, digest_pendente)"
@@ -275,17 +283,37 @@ def definir_situacao(id_ou_link: str, situacao: str):
         )
 
 
-def definir_feedback(job_id: str, feedback: str):
-    """Grava a reação 👍/👎 do botão inline (ver processar_feedback_pendente
-    em notifier/telegram.py) — 'positivo'/'negativo'. Só por id (não por
-    link, diferente de definir_situacao): o callback_data do botão sempre
-    carrega o id, nunca o link inteiro (custaria mais dos 64 bytes que o
-    Telegram permite em callback_data)."""
+def definir_feedback(job_id: str, feedback: str, comentario: str | None = None):
+    """Grava a reação 👍/👎 do usuário — 'positivo'/'negativo' e comentário opcional."""
     with _conectar() as conn:
         conn.execute(
-            "UPDATE vagas_vistas SET feedback = ? WHERE id = ?",
-            (feedback, job_id),
+            "UPDATE vagas_vistas SET feedback = ?, comentario_feedback = ? WHERE id = ?",
+            (feedback, comentario, job_id),
         )
+
+
+def obter_vaga_por_id(job_id: str) -> dict | None:
+    """Busca uma vaga específica por id no banco SQLite."""
+    with _conectar() as conn:
+        cursor = conn.execute(
+            "SELECT id, titulo, empresa, local, link, site, modalidade, publicado_em, feedback, comentario_feedback FROM vagas_vistas WHERE id = ?",
+            (job_id,)
+        )
+        row = cursor.fetchone()
+        if not row:
+            return None
+        return {
+            "id": row[0],
+            "titulo": row[1],
+            "empresa": row[2],
+            "local": row[3],
+            "link": row[4],
+            "site": row[5],
+            "modalidade": row[6],
+            "publicado_em": row[7],
+            "feedback": row[8],
+            "comentario_feedback": row[9],
+        }
 
 
 def obter_vagas_pendentes_digest(perfil_chave: str) -> list[tuple]:

@@ -691,6 +691,8 @@ class RegrasFiltro:
     modalidades_aceitas: dict[str, bool] | None = None
     preferencia_modalidade: str = "sem_preferencia"
     senioridades_alvo: list[str] | None = None
+    empresas_bloqueadas: list[str] | None = None
+    titulos_bloqueados: list[str] | None = None
 
 
 @dataclass
@@ -831,23 +833,18 @@ class Job:
         return hashlib.md5(link_normalizado.encode()).hexdigest()
 
     @property
-    def chave_secundaria(self) -> str:
-        """Chave de dedup secundária: empresa + título normalizados.
-
-        O `.id` sozinho é hash da URL — a mesma vaga publicada em fontes
-        diferentes (ex: Gupy e LinkedIn, ou LinkedIn BR e LinkedIn Intl) tem
-        URL diferente em cada uma, então o `.id` também diverge e a vaga
-        passa como "nova" mais de uma vez. Medido: 23% de repetição (60
-        registros pra 46 pares distintos). Empresa+título normalizados
-        (minúsculo, sem acento) captura isso mesmo com pequena variação de
-        formatação entre sites.
+    def eh_gerencia(self) -> bool:
+        """Indica se o cargo é de gerência (Gerente / PMO / Head / etc.).
+        
+        Isso é só informativo pra notificação — a vaga não é excluída por
+        senioridade em nenhum momento do filtro.
         """
-        return f"{_normalizar(self.empresa)}|{_normalizar(self.titulo)}"
+        return _detectar_senioridade(self.titulo) in ("Gerência/Executivo",)
 
     @property
     def senioridade(self) -> str:
-        """Nível classificado a partir do título (Júnior/Pleno/Sênior/...).
-
+        """Classifica a vaga em Júnior, Pleno, Sênior, Gerência/Executivo ou Não especificada.
+        
         Isso é só informativo pra notificação — a vaga não é excluída por
         senioridade em nenhum momento do filtro.
         """
@@ -911,24 +908,13 @@ class Job:
         tit_norm = _normalizar(self.titulo)
         loc_norm = _normalizar(self.local)
 
-        # 1. Checagem de Híbrido (prevalência se qualquer campo indicar híbrido)
-        if any(h in mod_norm for h in ("hibrid", "hybrid", "semi-presencial", "semipresencial")) or \
-           any(h in tit_norm for h in ("hibrid", "hybrid", "semi-presencial", "semipresencial")) or \
-           any(h in loc_norm for h in ("hibrid", "hybrid", "semi-presencial", "semipresencial")):
+        if "hibrid" in mod_norm or "hibrid" in tit_norm or "hibrid" in loc_norm or "semi-presencial" in mod_norm:
             return "hibrido"
 
-        # 2. Checagem de Remoto
-        e_rem = any(r in mod_norm for r in ("remoto", "remota", "remote", "home office", "teletrabalho", "teletrabajo", "anywhere")) or \
-                _e_remoto(loc_norm) or _e_remoto(tit_norm)
-
-        if e_rem:
-            # Se o título ou local indicar explicitamente presencial/on-site, vence presencial
-            if any(p in tit_norm for p in ("on-site", "onsite", "on site", "presencial")) or \
-               any(p in loc_norm for p in ("on-site", "onsite", "on site", "presencial")):
-                return "presencial"
+        _TERMOS_REMOTO = ("remoto", "remota", "remote", "home office", "teletrabalho", "anywhere")
+        if any(t in mod_norm for t in _TERMOS_REMOTO) or any(t in tit_norm for t in _TERMOS_REMOTO) or any(t in loc_norm for t in _TERMOS_REMOTO):
             return "remoto"
 
-        # 3. Padrão: Presencial
         return "presencial"
 
     def combina_com(self, regras: RegrasFiltro) -> bool:
@@ -948,6 +934,34 @@ class Job:
                 mercado_confirmado=False,
                 idioma_bateu_titulo=False,
             )
+
+        if regras.empresas_bloqueadas and self.empresa:
+            emp_norm = _normalizar(self.empresa)
+            if any(_normalizar(b) in emp_norm for b in regras.empresas_bloqueadas if b and b.strip()):
+                return _Avaliacao(
+                    aprovada=False,
+                    bate_forte=False,
+                    bate_ambiguo=False,
+                    bate_ferramenta=False,
+                    bate_remoto=False,
+                    escopos=set(),
+                    mercado_confirmado=False,
+                    idioma_bateu_titulo=False,
+                )
+
+        if regras.titulos_bloqueados and self.titulo:
+            tit_norm = _normalizar(self.titulo)
+            if any(_normalizar(b) in tit_norm for b in regras.titulos_bloqueados if b and b.strip()):
+                return _Avaliacao(
+                    aprovada=False,
+                    bate_forte=False,
+                    bate_ambiguo=False,
+                    bate_ferramenta=False,
+                    bate_remoto=False,
+                    escopos=set(),
+                    mercado_confirmado=False,
+                    idioma_bateu_titulo=False,
+                )
 
         titulo_norm = _normalizar(self.titulo)
         local_norm = _normalizar(self.local)
