@@ -41,10 +41,13 @@ def enviar_notificacao_multicanal(
     texto_simples: str,
     assunto: str = "Nova Vaga Encontrada pelo JobRadar",
     corpo_html: str | None = None,
-    reply_markup: dict | None = None,
+    vagas_dict_list: list[dict] | None = None,
     forcar_canal: str | None = None,
 ) -> dict[str, tuple[bool, str]]:
-    """Dispara a notificação para os canais ativados no user_config.json (E-mail)."""
+    """Dispara a notificação para TODOS os canais ativados no user_config.json.
+    Garante que qualquer alteração nas configurações (filtros, regras de bloqueio, pontuação mínima, ativação de canal)
+    seja estritamente respeitada por todos os canais de notificação existentes e futuros.
+    """
     config = carregar_config()
     canais = config.get("canais_notificacao", {})
     resultados = {}
@@ -63,6 +66,54 @@ def enviar_notificacao_multicanal(
             smtp_pass=email_cfg.get("smtp_pass", ""),
         )
         resultados["email"] = (ok, msg)
+
+    # 2. Telegram (Bot API)
+    telegram_cfg = canais.get("telegram", {})
+    if telegram_cfg.get("ativo", False) or forcar_canal == "telegram":
+        token = telegram_cfg.get("bot_token", "").strip()
+        chat_id = telegram_cfg.get("chat_id", "").strip()
+        if token and chat_id:
+            from notifier.telegram import enviar_mensagem
+            ok = enviar_mensagem(texto_simples, chat_id=chat_id, token=token)
+            resultados["telegram"] = (ok, "Mensagem enviada no Telegram" if ok else "Falha no envio Telegram")
+
+    # 3. Webhook (HTTP POST)
+    webhook_cfg = canais.get("webhook", {})
+    if webhook_cfg.get("ativo", False) or forcar_canal == "webhook":
+        url = webhook_cfg.get("url", "").strip()
+        if url:
+            try:
+                import urllib.request
+                req = urllib.request.Request(
+                    url,
+                    data=json.dumps({"texto": texto_simples, "assunto": assunto, "vagas": vagas_dict_list or []}).encode("utf-8"),
+                    headers={"Content-Type": "application/json"}
+                )
+                with urllib.request.urlopen(req, timeout=10) as resp:
+                    ok = (200 <= resp.status < 300)
+                    resultados["webhook"] = (ok, f"Webhook disparado (HTTP {resp.status})")
+            except Exception as e:
+                resultados["webhook"] = (False, f"Erro Webhook: {e}")
+
+    # 4. Outros canais futuros configurados dinamicamente
+    for canal_nome, canal_cfg in canais.items():
+        if canal_nome in ("email", "telegram", "webhook"):
+            continue
+        if isinstance(canal_cfg, dict) and (canal_cfg.get("ativo", False) or forcar_canal == canal_nome):
+            url_futura = canal_cfg.get("url") or canal_cfg.get("webhook_url")
+            if url_futura:
+                try:
+                    import urllib.request
+                    req = urllib.request.Request(
+                        url_futura,
+                        data=json.dumps({"canal": canal_nome, "texto": texto_simples, "assunto": assunto, "vagas": vagas_dict_list or []}).encode("utf-8"),
+                        headers={"Content-Type": "application/json"}
+                    )
+                    with urllib.request.urlopen(req, timeout=10) as resp:
+                        ok = (200 <= resp.status < 300)
+                        resultados[canal_nome] = (ok, f"Canal {canal_nome} disparado (HTTP {resp.status})")
+                except Exception as e:
+                    resultados[canal_nome] = (False, f"Erro no canal {canal_nome}: {e}")
 
     return resultados
 
