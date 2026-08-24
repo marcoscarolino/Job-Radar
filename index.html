@@ -84,20 +84,6 @@
         </div>
     </header>
 
-    <!-- Barra de Progresso da Varredura -->
-    <div id="searchProgressBar" class="hidden bg-white border border-lime-400 rounded-2xl p-4 mb-6">
-        <div class="flex items-center justify-between text-sm font-medium text-olive-800 mb-2">
-            <span class="flex items-center gap-2">
-                <i class="ph ph-spinner animate-spin text-lg text-lime-600"></i>
-                Varredura de vagas em andamento...
-            </span>
-            <span id="progressText" class="font-normal text-xs text-olive-600">Buscando...</span>
-        </div>
-        <div class="h-1.5 w-full bg-lime-100 rounded-full overflow-hidden">
-            <div class="h-full bg-lime-400 rounded-full w-full animate-pulse"></div>
-        </div>
-    </div>
-
     <!-- PÁGINA 1: VAGAS -->
     <div id="pageVagas" class="space-y-6 md:space-y-7">
         <!-- Barra de Busca e Filtros -->
@@ -170,7 +156,8 @@
                         <span>Limpar lista</span>
                     </button>
 
-                    <button id="btnBuscarVagas" onclick="salvarERodar()" class="px-4 py-2 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl flex items-center gap-2 transition-colors border-0">
+                    <!-- Botão Buscar Vagas com Loading Spin e Estado Parar Busca (Vermelho) -->
+                    <button id="btnBuscarVagas" onclick="aoClicarBotaoBuscar()" class="px-4 py-2 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl flex items-center gap-2 transition-colors border-0">
                         <i class="ph ph-magnifying-glass font-semibold text-olive-950 text-base" id="btnBuscarVagasIcon"></i>
                         <span id="btnBuscarVagasLabel" class="text-olive-950 font-semibold">Buscar vagas</span>
                     </button>
@@ -204,8 +191,8 @@
             </table>
         </div>
 
-        <!-- Bar da Paginação -->
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 px-1">
+        <!-- Bar da Paginação (Ocultado se houver 20 ou menos itens) -->
+        <div id="paginationWrapper" class="hidden flex-col sm:flex-row items-center justify-between gap-4 pt-2 px-1">
             <div id="paginationInfo" class="text-sm font-normal text-olive-600">Exibindo 0 vagas</div>
             <div id="paginationControls" class="flex items-center gap-1.5"></div>
         </div>
@@ -409,8 +396,8 @@
     Salvo com sucesso!
 </div>
 
-<!-- Modal -->
-<div id="infoModalOverlay" class="fixed inset-0 bg-olive-950/75 backdrop-blur-sm hidden items-center justify-center p-4 z-50" onclick="fecharModalInfo(event)">
+<!-- Modal Instruções (Escurece a tela sem desfocar) -->
+<div id="infoModalOverlay" class="fixed inset-0 bg-olive-950/75 hidden items-center justify-center p-4 z-50" onclick="fecharModalInfo(event)">
     <div class="bg-white border border-olive-200 rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-xl overflow-hidden" onclick="event.stopPropagation()">
         <div class="px-5 py-4 border-b border-olive-200 flex items-center justify-between">
             <h3 class="font-medium text-olive-800 text-lg" id="modalInfoTitulo">Instruções de configuração</h3>
@@ -423,8 +410,8 @@
     </div>
 </div>
 
-<!-- Modal Feedback Thumbs Down -->
-<div id="feedbackModalOverlay" class="fixed inset-0 bg-olive-950/75 backdrop-blur-sm hidden items-center justify-center p-4 z-50" onclick="fecharModalFeedback(event)">
+<!-- Modal Feedback Thumbs Down (Escurece a tela sem desfocar) -->
+<div id="feedbackModalOverlay" class="fixed inset-0 bg-olive-950/75 hidden items-center justify-center p-4 z-50" onclick="fecharModalFeedback(event)">
     <div class="bg-white border border-olive-200 rounded-2xl max-w-lg w-full flex flex-col shadow-xl overflow-hidden" onclick="event.stopPropagation()">
         <div class="px-5 py-4 border-b border-olive-200 flex items-center justify-between">
             <h3 class="font-medium text-olive-800 text-lg">Avaliar vaga</h3>
@@ -465,6 +452,7 @@
     let todasAsVagas = [];
     let sortField = 'data'; // 'data' ou 'score' (padrão 'data')
     let sortDirection = 'desc'; // 'desc' (mais recente/maior) ou 'asc'
+    let buscaEmAndamento = false;
 
     const instrucoesCanais = {
         email: {
@@ -1001,7 +989,13 @@
         }
     }
 
-    let wasRunning = false;
+    function aoClicarBotaoBuscar() {
+        if (buscaEmAndamento) {
+            cancelarBusca();
+        } else {
+            salvarERodar();
+        }
+    }
 
     async function salvarERodar(force = false) {
         await salvarConfiguracoes();
@@ -1058,33 +1052,46 @@
             const res = await fetch(API_BASE + "/api/status");
             const data = await res.json();
 
-            const progressBar = document.getElementById("searchProgressBar");
-            const progressText = document.getElementById("progressText");
-            const logBox = document.getElementById("logBox");
+            const btnBuscar = document.getElementById("btnBuscarVagas");
             const btnBuscarLabel = document.getElementById("btnBuscarVagasLabel");
             const btnBuscarIcon = document.getElementById("btnBuscarVagasIcon");
 
             if (data.is_running) {
-                wasRunning = true;
-                if (progressBar) progressBar.classList.remove("hidden");
-                if (progressText) progressText.innerText = "Executando varredura...";
+                buscaEmAndamento = true;
 
-                if (btnBuscarLabel) btnBuscarLabel.innerText = "Parar busca";
-                if (btnBuscarIcon) btnBuscarIcon.className = "ph ph-stop font-semibold text-olive-950 text-base";
+                // Estado de Loading (Botão Vermelho de Parar Busca com Ícone de Spinner)
+                if (btnBuscar) {
+                    btnBuscar.className = "px-4 py-2 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-semibold text-sm rounded-xl flex items-center gap-2 transition-colors border-0";
+                }
+                if (btnBuscarIcon) {
+                    btnBuscarIcon.className = "ph ph-spinner animate-spin font-semibold text-white text-base";
+                }
+                if (btnBuscarLabel) {
+                    btnBuscarLabel.innerText = "Parar busca";
+                    btnBuscarLabel.className = "text-white font-semibold";
+                }
             } else {
-                if (progressBar) progressBar.classList.add("hidden");
-
-                if (wasRunning) {
-                    wasRunning = false;
+                if (buscaEmAndamento) {
+                    buscaEmAndamento = false;
                     carregarVagas();
                     showToast("Busca concluída! Vagas atualizadas.");
                 }
 
-                if (btnBuscarLabel) btnBuscarLabel.innerText = "Buscar vagas";
-                if (btnBuscarIcon) btnBuscarIcon.className = "ph ph-magnifying-glass font-semibold text-olive-950 text-base";
+                // Estado Normal de Buscar Vagas
+                if (btnBuscar) {
+                    btnBuscar.className = "px-4 py-2 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl flex items-center gap-2 transition-colors border-0";
+                }
+                if (btnBuscarIcon) {
+                    btnBuscarIcon.className = "ph ph-magnifying-glass font-semibold text-olive-950 text-base";
+                }
+                if (btnBuscarLabel) {
+                    btnBuscarLabel.innerText = "Buscar vagas";
+                    btnBuscarLabel.className = "text-olive-950 font-semibold";
+                }
             }
 
-            if (data.logs && data.logs.length > 0) {
+            const logBox = document.getElementById("logBox");
+            if (logBox && data.logs && data.logs.length > 0) {
                 logBox.innerText = data.logs.join("\n");
                 logBox.scrollTop = logBox.scrollHeight;
             }
@@ -1135,6 +1142,19 @@
     const ITENS_POR_PAGINA = 20;
 
     function renderizarPaginacao(totalItens) {
+        const wrapperEl = document.getElementById("paginationWrapper");
+        if (!wrapperEl) return;
+
+        // Se houver 20 ou menos itens, oculta totalmente a barra de paginação
+        if (totalItens <= ITENS_POR_PAGINA) {
+            wrapperEl.classList.add("hidden");
+            wrapperEl.classList.remove("flex");
+            return;
+        }
+
+        wrapperEl.classList.remove("hidden");
+        wrapperEl.classList.add("flex");
+
         const totalPaginas = Math.ceil(totalItens / ITENS_POR_PAGINA) || 1;
         if (paginaAtual > totalPaginas) paginaAtual = totalPaginas;
         if (paginaAtual < 1) paginaAtual = 1;
@@ -1145,7 +1165,7 @@
 
         const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA + 1;
         const fim = Math.min(paginaAtual * ITENS_POR_PAGINA, totalItens);
-        infoEl.innerText = totalItens > 0 ? `Exibindo ${inicio}-${fim} de ${totalItens} vagas` : "Exibindo 0 vagas";
+        infoEl.innerText = `Exibindo ${inicio}-${fim} de ${totalItens} vagas`;
 
         let html = "";
         const desativarPrev = paginaAtual === 1;
@@ -1317,12 +1337,8 @@
         vagasDaPagina.forEach(vaga => {
             const scoreVal = vaga.score !== undefined && vaga.score !== null ? vaga.score : 5;
             
-            let scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-olive-100 text-olive-800 font-medium text-sm inline-flex items-center border-0";
-            if (scoreVal >= 8) {
-                scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-lime-400 text-olive-950 font-medium text-sm inline-flex items-center border-0";
-            } else if (scoreVal >= 5) {
-                scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-amber-100 text-amber-900 font-medium text-sm inline-flex items-center border-0";
-            }
+            // Todas as tags de pontuação (8, 9, 10, 5, etc.) com cor clara igual às demais (bg-olive-100 text-olive-800)
+            const scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-olive-100 text-olive-800 font-medium text-sm inline-flex items-center border-0";
 
             const modalidadeTexto = vaga.modalidade || (vaga.local && vaga.local.toLowerCase().includes("remoto") ? "Remoto" : "Presencial");
             const divulgadaEm = extrairDataFormatada(vaga);
