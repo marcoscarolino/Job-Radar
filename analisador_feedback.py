@@ -38,13 +38,15 @@ def analisar_comentario_feedback(vaga: dict, comentario: str) -> dict:
     # 1. Detecção de Bloqueio de Empresa
     deve_bloquear_empresa = False
 
-    if empresa_vaga:
+    if empresa_vaga and _normalizar(empresa_vaga) not in ("confidencial", "empresa confidencial", "-"):
         emp_norm = _normalizar(empresa_vaga)
 
         palavras_chave_empresa = [
             "empresa", "companhia", "organizacao", "consultoria",
             "dessa empresa", "esta empresa", "da empresa", "bloquear empresa",
-            "nao quero vagas da", "odiei essa empresa", "nao gosto da"
+            "nao quero vagas da", "odiei essa empresa", "odiei essa", "nao gosto da",
+            "nao gosto dessa", "nao gosto desta", "nao gosto dessa empresa",
+            "nao quero essa empresa", "nao quero esta empresa"
         ]
 
         if emp_norm and (emp_norm in com_norm or any(kw in com_norm for kw in palavras_chave_empresa)):
@@ -61,8 +63,8 @@ def analisar_comentario_feedback(vaga: dict, comentario: str) -> dict:
     deve_bloquear_titulo = False
     termo_titulo_para_bloquear = ""
 
-    # Se o comentário for focado na empresa (ex: "não quero vagas dessa empresa"), não assume bloqueio de cargo a menos que explicite cargo/título
-    menciona_cargo_explicito = any(kw in com_norm for kw in ["cargo", "titulo", "funcao", "posicao", "nivel", "estagiario", "trainee", "scrum master"])
+    # Se o comentário for focado na empresa, não assume bloqueio de cargo a menos que mencione termo explicito de cargo
+    menciona_cargo_explicito = any(kw in com_norm for kw in ["cargo", "titulo", "funcao", "posicao", "nivel", "estagiario", "trainee", "scrum master", "coordenador"])
     
     padrao_cargo = re.search(r"(?:nao quero vagas? (?:do cargo|do titulo|de cargo|de titulo)|cargo de|titulo de|bloquear cargo|bloquear titulo)\s+([a-z0-9\s]+)", com_norm)
     if padrao_cargo:

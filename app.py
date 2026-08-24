@@ -24,6 +24,12 @@ RUNNING_PROCESS = None
 RUNNING_LOCK = threading.Lock()
 LAST_RUN_LOGS = []
 
+try:
+    from database.database import iniciar_db
+    iniciar_db()
+except Exception:
+    pass
+
 
 def obter_vagas_recientes(limit: int = 100) -> list[dict]:
     """Retorna as vagas mais recentes gravadas no SQLite data/jobs.db que combinam com as regras ativas."""
@@ -42,7 +48,7 @@ def obter_vagas_recientes(limit: int = 100) -> list[dict]:
             """
             SELECT id, titulo, empresa, local, link AS url, site AS fonte,
                    encontrada_em AS criado_em, modalidade, relevancia AS score,
-                   publicado_em
+                   publicado_em, feedback, comentario_feedback
             FROM vagas_vistas
             ORDER BY encontrada_em DESC, ROWID DESC
             """,
