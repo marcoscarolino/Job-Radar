@@ -35,7 +35,9 @@
     "Rio de Janeiro",
     "São Paulo"
   ],
-  "empresas_bloqueadas": [],
+  "empresas_bloqueadas": [
+    "BAIRESDEV"
+  ],
   "titulos_bloqueados": [],
   "aceitar_remoto": true,
   "canais_notificacao": {
