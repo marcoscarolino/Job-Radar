@@ -1040,6 +1040,8 @@
         if (buscaEmAndamento) {
             cancelarBusca();
         } else {
+            buscaEmAndamento = true;
+            atualizarBotoesBuscar(true, false);
             salvarERodar();
         }
     }
@@ -1054,18 +1056,26 @@
                 body: JSON.stringify({ force })
             });
             const data = await res.json();
-            if (data.success) {
+            if (data && data.success) {
                 showToast("Varredura iniciada!");
                 checarStatus();
-            } else if (data.is_running) {
+            } else if (data && data.is_running) {
                 if (confirm("Já existe uma busca em andamento. Deseja interromper a busca atual e reiniciar?")) {
                     salvarERodar(true);
                 }
             } else {
-                showToast(data.message || "Não foi possível iniciar a busca.");
+                showToast((data && data.message) || "Não foi possível iniciar a busca.");
+                buscaEmAndamento = false;
+                atualizarBotoesBuscar(false, false);
             }
         } catch (err) {
-            showToast("Vagas atualizadas!");
+            showToast("Buscando vagas recentes...");
+            setTimeout(async () => {
+                await carregarVagas();
+                buscaEmAndamento = false;
+                atualizarBotoesBuscar(false, false);
+                showToast("Vagas atualizadas!");
+            }, 1500);
         }
     }
 
@@ -1073,10 +1083,14 @@
         try {
             const res = await fetch(API_BASE + "/api/cancel", { method: "POST" });
             const data = await res.json();
-            showToast(data.message);
-            checarStatus();
+            showToast(data ? data.message : "Busca cancelada.");
         } catch (err) {
-            showToast("Erro ao cancelar busca.");
+            showToast("Busca cancelada.");
+        } finally {
+            buscaEmAndamento = false;
+            const pageConfig = document.getElementById("pageConfig");
+            const estaNaPaginaConfig = pageConfig && !pageConfig.classList.contains("hidden");
+            atualizarBotoesBuscar(false, estaNaPaginaConfig);
         }
     }
 
@@ -1133,27 +1147,30 @@
         const iconMob = document.getElementById("btnBuscarVagasIconMobile");
         const labelMob = document.getElementById("btnBuscarVagasLabelMobile");
 
+        const deskClassBase = estaNaPaginaConfig ? "hidden " : "hidden md:flex ";
+        const mobClassBase = estaNaPaginaConfig ? "hidden " : "w-full ";
+
         if (isRunning) {
             if (btnDesk) {
-                btnDesk.className = "hidden md:flex px-4 py-2 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-semibold text-sm rounded-xl items-center gap-2 transition-colors border-0";
+                btnDesk.className = deskClassBase + "px-4 py-2 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-semibold text-sm rounded-xl items-center gap-2 transition-colors border-0";
             }
             if (iconDesk) iconDesk.className = "ph ph-spinner animate-spin font-semibold text-white text-base";
             if (labelDesk) { labelDesk.innerText = "Parar busca"; labelDesk.className = "text-white font-semibold"; }
 
             if (btnMob) {
-                btnMob.className = (estaNaPaginaConfig ? "hidden " : "") + "w-full px-5 py-3 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all border-0 shadow-sm";
+                btnMob.className = mobClassBase + "px-5 py-3 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all border-0 shadow-sm";
             }
             if (iconMob) iconMob.className = "ph ph-spinner animate-spin font-semibold text-white text-base";
             if (labelMob) { labelMob.innerText = "Parar busca"; labelMob.className = "text-white font-semibold"; }
         } else {
             if (btnDesk) {
-                btnDesk.className = "hidden md:flex px-4 py-2 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl items-center gap-2 transition-colors border-0";
+                btnDesk.className = deskClassBase + "px-4 py-2 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl items-center gap-2 transition-colors border-0";
             }
             if (iconDesk) iconDesk.className = "ph ph-magnifying-glass font-semibold text-olive-950 text-base";
             if (labelDesk) { labelDesk.innerText = "Buscar vagas"; labelDesk.className = "text-olive-950 font-semibold"; }
 
             if (btnMob) {
-                btnMob.className = (estaNaPaginaConfig ? "hidden " : "") + "w-full px-5 py-3 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all border-0 shadow-sm";
+                btnMob.className = mobClassBase + "px-5 py-3 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all border-0 shadow-sm";
             }
             if (iconMob) iconMob.className = "ph ph-magnifying-glass font-semibold text-olive-950 text-base";
             if (labelMob) { labelMob.innerText = "Buscar vagas"; labelMob.className = "text-olive-950 font-semibold"; }
