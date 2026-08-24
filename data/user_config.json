@@ -8,13 +8,9 @@
   },
   "preferencia_modalidade": "remoto",
   "senioridades_alvo": [
-    "Sênior",
     "Especialista/Liderança"
   ],
   "cargos_fortes": [
-    "PMO",
-    "Gerente de Projetos",
-    "Project Manager",
     "Product Design"
   ],
   "cargos_ambiguos": [
@@ -33,10 +29,7 @@
   ],
   "cidades": [
     "Brasília",
-    "Rio de Janeiro",
-    "São Paulo",
-    "Belo Horizonte",
-    "Santa Catarina"
+    "São Paulo"
   ],
   "empresas_bloqueadas": [],
   "titulos_bloqueados": [],
