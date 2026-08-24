@@ -64,7 +64,7 @@
         }
     </style>
 </head>
-<body class="bg-olive-50 text-olive-800 font-sans min-h-screen pb-28 antialiased">
+<body class="bg-olive-50 text-olive-800 font-sans min-h-screen pb-24 md:pb-12 antialiased">
 
 <div class="max-w-6xl mx-auto px-4 py-4 md:py-6">
     <!-- Header Transparente sem borda -->
@@ -149,11 +149,16 @@
                     </select>
                 </div>
 
-                <!-- Botão Limpar Lista no final dos filtros -->
+                <!-- Botões de Ação no Desktop (Limpar lista + Buscar vagas) -->
                 <div class="flex items-center gap-2 ml-auto pt-2 sm:pt-0">
                     <button onclick="limparListaVagas()" class="px-3.5 py-2 text-rose-700 hover:bg-rose-100/70 font-semibold text-sm rounded-xl transition-colors flex items-center gap-1.5 border-0">
                         <i class="ph ph-trash text-base"></i>
                         <span>Limpar lista</span>
+                    </button>
+                    <!-- Botão Buscar Vagas DESKTOP -->
+                    <button id="btnBuscarVagasDesktop" onclick="aoClicarBotaoBuscar()" class="hidden md:flex px-4 py-2 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl items-center gap-2 transition-colors border-0">
+                        <i class="ph ph-magnifying-glass font-semibold text-olive-950 text-base" id="btnBuscarVagasIconDesktop"></i>
+                        <span id="btnBuscarVagasLabelDesktop" class="text-olive-950 font-semibold">Buscar vagas</span>
                     </button>
                 </div>
             </div>
@@ -390,27 +395,32 @@
                 </div>
             </div>
         </div>
+
+        <!-- Botão Salvar Configurações no Desktop -->
+        <div class="hidden md:flex items-center justify-end pt-2">
+            <button class="px-5 py-2.5 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl transition-colors border-0" onclick="salvarConfiguracoes()">Salvar configurações</button>
+        </div>
     </div>
 </div>
 
-<!-- Barra de Ações Fixa na Parte Inferior (Mobile: Ocupa toda a largura | Desktop: Alinhada à direita com limite do container) -->
-<div id="fixedBottomBar" class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-olive-200/80 p-3 sm:px-6 sm:py-3 shadow-lg">
-    <div class="max-w-6xl mx-auto flex items-center justify-end px-1">
-        <!-- Botão Buscar Vagas (Página de Vagas) -->
-        <button id="btnBuscarVagas" onclick="aoClicarBotaoBuscar()" class="w-full sm:w-auto px-5 py-3 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all border-0 shadow-sm">
-            <i class="ph ph-magnifying-glass font-semibold text-olive-950 text-base" id="btnBuscarVagasIcon"></i>
-            <span id="btnBuscarVagasLabel" class="text-olive-950 font-semibold">Buscar vagas</span>
+<!-- Barra de Ações Fixa na Parte Inferior (APENAS MOBILE - md:hidden) -->
+<div id="fixedBottomBar" class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-olive-200/80 p-3 shadow-lg">
+    <div class="w-full flex items-center justify-center">
+        <!-- Botão Buscar Vagas Mobile -->
+        <button id="btnBuscarVagasMobile" onclick="aoClicarBotaoBuscar()" class="w-full px-5 py-3 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all border-0 shadow-sm">
+            <i class="ph ph-magnifying-glass font-semibold text-olive-950 text-base" id="btnBuscarVagasIconMobile"></i>
+            <span id="btnBuscarVagasLabelMobile" class="text-olive-950 font-semibold">Buscar vagas</span>
         </button>
 
-        <!-- Botão Salvar Configurações (Página de Configurações) -->
-        <button id="btnSalvarConfigFixed" onclick="salvarConfiguracoes()" class="hidden w-full sm:w-auto px-5 py-3 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl transition-all border-0 shadow-sm">
+        <!-- Botão Salvar Configurações Mobile -->
+        <button id="btnSalvarConfigMobile" onclick="salvarConfiguracoes()" class="hidden w-full px-5 py-3 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl transition-all border-0 shadow-sm">
             Salvar configurações
         </button>
     </div>
 </div>
 
 <!-- Toast -->
-<div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-olive-950 text-white px-4 py-2 rounded-full font-semibold text-sm shadow-lg hidden z-50 transition-all">
+<div id="toast" class="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 bg-olive-950 text-white px-4 py-2 rounded-full font-semibold text-sm shadow-lg hidden z-50 transition-all">
     Salvo com sucesso!
 </div>
 
@@ -587,23 +597,23 @@
         const pageConfig = document.getElementById("pageConfig");
         const btnToggleNavText = document.getElementById("btnToggleNavText");
         const btnToggleNavIcon = document.getElementById("btnToggleNavIcon");
-        const btnBuscar = document.getElementById("btnBuscarVagas");
-        const btnSalvar = document.getElementById("btnSalvarConfigFixed");
+        const btnBuscarMob = document.getElementById("btnBuscarVagasMobile");
+        const btnSalvarMob = document.getElementById("btnSalvarConfigMobile");
 
         if (nomePagina === "config") {
             pageVagas.classList.add("hidden");
             pageConfig.classList.remove("hidden");
             if (btnToggleNavText) btnToggleNavText.innerText = "Voltar para vagas";
             if (btnToggleNavIcon) btnToggleNavIcon.className = "ph ph-arrow-left text-lg";
-            if (btnBuscar) btnBuscar.classList.add("hidden");
-            if (btnSalvar) btnSalvar.classList.remove("hidden");
+            if (btnBuscarMob) btnBuscarMob.classList.add("hidden");
+            if (btnSalvarMob) btnSalvarMob.classList.remove("hidden");
         } else {
             pageVagas.classList.remove("hidden");
             pageConfig.classList.add("hidden");
             if (btnToggleNavText) btnToggleNavText.innerText = "Configurações";
             if (btnToggleNavIcon) btnToggleNavIcon.className = "ph ph-gear text-lg";
-            if (btnBuscar) btnBuscar.classList.remove("hidden");
-            if (btnSalvar) btnSalvar.classList.add("hidden");
+            if (btnBuscarMob) btnBuscarMob.classList.remove("hidden");
+            if (btnSalvarMob) btnSalvarMob.classList.add("hidden");
         }
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -1089,46 +1099,19 @@
             const res = await fetch(API_BASE + "/api/status");
             const data = await res.json();
 
-            const btnBuscar = document.getElementById("btnBuscarVagas");
-            const btnBuscarLabel = document.getElementById("btnBuscarVagasLabel");
-            const btnBuscarIcon = document.getElementById("btnBuscarVagasIcon");
-
             const pageConfig = document.getElementById("pageConfig");
             const estaNaPaginaConfig = pageConfig && !pageConfig.classList.contains("hidden");
-            const hiddenPrefix = estaNaPaginaConfig ? "hidden " : "";
 
             if (data.is_running) {
                 buscaEmAndamento = true;
-
-                // Estado de Loading (Botão Vermelho de Parar Busca com Ícone de Spinner)
-                if (btnBuscar) {
-                    btnBuscar.className = hiddenPrefix + "w-full sm:w-auto px-5 py-3 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all border-0 shadow-sm";
-                }
-                if (btnBuscarIcon) {
-                    btnBuscarIcon.className = "ph ph-spinner animate-spin font-semibold text-white text-base";
-                }
-                if (btnBuscarLabel) {
-                    btnBuscarLabel.innerText = "Parar busca";
-                    btnBuscarLabel.className = "text-white font-semibold";
-                }
+                atualizarBotoesBuscar(true, estaNaPaginaConfig);
             } else {
                 if (buscaEmAndamento) {
                     buscaEmAndamento = false;
                     carregarVagas();
                     showToast("Busca concluída! Vagas atualizadas.");
                 }
-
-                // Estado Normal de Buscar Vagas
-                if (btnBuscar) {
-                    btnBuscar.className = hiddenPrefix + "w-full sm:w-auto px-5 py-3 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all border-0 shadow-sm";
-                }
-                if (btnBuscarIcon) {
-                    btnBuscarIcon.className = "ph ph-magnifying-glass font-semibold text-olive-950 text-base";
-                }
-                if (btnBuscarLabel) {
-                    btnBuscarLabel.innerText = "Buscar vagas";
-                    btnBuscarLabel.className = "text-olive-950 font-semibold";
-                }
+                atualizarBotoesBuscar(false, estaNaPaginaConfig);
             }
 
             const logBox = document.getElementById("logBox");
@@ -1137,6 +1120,44 @@
                 logBox.scrollTop = logBox.scrollHeight;
             }
         } catch (err) {}
+    }
+
+    function atualizarBotoesBuscar(isRunning, estaNaPaginaConfig) {
+        // Desktop Button
+        const btnDesk = document.getElementById("btnBuscarVagasDesktop");
+        const iconDesk = document.getElementById("btnBuscarVagasIconDesktop");
+        const labelDesk = document.getElementById("btnBuscarVagasLabelDesktop");
+
+        // Mobile Button
+        const btnMob = document.getElementById("btnBuscarVagasMobile");
+        const iconMob = document.getElementById("btnBuscarVagasIconMobile");
+        const labelMob = document.getElementById("btnBuscarVagasLabelMobile");
+
+        if (isRunning) {
+            if (btnDesk) {
+                btnDesk.className = "hidden md:flex px-4 py-2 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-semibold text-sm rounded-xl items-center gap-2 transition-colors border-0";
+            }
+            if (iconDesk) iconDesk.className = "ph ph-spinner animate-spin font-semibold text-white text-base";
+            if (labelDesk) { labelDesk.innerText = "Parar busca"; labelDesk.className = "text-white font-semibold"; }
+
+            if (btnMob) {
+                btnMob.className = (estaNaPaginaConfig ? "hidden " : "") + "w-full px-5 py-3 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all border-0 shadow-sm";
+            }
+            if (iconMob) iconMob.className = "ph ph-spinner animate-spin font-semibold text-white text-base";
+            if (labelMob) { labelMob.innerText = "Parar busca"; labelMob.className = "text-white font-semibold"; }
+        } else {
+            if (btnDesk) {
+                btnDesk.className = "hidden md:flex px-4 py-2 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl items-center gap-2 transition-colors border-0";
+            }
+            if (iconDesk) iconDesk.className = "ph ph-magnifying-glass font-semibold text-olive-950 text-base";
+            if (labelDesk) { labelDesk.innerText = "Buscar vagas"; labelDesk.className = "text-olive-950 font-semibold"; }
+
+            if (btnMob) {
+                btnMob.className = (estaNaPaginaConfig ? "hidden " : "") + "w-full px-5 py-3 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all border-0 shadow-sm";
+            }
+            if (iconMob) iconMob.className = "ph ph-magnifying-glass font-semibold text-olive-950 text-base";
+            if (labelMob) { labelMob.innerText = "Buscar vagas"; labelMob.className = "text-olive-950 font-semibold"; }
+        }
     }
 
     function mesclarVagas(novasVagas) {
