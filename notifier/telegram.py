@@ -12,15 +12,18 @@ from logger import get_logger
 logger = get_logger()
 
 
-def enviar_mensagem(texto: str, reply_markup: dict | None = None) -> bool:
-    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
-        logger.warning("Telegram não configurado (token/chat_id ausentes no .env). Pulando envio.")
+def enviar_mensagem(texto: str, reply_markup: dict | None = None, chat_id: str | None = None, token: str | None = None) -> bool:
+    bot_token = token or TELEGRAM_BOT_TOKEN
+    target_chat_id = chat_id or TELEGRAM_CHAT_ID
+
+    if not bot_token or not target_chat_id:
+        logger.warning("Telegram não configurado (token/chat_id ausentes). Pulando envio.")
         return False
 
-    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
 
     payload = {
-        "chat_id": TELEGRAM_CHAT_ID,
+        "chat_id": target_chat_id,
         "text": texto,
         "parse_mode": "HTML",
         "disable_web_page_preview": False,
