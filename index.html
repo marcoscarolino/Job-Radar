@@ -1093,12 +1093,16 @@
             const btnBuscarLabel = document.getElementById("btnBuscarVagasLabel");
             const btnBuscarIcon = document.getElementById("btnBuscarVagasIcon");
 
+            const pageConfig = document.getElementById("pageConfig");
+            const estaNaPaginaConfig = pageConfig && !pageConfig.classList.contains("hidden");
+            const hiddenPrefix = estaNaPaginaConfig ? "hidden " : "";
+
             if (data.is_running) {
                 buscaEmAndamento = true;
 
                 // Estado de Loading (Botão Vermelho de Parar Busca com Ícone de Spinner)
                 if (btnBuscar) {
-                    btnBuscar.className = "w-full sm:w-auto px-5 py-3 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all border-0 shadow-sm";
+                    btnBuscar.className = hiddenPrefix + "w-full sm:w-auto px-5 py-3 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all border-0 shadow-sm";
                 }
                 if (btnBuscarIcon) {
                     btnBuscarIcon.className = "ph ph-spinner animate-spin font-semibold text-white text-base";
@@ -1116,7 +1120,7 @@
 
                 // Estado Normal de Buscar Vagas
                 if (btnBuscar) {
-                    btnBuscar.className = "w-full sm:w-auto px-5 py-3 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all border-0 shadow-sm";
+                    btnBuscar.className = hiddenPrefix + "w-full sm:w-auto px-5 py-3 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all border-0 shadow-sm";
                 }
                 if (btnBuscarIcon) {
                     btnBuscarIcon.className = "ph ph-magnifying-glass font-semibold text-olive-950 text-base";
