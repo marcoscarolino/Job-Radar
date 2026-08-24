@@ -31,12 +31,9 @@
     "curso"
   ],
   "cidades": [
-    "Brasil",
     "Brasília",
-    "São Paulo",
     "Rio de Janeiro",
-    "Minas Gerais",
-    "Santa Catarina"
+    "São Paulo"
   ],
   "aceitar_remoto": true,
   "canais_notificacao": {
