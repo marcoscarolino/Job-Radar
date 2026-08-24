@@ -14,7 +14,8 @@
   "cargos_fortes": [
     "PMO",
     "Gerente de Projetos",
-    "Project Manager"
+    "Project Manager",
+    "Product Design"
   ],
   "cargos_ambiguos": [
     "Coordenador de Projetos",
@@ -43,7 +44,7 @@
   "canais_notificacao": {
     "email": {
       "ativo": true,
-      "destinatario": "contato.marcoscarolino@gmail.com, paloma.pessoa86@gmail.com",
+      "destinatario": "contato.marcoscarolino@gmail.com",
       "smtp_host": "smtp.gmail.com",
       "smtp_port": 587,
       "smtp_user": "contato.marcoscarolino@gmail.com",
