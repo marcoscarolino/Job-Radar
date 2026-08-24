@@ -79,10 +79,10 @@ def construir_digest_html(vagas: list[dict]) -> str:
                                 </td>
                                 <td align="right">
                                     <a href="https://marcoscarolino.github.io/Job-Radar/index.html?job_id={vaga_id}&feedback=positivo" target="_blank" style="display: inline-block; background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 5px 9px; border-radius: 10px; font-size: 13px; font-weight: 500; text-decoration: none; margin-right: 4px;" title="Gostei da vaga">
-                                        👍 Gostei
+                                        Gostei
                                     </a>
                                     <a href="https://marcoscarolino.github.io/Job-Radar/index.html?job_id={vaga_id}&feedback=negativo" target="_blank" style="display: inline-block; background-color: #fff1f2; border: 1px solid #fecdd3; color: #9f1239; padding: 5px 9px; border-radius: 10px; font-size: 13px; font-weight: 500; text-decoration: none; margin-right: 8px;" title="Não gostei">
-                                        👎 Não gostei
+                                        Não gostei
                                     </a>
                                     <a href="{link}" target="_blank" style="display: inline-block; background-color: #a3e635; color: #1e2019; padding: 6px 14px; border-radius: 12px; font-size: 14px; font-weight: 500; text-decoration: none; border: 0;">
                                         Ver vaga &rarr;
@@ -127,7 +127,7 @@ def construir_digest_html(vagas: list[dict]) -> str:
                         <table border="0" cellspacing="0" cellpadding="0">
                             <tr>
                                 <td style="vertical-align: middle; padding-right: 8px;">
-                                    <img src="{logo_url}" width="26" height="26" alt="🎯" style="display: block; border: 0; width: 26px; height: 26px; outline: none; text-decoration: none;">
+                                    <img src="{logo_url}" width="26" height="26" alt="JobRadar" style="display: block; border: 0; width: 26px; height: 26px; outline: none; text-decoration: none;">
                                 </td>
                                 <td style="font-size: 24px; font-weight: 600; color: #3f4530; line-height: 1; vertical-align: middle;">
                                     JobRadar

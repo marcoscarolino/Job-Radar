@@ -420,7 +420,7 @@
 <div id="feedbackModalOverlay" class="fixed inset-0 bg-olive-950/60 hidden items-center justify-center p-4 z-50" onclick="fecharModalFeedback(event)">
     <div class="bg-white border border-olive-200 rounded-2xl max-w-lg w-full flex flex-col shadow-xl overflow-hidden" onclick="event.stopPropagation()">
         <div class="px-5 py-4 border-b border-olive-200 flex items-center justify-between">
-            <h3 class="font-medium text-olive-900 text-lg">Avaliar vaga (👎)</h3>
+            <h3 class="font-medium text-olive-900 text-lg">Avaliar vaga</h3>
             <button type="button" class="w-8 h-8 rounded-xl bg-olive-100/70 hover:bg-olive-200 text-olive-700 hover:text-olive-950 flex items-center justify-center transition-all border-0 font-medium text-lg modal-close" onclick="fecharModalFeedback()">&times;</button>
         </div>
         <div class="p-5 space-y-3">
@@ -1282,10 +1282,10 @@
                         <p class="text-sm font-normal text-olive-600 mt-0.5">${vaga.empresa || 'Empresa Confidencial'}</p>
                     </div>
                     <div class="flex items-center gap-1 shrink-0">
-                        <button type="button" class="${btnUpClass}" onclick="enviarFeedback('${vaga.id}', 'positivo')" title="Gostei dessa vaga (👍)">
+                        <button type="button" class="${btnUpClass}" onclick="enviarFeedback('${vaga.id}', 'positivo')" title="Gostei dessa vaga">
                             <i class="ph ph-thumbs-up text-xs"></i>
                         </button>
-                        <button type="button" class="${btnDownClass}" onclick="abrirModalFeedback('${vaga.id}')" title="Não gostei (👎)">
+                        <button type="button" class="${btnDownClass}" onclick="abrirModalFeedback('${vaga.id}')" title="Não gostei">
                             <i class="ph ph-thumbs-down text-xs"></i>
                         </button>
                         <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="w-7 h-7 rounded-lg bg-olive-100/60 hover:bg-lime-400 text-olive-600 hover:text-olive-950 flex items-center justify-center transition-all shrink-0 border-0 ml-1" title="Ver vaga">
@@ -1321,10 +1321,10 @@
                 <td class="py-3.5 px-4 text-olive-600 text-sm font-normal">${vaga.fonte}</td>
                 <td class="py-3.5 px-4 text-right">
                     <div class="inline-flex items-center gap-1.5 justify-end">
-                        <button type="button" class="${btnUpClass}" onclick="enviarFeedback('${vaga.id}', 'positivo')" title="Gostei dessa vaga (👍)">
+                        <button type="button" class="${btnUpClass}" onclick="enviarFeedback('${vaga.id}', 'positivo')" title="Gostei dessa vaga">
                             <i class="ph ph-thumbs-up text-xs"></i>
                         </button>
-                        <button type="button" class="${btnDownClass}" onclick="abrirModalFeedback('${vaga.id}')" title="Não gostei (👎)">
+                        <button type="button" class="${btnDownClass}" onclick="abrirModalFeedback('${vaga.id}')" title="Não gostei">
                             <i class="ph ph-thumbs-down text-xs"></i>
                         </button>
                         <a href="${vaga.url}" target="_blank" rel="noopener noreferrer" class="w-7 h-7 rounded-lg bg-olive-100/60 hover:bg-lime-400 text-olive-600 hover:text-olive-950 inline-flex items-center justify-center transition-all border-0 ml-1" title="Ver vaga">
