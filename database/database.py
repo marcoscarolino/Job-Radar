@@ -317,22 +317,37 @@ def obter_vaga_por_id(job_id: str) -> dict | None:
 
 
 def obter_vagas_pendentes_digest(perfil_chave: str) -> list[tuple]:
-    """Vagas salvas com digest_pendente=1 pra esse perfil, da mais
-    relevante pra menos — ver _enviar_digest_diario em main.py. Pode
-    acumular de mais de um ciclo (a cada 3h) até bater o horário do envio,
-    e também sobrevive se o envio de um dia falhar (Telegram fora do ar):
-    fica pendente e entra no digest seguinte, nunca é descartada."""
+    """Vagas salvas com digest_pendente=1 pra esse perfil que combinam com as regras ativas no momento do envio."""
+    from perfis import obter_regras_perfil
+    from job import Job
+
+    regras = obter_regras_perfil(perfil_chave)
+
     with _conectar() as conn:
         cursor = conn.execute(
             """
-            SELECT titulo, empresa, link, relevancia, exploratoria
+            SELECT titulo, empresa, link, relevancia, exploratoria, local, site, modalidade, publicado_em
             FROM vagas_vistas
             WHERE perfil = ? AND digest_pendente = 1
             ORDER BY relevancia DESC, encontrada_em ASC
             """,
             (perfil_chave,),
         )
-        return cursor.fetchall()
+        vagas = []
+        for row in cursor.fetchall():
+            tit, emp, lnk, rel, exp, loc, st, mod, pub = row
+            j = Job(
+                titulo=tit or "",
+                empresa=emp or "",
+                local=loc or "",
+                link=lnk or "",
+                site=st or "",
+                modalidade=mod or "",
+                publicado_em=pub or "",
+            )
+            if j.combina_com(regras):
+                vagas.append((tit, emp, lnk, rel, exp))
+        return vagas
 
 
 def marcar_digest_enviado(perfil_chave: str):
