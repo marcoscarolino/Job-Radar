@@ -1,6 +1,6 @@
 {
   "score_minimo": "8",
-  "frequencia_email": "duas_vezes_ao_dia",
+  "frequencia_email": "a_cada_3_horas",
   "modalidades_aceitas": {
     "remoto": true,
     "hibrido": false,
