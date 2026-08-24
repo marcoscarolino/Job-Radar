@@ -26,6 +26,13 @@ from job import Job, RegrasFiltro, extrair_escopo_remoto
 from perfis import PERFIL_BR, PERFIL_INTL
 
 
+def test_job_chave_secundaria():
+    j1 = Job(titulo="Gerente de Projetos", empresa="Empresa Teste", local="São Paulo", link="http://site1.com/vaga1", site="gupy")
+    j2 = Job(titulo="Gerente de Projetos", empresa="Empresa Teste", local="Rio de Janeiro", link="http://site2.com/vaga2", site="gupy")
+    assert j1.chave_secundaria == j2.chave_secundaria
+    assert len(j1.chave_secundaria) == 32
+
+
 # ---------------------------------------------------------------------------
 # extrair_escopo_remoto(local, modalidade) -> set[str]
 # ---------------------------------------------------------------------------

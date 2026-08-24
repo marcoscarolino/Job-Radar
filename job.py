@@ -833,6 +833,15 @@ class Job:
         return hashlib.md5(link_normalizado.encode()).hexdigest()
 
     @property
+    def chave_secundaria(self) -> str:
+        """Chave secundária baseada na combinação normalizada de empresa + título.
+        Evita duplicatas da mesma vaga publicada em fontes diferentes com links distintos.
+        """
+        emp = _normalizar(self.empresa)
+        tit = _normalizar(self.titulo)
+        return hashlib.md5(f"{emp}:{tit}".encode()).hexdigest()
+
+    @property
     def eh_gerencia(self) -> bool:
         """Indica se o cargo é de gerência (Gerente / PMO / Head / etc.).
         
