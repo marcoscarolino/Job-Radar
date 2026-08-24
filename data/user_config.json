@@ -41,7 +41,7 @@
   "canais_notificacao": {
     "email": {
       "ativo": true,
-      "destinatario": "contato.marcoscarolino@gmail.com, paloma.pesso86@gmail.com",
+      "destinatario": "contato.marcoscarolino@gmail.com, paloma.pessoa86@gmail.com",
       "smtp_host": "smtp.gmail.com",
       "smtp_port": 587,
       "smtp_user": "contato.marcoscarolino@gmail.com",
