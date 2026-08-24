@@ -36,9 +36,7 @@
     "São Paulo",
     "Brasil"
   ],
-  "empresas_bloqueadas": [
-    "BAIRESDEV"
-  ],
+  "empresas_bloqueadas": [],
   "titulos_bloqueados": [],
   "aceitar_remoto": true,
   "canais_notificacao": {
