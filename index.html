@@ -408,7 +408,7 @@
     <div class="bg-white border border-olive-200 rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-xl overflow-hidden" onclick="event.stopPropagation()">
         <div class="px-5 py-4 border-b border-olive-200 flex items-center justify-between">
             <h3 class="font-medium text-olive-900 text-lg" id="modalInfoTitulo">Instruções de configuração</h3>
-            <button type="button" class="text-olive-400 hover:text-olive-600 text-xl font-medium" onclick="fecharModalInfo()">&times;</button>
+            <button type="button" class="w-8 h-8 rounded-xl bg-olive-100/70 hover:bg-olive-200 text-olive-700 hover:text-olive-950 flex items-center justify-center transition-all border-0 font-medium text-lg modal-close" onclick="fecharModalInfo()">&times;</button>
         </div>
         <div class="px-5 py-3 border-t border-olive-200 bg-olive-50 flex justify-end">
             <button type="button" class="px-4 py-2 bg-olive-100 hover:bg-olive-200 text-olive-800 font-medium text-sm rounded-xl transition-colors border-0" onclick="fecharModalInfo()">Fechar</button>
@@ -421,7 +421,7 @@
     <div class="bg-white border border-olive-200 rounded-2xl max-w-lg w-full flex flex-col shadow-xl overflow-hidden" onclick="event.stopPropagation()">
         <div class="px-5 py-4 border-b border-olive-200 flex items-center justify-between">
             <h3 class="font-medium text-olive-900 text-lg">Avaliar vaga (👎)</h3>
-            <button type="button" class="text-olive-400 hover:text-olive-600 text-xl font-medium" onclick="fecharModalFeedback()">&times;</button>
+            <button type="button" class="w-8 h-8 rounded-xl bg-olive-100/70 hover:bg-olive-200 text-olive-700 hover:text-olive-950 flex items-center justify-center transition-all border-0 font-medium text-lg modal-close" onclick="fecharModalFeedback()">&times;</button>
         </div>
         <div class="p-5 space-y-3">
             <div id="feedbackModalSubtitulo" class="text-sm font-medium text-olive-900 bg-olive-50 p-3 rounded-xl"></div>
@@ -491,7 +491,9 @@
 
     document.addEventListener("DOMContentLoaded", () => {
         carregarConfiguracoes();
-        carregarVagas();
+        carregarVagas().then(() => {
+            checarParametrosUrlFeedback();
+        });
         setInterval(checarStatus, 3000);
         setInterval(sincronizarSessaoSilenciosa, 4000);
         window.addEventListener("focus", sincronizarSessaoSilenciosa);
@@ -499,6 +501,21 @@
             if (!document.hidden) sincronizarSessaoSilenciosa();
         });
     });
+
+    async function checarParametrosUrlFeedback() {
+        const params = new URLSearchParams(window.location.search);
+        const jobId = params.get("job_id");
+        const fb = params.get("feedback");
+
+        if (jobId && fb) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+            if (fb === "positivo") {
+                await enviarFeedback(jobId, "positivo");
+            } else if (fb === "negativo") {
+                setTimeout(() => abrirModalFeedback(jobId), 300);
+            }
+        }
+    }
 
     async function sincronizarSessaoSilenciosa() {
         const elAtivo = document.activeElement;
@@ -1236,7 +1253,7 @@
             
             let scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-olive-100 text-olive-700 font-medium text-sm inline-flex items-center border-0";
             if (scoreVal >= 8) {
-                scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-lime-400 text-olive-950 font-medium text-sm inline-flex items-center border-0";
+                scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-lime-100 text-lime-900 font-medium text-sm inline-flex items-center border-0";
             } else if (scoreVal >= 5) {
                 scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-amber-100 text-amber-900 font-medium text-sm inline-flex items-center border-0";
             }

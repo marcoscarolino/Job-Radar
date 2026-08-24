@@ -39,11 +39,13 @@ def construir_digest_html(vagas: list[dict]) -> str:
             mod_texto = f" • {modalidade}" if modalidade else ""
 
             if score_val >= 8:
-                score_badge_style = "background-color: #a3e635; color: #1e2019; border: 0;"
+                score_badge_style = "background-color: #ecfccb; color: #365314; border: 0;"
             elif score_val >= 5:
                 score_badge_style = "background-color: #fef3c7; color: #78350f; border: 0;"
             else:
                 score_badge_style = "background-color: #f0f2ea; color: #4b5338; border: 0;"
+
+            vaga_id = v.get("id") or ""
 
             items_html += f"""
             <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 14px; background-color: #f8f9f5; border: 1px solid #e1e5d5; border-radius: 14px; padding: 16px; box-sizing: border-box;">
@@ -76,6 +78,12 @@ def construir_digest_html(vagas: list[dict]) -> str:
                                     {divulgada_em}
                                 </td>
                                 <td align="right">
+                                    <a href="https://marcoscarolino.github.io/Job-Radar/index.html?job_id={vaga_id}&feedback=positivo" target="_blank" style="display: inline-block; background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 5px 9px; border-radius: 10px; font-size: 13px; font-weight: 500; text-decoration: none; margin-right: 4px;" title="Gostei da vaga">
+                                        👍 Gostei
+                                    </a>
+                                    <a href="https://marcoscarolino.github.io/Job-Radar/index.html?job_id={vaga_id}&feedback=negativo" target="_blank" style="display: inline-block; background-color: #fff1f2; border: 1px solid #fecdd3; color: #9f1239; padding: 5px 9px; border-radius: 10px; font-size: 13px; font-weight: 500; text-decoration: none; margin-right: 8px;" title="Não gostei">
+                                        👎 Não gostei
+                                    </a>
                                     <a href="{link}" target="_blank" style="display: inline-block; background-color: #a3e635; color: #1e2019; padding: 6px 14px; border-radius: 12px; font-size: 14px; font-weight: 500; text-decoration: none; border: 0;">
                                         Ver vaga &rarr;
                                     </a>
