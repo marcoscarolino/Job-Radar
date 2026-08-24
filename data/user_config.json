@@ -8,15 +8,16 @@
   },
   "preferencia_modalidade": "remoto",
   "senioridades_alvo": [
+    "Pleno",
+    "Sênior",
     "Especialista/Liderança"
   ],
   "cargos_fortes": [
-    "Product Design"
+    "PMO",
+    "Gerente de Projetos",
+    "Project Manager"
   ],
-  "cargos_ambiguos": [
-    "Coordenador de Projetos",
-    "Scrum Master"
-  ],
+  "cargos_ambiguos": [],
   "ferramentas": [],
   "qualificadores_dados": [
     "pmp",
@@ -29,7 +30,10 @@
   ],
   "cidades": [
     "Brasília",
-    "São Paulo"
+    "São Paulo",
+    "Rio de Janeiro",
+    "Santa Catarina",
+    "Minas Gerais"
   ],
   "empresas_bloqueadas": [],
   "titulos_bloqueados": [],
