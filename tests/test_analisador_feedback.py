@@ -33,6 +33,34 @@ def test_analisar_feedback_bloquear_empresa(tmp_path, monkeypatch):
     assert job_ok.combina_com(regras) is True
 
 
+def test_desbloquear_empresa_reaparecer_vaga():
+    # Ao remover a empresa de empresas_bloqueadas, a vaga volta a passar no filtro imediatamente
+    regras_com_bloqueio = RegrasFiltro(
+        keywords_forte=["Gerente de Projetos"],
+        keywords_ambiguo=[],
+        qualificadores_dados=[],
+        ferramentas_titulo=[],
+        qualificadores_cargo=[],
+        cidades=["São Paulo"],
+        empresas_bloqueadas=["Empresa Anteriormente Bloqueada"],
+    )
+
+    regras_desbloqueada = RegrasFiltro(
+        keywords_forte=["Gerente de Projetos"],
+        keywords_ambiguo=[],
+        qualificadores_dados=[],
+        ferramentas_titulo=[],
+        qualificadores_cargo=[],
+        cidades=["São Paulo"],
+        empresas_bloqueadas=[],
+    )
+
+    job = Job("Gerente de Projetos", "Empresa Anteriormente Bloqueada", "São Paulo", "http://l.com", "gupy", modalidade="Remoto")
+
+    assert job.combina_com(regras_com_bloqueio) is False
+    assert job.combina_com(regras_desbloqueada) is True
+
+
 def test_analisar_feedback_bloquear_titulo(tmp_path, monkeypatch):
     test_json = tmp_path / "user_config.json"
     monkeypatch.setattr("config_manager.CONFIG_PATH", test_json)
