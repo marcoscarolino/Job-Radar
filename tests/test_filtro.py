@@ -143,6 +143,37 @@ regras_teste_br = RegrasFiltro(
     mercados_remoto_aceitos=["Brasil"],
 )
 
+regras_apenas_remoto = RegrasFiltro(
+    keywords_forte=["Analista de Dados"],
+    keywords_ambiguo=[],
+    qualificadores_dados=[],
+    ferramentas_titulo=[],
+    qualificadores_cargo=[],
+    cidades=["Recife", "Remoto"],
+    mercados_remoto_aceitos=["Brasil"],
+    modalidades_aceitas={"remoto": True, "hibrido": False, "presencial": False},
+)
+
+regras_apenas_hibrido = RegrasFiltro(
+    keywords_forte=["Analista de Dados"],
+    keywords_ambiguo=[],
+    qualificadores_dados=[],
+    ferramentas_titulo=[],
+    qualificadores_cargo=[],
+    cidades=["Recife"],
+    modalidades_aceitas={"remoto": False, "hibrido": True, "presencial": False},
+)
+
+regras_apenas_presencial = RegrasFiltro(
+    keywords_forte=["Analista de Dados"],
+    keywords_ambiguo=[],
+    qualificadores_dados=[],
+    ferramentas_titulo=[],
+    qualificadores_cargo=[],
+    cidades=["Recife"],
+    modalidades_aceitas={"remoto": False, "hibrido": False, "presencial": True},
+)
+
 CASOS_COMBINA_COM = [
     # --- Internacional (Perfil INTL) ---
     ("seattle-barrada-perfil-intl", "Senior Data Analyst", "Greater Seattle Area", "Remoto", PERFIL_INTL.regras, False),
@@ -157,6 +188,24 @@ CASOS_COMBINA_COM = [
     ("cargo-forte-cidade-aceita-passa", "Analista de Dados Pleno", "Recife, PE", "Presencial", regras_teste_br, True),
     ("cargo-ambiguo-sem-qualificador-barrado", "Business Analyst", "Recife, PE", "Presencial", regras_teste_br, False),
     ("cargo-ambiguo-com-qualificador-passa", "Business Analyst com SQL", "Recife, PE", "Presencial", regras_teste_br, True),
+
+    # --- Modalidade Estrita: Apenas Remoto ---
+    ("apenas-remoto-bloqueia-presencial-mesma-cidade", "Analista de Dados", "Recife, PE", "Presencial", regras_apenas_remoto, False),
+    ("apenas-remoto-bloqueia-hibrido", "Analista de Dados", "Recife, PE", "Híbrido", regras_apenas_remoto, False),
+    ("apenas-remoto-bloqueia-hibrido-no-titulo", "Analista de Dados (Híbrido)", "Remoto", "Remoto", regras_apenas_remoto, False),
+    ("apenas-remoto-aprova-remoto", "Analista de Dados", "Brasil", "Remoto", regras_apenas_remoto, True),
+
+    # --- Modalidade Estrita: Apenas Híbrido ---
+    ("apenas-hibrido-bloqueia-remoto", "Analista de Dados", "Brasil", "Remoto", regras_apenas_hibrido, False),
+    ("apenas-hibrido-bloqueia-presencial", "Analista de Dados", "Recife, PE", "Presencial", regras_apenas_hibrido, False),
+    ("apenas-hibrido-aprova-hibrido-cidade-certa", "Analista de Dados", "Recife, PE", "Híbrido", regras_apenas_hibrido, True),
+    ("apenas-hibrido-bloqueia-hibrido-cidade-errada", "Analista de Dados", "São Paulo, SP", "Híbrido", regras_apenas_hibrido, False),
+
+    # --- Modalidade Estrita: Apenas Presencial ---
+    ("apenas-presencial-bloqueia-remoto", "Analista de Dados", "Brasil", "Remoto", regras_apenas_presencial, False),
+    ("apenas-presencial-bloqueia-hibrido", "Analista de Dados", "Recife, PE", "Híbrido", regras_apenas_presencial, False),
+    ("apenas-presencial-aprova-presencial-cidade-certa", "Analista de Dados", "Recife, PE", "Presencial", regras_apenas_presencial, True),
+    ("apenas-presencial-bloqueia-presencial-cidade-errada", "Analista de Dados", "São Paulo, SP", "Presencial", regras_apenas_presencial, False),
 ]
 
 

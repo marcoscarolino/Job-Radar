@@ -899,6 +899,38 @@ class Job:
             return set()
         return extrair_escopo_remoto(self.local, self.modalidade)
 
+    def determinar_modalidade(self) -> str:
+        """Classifica categoricamente a modalidade da vaga em 'remoto', 'hibrido' ou 'presencial'.
+        
+        Prioridade:
+        1. Híbrido: se o título, modalidade ou local indicar 'híbrido' / 'hybrid' / 'semi-presencial'.
+        2. Remoto: se indicar remoto, home office, teletrabalho, remote, etc., sem sinal contraditório.
+        3. Presencial: se indicar presencial, on-site, ou se for atrelada a uma localidade sem menção a remoto/híbrido.
+        """
+        mod_norm = _normalizar(self.modalidade)
+        tit_norm = _normalizar(self.titulo)
+        loc_norm = _normalizar(self.local)
+
+        # 1. Checagem de Híbrido (prevalência se qualquer campo indicar híbrido)
+        if any(h in mod_norm for h in ("hibrid", "hybrid", "semi-presencial", "semipresencial")) or \
+           any(h in tit_norm for h in ("hibrid", "hybrid", "semi-presencial", "semipresencial")) or \
+           any(h in loc_norm for h in ("hibrid", "hybrid", "semi-presencial", "semipresencial")):
+            return "hibrido"
+
+        # 2. Checagem de Remoto
+        e_rem = any(r in mod_norm for r in ("remoto", "remota", "remote", "home office", "teletrabalho", "teletrabajo", "anywhere")) or \
+                _e_remoto(loc_norm) or _e_remoto(tit_norm)
+
+        if e_rem:
+            # Se o título ou local indicar explicitamente presencial/on-site, vence presencial
+            if any(p in tit_norm for p in ("on-site", "onsite", "on site", "presencial")) or \
+               any(p in loc_norm for p in ("on-site", "onsite", "on site", "presencial")):
+                return "presencial"
+            return "remoto"
+
+        # 3. Padrão: Presencial
+        return "presencial"
+
     def combina_com(self, regras: RegrasFiltro) -> bool:
         return self._avaliar(regras).aprovada
 
@@ -942,38 +974,38 @@ class Job:
 
         bate_keyword = bate_forte or bate_ambiguo or bate_ferramenta
 
-        # Antes: _e_remoto(local_norm), redetectando por substring dentro de
-        # `local` toda vez que combina_com() rodava (inclusive mais de uma
-        # vez pra mesma vaga, no pipeline internacional). Agora o scraper
-        # já classifica a modalidade uma vez, na extração, e aqui só se lê o
-        # campo — sem reparsear texto.
-        #
-        # "remote" (inglês) entra aqui também: CIDADES_INTL usa ["Remote",
-        # "Remoto"] pras duas grafias. Sem incluir "remote" nesse conjunto,
-        # ele caía no branch de cidade normal abaixo (bate_cidade por
-        # substring cru em local_norm) — que sempre batia, porque o texto de
-        # local de vaga remota internacional quase sempre contém a palavra
-        # "remote" literalmente. Isso ignorava completamente o campo
-        # modalidade E o filtro de mercado (escopo) logo abaixo: bastava o
-        # texto conter "remote" que passava, mesmo pra vaga só remota nos
-        # EUA. Tratando "remote" como flag de remoto (igual "remoto"), ele
-        # passa pelo mesmo caminho de bate_remoto/escopo que "remoto" já
-        # passava, em vez de furar o filtro por um atalho.
-        _FLAGS_REMOTO = ("remoto", "remota", "remote")
-        _FLAGS_HIBRIDO = ("hibrido", "híbrido", "hybrid")
-        _FLAGS_PRESENCIAL = ("presencial", "on-site", "onsite")
+        # Classificação estrita e universal da modalidade
+        mod_canonica = self.determinar_modalidade()
 
+        # Gate Estrito e Simétrico de Modalidades Aceitas
         if regras.modalidades_aceitas is not None:
-            mod_norm_check = modalidade_norm.lower()
-            mod_permitida = True
-            if any(f in mod_norm_check for f in _FLAGS_REMOTO):
-                mod_permitida = regras.modalidades_aceitas.get("remoto", True)
-            elif any(f in mod_norm_check for f in _FLAGS_HIBRIDO):
-                mod_permitida = regras.modalidades_aceitas.get("hibrido", True)
-            elif any(f in mod_norm_check for f in _FLAGS_PRESENCIAL):
-                mod_permitida = regras.modalidades_aceitas.get("presencial", True)
+            aceita_remoto = bool(regras.modalidades_aceitas.get("remoto", True))
+            aceita_hibrido = bool(regras.modalidades_aceitas.get("hibrido", True))
+            aceita_presencial = bool(regras.modalidades_aceitas.get("presencial", True))
 
-            if not mod_permitida:
+            if mod_canonica == "remoto" and not aceita_remoto:
+                return _Avaliacao(
+                    aprovada=False,
+                    bate_forte=bate_forte,
+                    bate_ambiguo=bate_ambiguo,
+                    bate_ferramenta=bate_ferramenta,
+                    bate_remoto=False,
+                    escopos=set(),
+                    mercado_confirmado=False,
+                    idioma_bateu_titulo=False,
+                )
+            if mod_canonica == "hibrido" and not aceita_hibrido:
+                return _Avaliacao(
+                    aprovada=False,
+                    bate_forte=bate_forte,
+                    bate_ambiguo=bate_ambiguo,
+                    bate_ferramenta=bate_ferramenta,
+                    bate_remoto=False,
+                    escopos=set(),
+                    mercado_confirmado=False,
+                    idioma_bateu_titulo=False,
+                )
+            if mod_canonica == "presencial" and not aceita_presencial:
                 return _Avaliacao(
                     aprovada=False,
                     bate_forte=bate_forte,
@@ -985,11 +1017,8 @@ class Job:
                     idioma_bateu_titulo=False,
                 )
 
-        quer_remoto = any(_normalizar(c) in _FLAGS_REMOTO for c in regras.cidades)
-        bate_remoto = quer_remoto and modalidade_norm in ("remoto", "remota")
-
-        # Calculado uma vez só e reaproveitado nos dois gates abaixo
-        # (mercado aceito e idioma exigido) — os dois leem o mesmo escopo.
+        _FLAGS_REMOTO = ("remoto", "remota", "remote")
+        bate_remoto = (mod_canonica == "remoto")
         escopos = self.escopo_remoto if bate_remoto else set()
 
         if bate_remoto and regras.mercados_remoto_aceitos is not None:
@@ -1007,11 +1036,17 @@ class Job:
             if not idioma_bateu_titulo:
                 bate_remoto = False
 
-        bate_cidade = bate_remoto or any(
-            _contem_termo(_normalizar(c), local_norm)
-            for c in regras.cidades
-            if _normalizar(c) not in _FLAGS_REMOTO
-        )
+        # Validação de Localização / Cidade
+        if mod_canonica == "remoto":
+            # Para vagas remotas, a cidade não é restritiva
+            bate_cidade = bate_remoto
+        else:
+            # Para presenciais ou híbridas, DEVE casar com a lista de cidades aceitas
+            bate_cidade = any(
+                _contem_termo(_normalizar(c), local_norm)
+                for c in regras.cidades
+                if _normalizar(c) not in _FLAGS_REMOTO
+            )
 
         return _Avaliacao(
             aprovada=bate_keyword and bate_cidade,

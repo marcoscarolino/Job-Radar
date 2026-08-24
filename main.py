@@ -282,11 +282,6 @@ def ciclo_de_busca(perfil: Perfil):
         f"{total_novas} nova(s)."
     )
 
-    if novas_vagas_ciclo:
-        from notifier.dispatcher import enviar_digest_email_multicanal
-        logger.info(f"[{perfil.nome}] Disparando 1 e-mail consolidado com {len(novas_vagas_ciclo)} nova(s) vaga(s)...")
-        enviar_digest_email_multicanal(novas_vagas_ciclo)
-
     # MEDIDO: descarte por escopo era invisível no log — o funil mostra
     # bruta → filtrada → nova, mas nunca QUAL escopo derrubou vaga nem
     # QUANTAS. Um escopo mal reconhecido (texto cru tipo "lagos nigeria",
@@ -341,27 +336,10 @@ def _rodar_um_ciclo_de_cada(perfis: list[Perfil]):
         ciclo_de_busca(perfil)
 
     try:
-        from database.database import _conectar
-        with _conectar() as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                """
-                SELECT id, titulo, empresa, local, link AS url, site AS fonte,
-                       encontrada_em AS criado_em, modalidade, relevancia AS score,
-                       publicado_em
-                FROM vagas_vistas
-                ORDER BY encontrada_em DESC, ROWID DESC
-                LIMIT 100
-                """
-            )
-            colunas = [col[0] for col in cursor.description]
-            vagas = [dict(zip(colunas, r)) for r in cursor.fetchall()]
-
-        if vagas:
-            from notifier.dispatcher import enviar_digest_email_multicanal
-            enviar_digest_email_multicanal(vagas)
+        from notifier.dispatcher import processar_envio_email_pendentes
+        processar_envio_email_pendentes(forcar=False)
     except Exception as e:
-        logger.warning(f"Erro ao enviar digest por e-mail no ciclo: {e}")
+        logger.warning(f"Erro ao processar envio de e-mail consolidado: {e}")
 
     try:
         from database.database import exportar_jobs_json

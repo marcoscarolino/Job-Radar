@@ -62,3 +62,37 @@ def test_pontuacao_preferencia_modalidade():
 
     # Vaga remota deve ganhar +3 pontos de bônus por bater a preferência do usuário
     assert job_remoto.pontuar_relevancia(regras) > job_hibrido.pontuar_relevancia(regras)
+
+
+def test_desativacao_email_respeitada_mesmo_com_env_vars(tmp_path, monkeypatch):
+    test_json = tmp_path / "user_config.json"
+    monkeypatch.setattr("config_manager.CONFIG_PATH", test_json)
+
+    # Configura explicitamente email desativado
+    salvar_config({
+        "canais_notificacao": {
+            "email": {
+                "ativo": False,
+                "destinatario": "teste@email.com",
+            }
+        }
+    })
+
+    # Simula variáveis de ambiente do GitHub Actions / ambiente de produção
+    monkeypatch.setenv("EMAIL_DESTINATARIO", "env@email.com")
+    monkeypatch.setenv("EMAIL_SMTP_USER", "user@email.com")
+    monkeypatch.setenv("EMAIL_SMTP_PASS", "senha123")
+
+    cfg = carregar_config()
+    # Deve continuar rigorosamente desativado
+    assert cfg["canais_notificacao"]["email"]["ativo"] is False
+
+
+def test_frequencia_email_salvar_e_carregar(tmp_path, monkeypatch):
+    test_json = tmp_path / "user_config.json"
+    monkeypatch.setattr("config_manager.CONFIG_PATH", test_json)
+
+    salvar_config({"frequencia_email": "duas_vezes_ao_dia"})
+    cfg = carregar_config()
+    assert cfg["frequencia_email"] == "duas_vezes_ao_dia"
+

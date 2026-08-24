@@ -140,6 +140,14 @@ def _garantir_coluna_feedback(conn):
         conn.execute("ALTER TABLE vagas_vistas ADD COLUMN feedback TEXT")
 
 
+def _garantir_coluna_email_enviado(conn):
+    """Migração leve: rastreamento de envio por e-mail para garantir que vagas
+    já enviadas por e-mail nunca sejam reenviadas em duplicidade."""
+    colunas = [linha[1] for linha in conn.execute("PRAGMA table_info(vagas_vistas)")]
+    if "email_enviado" not in colunas:
+        conn.execute("ALTER TABLE vagas_vistas ADD COLUMN email_enviado INTEGER DEFAULT 0")
+
+
 class BancoVazioSuspeito(RuntimeError):
     """jobs.db já existia em disco (tinha conteúdo) mas a tabela veio vazia
     depois de iniciar_db() — não é primeiro uso, é banco perdido/corrompido/
@@ -170,6 +178,7 @@ def iniciar_db():
         _garantir_colunas_digest(conn)
         _garantir_coluna_situacao(conn)
         _garantir_coluna_feedback(conn)
+        _garantir_coluna_email_enviado(conn)
         conn.execute(
             "CREATE INDEX IF NOT EXISTS idx_vagas_digest_pendente "
             "ON vagas_vistas (perfil, digest_pendente)"
@@ -177,6 +186,10 @@ def iniciar_db():
         conn.execute(
             "CREATE INDEX IF NOT EXISTS idx_vagas_chave_secundaria "
             "ON vagas_vistas (chave_secundaria)"
+        )
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_vagas_email_enviado "
+            "ON vagas_vistas (email_enviado)"
         )
         # Tabela chave/valor genérica — usada hoje só pra guardar a data do
         # último heartbeat diário (ver notifier/telegram.py e main.py), mas
@@ -305,6 +318,58 @@ def marcar_digest_enviado(perfil_chave: str):
         conn.execute(
             "UPDATE vagas_vistas SET digest_pendente = 0 WHERE perfil = ? AND digest_pendente = 1",
             (perfil_chave,),
+        )
+
+
+def obter_vagas_pendentes_email(perfil_chave: str = "brasil") -> list[dict]:
+    """Retorna as vagas salvas no banco com email_enviado = 0 que combinam com as regras ativas."""
+    from perfis import obter_regras_perfil
+    from job import Job
+
+    regras = obter_regras_perfil(perfil_chave)
+
+    with _conectar() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT id, titulo, empresa, local, link AS url, site AS fonte,
+                   encontrada_em AS criado_em, modalidade, relevancia AS score,
+                   publicado_em
+            FROM vagas_vistas
+            WHERE (email_enviado = 0 OR email_enviado IS NULL)
+            ORDER BY encontrada_em ASC, ROWID ASC
+            """
+        )
+        colunas = [col[0] for col in cursor.description]
+        vagas = []
+        for row in cursor.fetchall():
+            d = dict(zip(colunas, row))
+            j = Job(
+                titulo=d.get("titulo") or "",
+                empresa=d.get("empresa") or "",
+                local=d.get("local") or "",
+                link=d.get("url") or "",
+                site=d.get("fonte") or "",
+                modalidade=d.get("modalidade") or "",
+                publicado_em=d.get("publicado_em") or "",
+            )
+            if j.combina_com(regras):
+                if not d.get("score"):
+                    d["score"] = j.pontuar_relevancia(regras)
+                if not d.get("publicado_em"):
+                    d["publicado_em"] = "Recente"
+                vagas.append(d)
+        return vagas
+
+
+def marcar_email_enviado(ids: list[str]):
+    """Marca as vagas especificadas por id como já enviadas por e-mail (email_enviado = 1)."""
+    if not ids:
+        return
+    with _conectar() as conn:
+        conn.executemany(
+            "UPDATE vagas_vistas SET email_enviado = 1 WHERE id = ?",
+            [(i,) for i in ids]
         )
 
 

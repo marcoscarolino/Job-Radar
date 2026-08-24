@@ -1,5 +1,6 @@
 {
   "score_minimo": "5",
+  "frequencia_email": "duas_vezes_ao_dia",
   "modalidades_aceitas": {
     "remoto": true,
     "hibrido": false,
@@ -41,7 +42,7 @@
   "canais_notificacao": {
     "email": {
       "ativo": true,
-      "destinatario": "paloma.pessoa86@gmail.com, contato.marcoscarolino@gmail.com",
+      "destinatario": "contato.marcoscarolino@gmail.com",
       "smtp_host": "smtp.gmail.com",
       "smtp_port": 587,
       "smtp_user": "contato.marcoscarolino@gmail.com",

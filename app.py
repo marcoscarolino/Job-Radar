@@ -81,10 +81,11 @@ def sincronizar_configuracao_github():
     def _push():
         try:
             cwd = Path(__file__).parent
+            subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=cwd, check=False)
             subprocess.run(["git", "add", "data/user_config.json"], cwd=cwd, check=True)
             subprocess.run(["git", "commit", "-m", "chore: atualizar configuracoes do usuario via interface"], cwd=cwd, check=False)
             subprocess.run(["git", "push", "origin", "main"], cwd=cwd, check=False)
-        except Exception as e:
+        except Exception:
             pass
 
     threading.Thread(target=_push, daemon=True).start()
@@ -166,16 +167,8 @@ def run_scraper():
                         LAST_RUN_LOGS.pop(0)
 
                 proc.wait()
-                vagas = obter_vagas_recientes(limit=100)
-                if vagas:
-                    try:
-                        from notifier.dispatcher import enviar_digest_email_multicanal
-                        enviar_digest_email_multicanal(vagas)
-                    except Exception as e:
-                        pass
             except Exception as e:
                 LAST_RUN_LOGS.append(f"Erro na execução: {e}")
-
 
         t = threading.Thread(target=executor, daemon=True)
         t.start()

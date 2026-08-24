@@ -8,6 +8,7 @@ CONFIG_PATH = Path(__file__).parent / "data" / "user_config.json"
 
 DEFAULT_CONFIG = {
     "score_minimo": "todos",  # "todos", "5", "8"
+    "frequencia_email": "a_cada_3_horas",  # "a_cada_3_horas", "duas_vezes_ao_dia", "uma_vez_ao_dia", "a_cada_2_dias", "a_cada_1_semana"
     "modalidades_aceitas": {
         "remoto": True,
         "hibrido": True,
@@ -85,20 +86,23 @@ def carregar_config() -> dict:
             else:
                 config_completa[k] = v
 
-        # Suporte a variáveis de ambiente para execução em nuvem / GitHub Actions (Gmail/SMTP)
+        # Suporte a variáveis de ambiente para execução em nuvem / GitHub Actions (apenas complementa credenciais, sem forçar ativo se o usuário desativou)
         em_cfg = config_completa.get("canais_notificacao", {}).get("email", {})
         env_dest = os.environ.get("EMAIL_DESTINATARIO")
         env_user = os.environ.get("EMAIL_SMTP_USER")
         env_pass = os.environ.get("EMAIL_SMTP_PASS")
-        if env_dest and env_user and env_pass:
-            em_cfg["ativo"] = True
+        if env_dest and not em_cfg.get("destinatario"):
             em_cfg["destinatario"] = env_dest
+        if env_user and not em_cfg.get("smtp_user"):
             em_cfg["smtp_user"] = env_user
+        if env_pass and not em_cfg.get("smtp_pass"):
             em_cfg["smtp_pass"] = env_pass
-            em_cfg["smtp_host"] = os.environ.get("EMAIL_SMTP_HOST", "smtp.gmail.com")
-            em_cfg["smtp_port"] = int(os.environ.get("EMAIL_SMTP_PORT", 587))
-            config_completa["canais_notificacao"]["email"] = em_cfg
+        if os.environ.get("EMAIL_SMTP_HOST"):
+            em_cfg["smtp_host"] = os.environ.get("EMAIL_SMTP_HOST")
+        if os.environ.get("EMAIL_SMTP_PORT"):
+            em_cfg["smtp_port"] = int(os.environ.get("EMAIL_SMTP_PORT"))
 
+        config_completa["canais_notificacao"]["email"] = em_cfg
         return config_completa
     except Exception:
         return copy.deepcopy(DEFAULT_CONFIG)
