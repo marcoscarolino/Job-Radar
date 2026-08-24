@@ -78,11 +78,11 @@ def construir_digest_html(vagas: list[dict]) -> str:
                                     {divulgada_em}
                                 </td>
                                 <td align="right">
-                                    <a href="https://marcoscarolino.github.io/Job-Radar/index.html?job_id={vaga_id}&feedback=positivo" target="_blank" style="display: inline-block; background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 5px 9px; border-radius: 10px; font-size: 13px; font-weight: 500; text-decoration: none; margin-right: 4px;" title="Gostei da vaga">
-                                        Gostei
+                                    <a href="https://marcoscarolino.github.io/Job-Radar/index.html?job_id={vaga_id}&feedback=positivo&silent=1" target="_blank" style="display: inline-block; background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 5px 10px; border-radius: 10px; font-size: 13px; font-weight: 500; text-decoration: none; margin-right: 4px;" title="Gostei da vaga">
+                                        <span style="font-size: 14px;">&#128077;</span> Gostei
                                     </a>
-                                    <a href="https://marcoscarolino.github.io/Job-Radar/index.html?job_id={vaga_id}&feedback=negativo" target="_blank" style="display: inline-block; background-color: #fff1f2; border: 1px solid #fecdd3; color: #9f1239; padding: 5px 9px; border-radius: 10px; font-size: 13px; font-weight: 500; text-decoration: none; margin-right: 8px;" title="Não gostei">
-                                        Não gostei
+                                    <a href="https://marcoscarolino.github.io/Job-Radar/index.html?job_id={vaga_id}&feedback=negativo" target="_blank" style="display: inline-block; background-color: #fff1f2; border: 1px solid #fecdd3; color: #9f1239; padding: 5px 10px; border-radius: 10px; font-size: 13px; font-weight: 500; text-decoration: none; margin-right: 8px;" title="Não gostei">
+                                        <span style="font-size: 14px;">&#128078;</span> Não gostei
                                     </a>
                                     <a href="{link}" target="_blank" style="display: inline-block; background-color: #a3e635; color: #1e2019; padding: 6px 14px; border-radius: 12px; font-size: 14px; font-weight: 500; text-decoration: none; border: 0;">
                                         Ver vaga &rarr;

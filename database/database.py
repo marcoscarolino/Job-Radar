@@ -453,6 +453,7 @@ def exportar_jobs_json(caminho_json=None) -> str:
                    encontrada_em AS criado_em, modalidade, relevancia AS score,
                    publicado_em
             FROM vagas_vistas
+            WHERE encontrada_em >= datetime('now', '-14 days')
             ORDER BY encontrada_em DESC, ROWID DESC
             """
         )
@@ -475,7 +476,7 @@ def exportar_jobs_json(caminho_json=None) -> str:
                 if not d.get("publicado_em"):
                     d["publicado_em"] = "Recente"
                 vagas.append(d)
-                if len(vagas) >= 100:
+                if len(vagas) >= 500:
                     break
 
     with open(caminho_json, "w", encoding="utf-8") as f:

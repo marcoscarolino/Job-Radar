@@ -28,3 +28,10 @@ jobs:
       - name: Executar Varredura de Vagas e Disparo de E-mail Consolidado
         run: |
           python main.py --perfil brasil --once
+
+      - name: Sincronizar data/jobs.json e configuracoes no repositorio
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/jobs.json data/user_config.json || true
+          git diff --staged --quiet || (git commit -m "auto: atualizacao automatica de vagas via GitHub Actions" && git push origin main)

@@ -404,7 +404,7 @@
 </div>
 
 <!-- Modal -->
-<div id="infoModalOverlay" class="fixed inset-0 bg-olive-950/60 hidden items-center justify-center p-4 z-50" onclick="fecharModalInfo(event)">
+<div id="infoModalOverlay" class="fixed inset-0 bg-olive-950/75 backdrop-blur-sm hidden items-center justify-center p-4 z-50" onclick="fecharModalInfo(event)">
     <div class="bg-white border border-olive-200 rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-xl overflow-hidden" onclick="event.stopPropagation()">
         <div class="px-5 py-4 border-b border-olive-200 flex items-center justify-between">
             <h3 class="font-medium text-olive-900 text-lg" id="modalInfoTitulo">Instruções de configuração</h3>
@@ -417,7 +417,7 @@
 </div>
 
 <!-- Modal Feedback Thumbs Down -->
-<div id="feedbackModalOverlay" class="fixed inset-0 bg-olive-950/60 hidden items-center justify-center p-4 z-50" onclick="fecharModalFeedback(event)">
+<div id="feedbackModalOverlay" class="fixed inset-0 bg-olive-950/75 backdrop-blur-sm hidden items-center justify-center p-4 z-50" onclick="fecharModalFeedback(event)">
     <div class="bg-white border border-olive-200 rounded-2xl max-w-lg w-full flex flex-col shadow-xl overflow-hidden" onclick="event.stopPropagation()">
         <div class="px-5 py-4 border-b border-olive-200 flex items-center justify-between">
             <h3 class="font-medium text-olive-900 text-lg">Avaliar vaga</h3>
@@ -1084,13 +1084,27 @@
         } catch (err) {}
     }
 
+    function mesclarVagas(novasVagas) {
+        if (!novasVagas || novasVagas.length === 0) return;
+        const existentesMap = new Map(todasAsVagas.map(v => [v.id, v]));
+        for (let i = novasVagas.length - 1; i >= 0; i--) {
+            const v = novasVagas[i];
+            if (!existentesMap.has(v.id)) {
+                todasAsVagas.unshift(v);
+                existentesMap.set(v.id, v);
+            } else {
+                Object.assign(existentesMap.get(v.id), v);
+            }
+        }
+    }
+
     async function carregarVagas() {
         try {
             let res = await fetch(API_BASE + "/api/jobs");
             if (res.ok) {
                 const data = await res.json();
                 if (data.vagas && data.vagas.length > 0) {
-                    todasAsVagas = data.vagas;
+                    mesclarVagas(data.vagas);
                     aplicarFiltrosTabela();
                     return;
                 }
@@ -1101,13 +1115,54 @@
             let resStatic = await fetch("./data/jobs.json?t=" + Date.now());
             if (resStatic.ok) {
                 const dataStatic = await resStatic.json();
-                todasAsVagas = dataStatic.vagas || [];
+                mesclarVagas(dataStatic.vagas || []);
                 aplicarFiltrosTabela();
                 return;
             }
         } catch(e) {}
 
         aplicarFiltrosTabela();
+    }
+
+    let paginaAtual = 1;
+    const ITENS_POR_PAGINA = 20;
+
+    function renderizarPaginacao(totalItens) {
+        const totalPaginas = Math.ceil(totalItens / ITENS_POR_PAGINA) || 1;
+        if (paginaAtual > totalPaginas) paginaAtual = totalPaginas;
+        if (paginaAtual < 1) paginaAtual = 1;
+
+        const infoEl = document.getElementById("paginationInfo");
+        const controlsEl = document.getElementById("paginationControls");
+        if (!infoEl || !controlsEl) return;
+
+        const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA + 1;
+        const fim = Math.min(paginaAtual * ITENS_POR_PAGINA, totalItens);
+        infoEl.innerText = totalItens > 0 ? `Exibindo ${inicio}-${fim} de ${totalItens} vagas` : "Exibindo 0 vagas";
+
+        let html = "";
+        const desativarPrev = paginaAtual === 1;
+        html += `<button onclick="mudarPagina(${paginaAtual - 1})" ${desativarPrev ? "disabled" : ""} class="px-3 py-1.5 rounded-xl border text-xs font-medium transition-colors ${desativarPrev ? "border-olive-200 text-olive-300 cursor-not-allowed bg-olive-50" : "border-olive-200 bg-white text-olive-800 hover:bg-lime-400 hover:text-olive-950 shadow-sm"}">Anterior</button>`;
+
+        for (let p = 1; p <= totalPaginas; p++) {
+            if (p === 1 || p === totalPaginas || (p >= paginaAtual - 2 && p <= paginaAtual + 2)) {
+                const ativo = p === paginaAtual;
+                html += `<button onclick="mudarPagina(${p})" class="w-8 h-8 rounded-xl text-xs font-medium transition-colors ${ativo ? "bg-lime-400 text-olive-950 font-semibold shadow-sm" : "bg-white border border-olive-200 text-olive-800 hover:bg-olive-100"}">${p}</button>`;
+            } else if (p === paginaAtual - 3 || p === paginaAtual + 3) {
+                html += `<span class="px-1 text-olive-400 text-xs">...</span>`;
+            }
+        }
+
+        const desativarNext = paginaAtual === totalPaginas;
+        html += `<button onclick="mudarPagina(${paginaAtual + 1})" ${desativarNext ? "disabled" : ""} class="px-3 py-1.5 rounded-xl border text-xs font-medium transition-colors ${desativarNext ? "border-olive-200 text-olive-300 cursor-not-allowed bg-olive-50" : "border-olive-200 bg-white text-olive-800 hover:bg-lime-400 hover:text-olive-950 shadow-sm"}">Próxima</button>`;
+
+        controlsEl.innerHTML = html;
+    }
+
+    function mudarPagina(novaPagina) {
+        paginaAtual = novaPagina;
+        aplicarFiltrosTabela();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function alterarOrdenacao(val) {
@@ -1124,6 +1179,7 @@
             sortField = 'score';
             sortDirection = 'asc';
         }
+        paginaAtual = 1;
         aplicarFiltrosTabela();
     }
 
@@ -1216,6 +1272,8 @@
             return true;
         });
 
+        renderizarPaginacao(vagasFiltradas.length);
+
         if (vagasFiltradas.length === 0) {
             const emptyHtml = `<div class="text-center py-12 px-4 bg-white border border-dashed border-olive-200 rounded-2xl space-y-1">
                 <div class="font-medium text-olive-900 text-sm">Nenhuma vaga encontrada</div>
@@ -1226,7 +1284,6 @@
             return;
         }
 
-        // Ordenação Dinâmica via Dropdown "Ordenar por"
         vagasFiltradas.sort((a, b) => {
             if (sortField === 'score') {
                 const scoreA = a.score !== undefined && a.score !== null ? a.score : 0;
@@ -1247,7 +1304,10 @@
             }
         });
 
-        vagasFiltradas.forEach(vaga => {
+        const inicioIndex = (paginaAtual - 1) * ITENS_POR_PAGINA;
+        const vagasDaPagina = vagasFiltradas.slice(inicioIndex, inicioIndex + ITENS_POR_PAGINA);
+
+        vagasDaPagina.forEach(vaga => {
             const scoreVal = vaga.score !== undefined && vaga.score !== null ? vaga.score : 5;
             
             let scoreTagClass = "px-2.5 py-0.5 rounded-lg bg-olive-100 text-olive-700 font-medium text-sm inline-flex items-center border-0";
