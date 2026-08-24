@@ -857,11 +857,14 @@
         if (elFreq) {
             state.frequencia_email = elFreq.value;
         }
+        const hostInput = document.getElementById("inputEmailSmtpHost");
+        const hostVal = (hostInput ? hostInput.value.trim() : "") || "smtp.gmail.com";
+
         state.canais_notificacao = {
             email: {
                 ativo: document.getElementById("checkEmailAtivo").checked,
                 destinatario: document.getElementById("inputEmailDestinatario").value.trim(),
-                smtp_host: document.getElementById("inputEmailSmtpHost").value.trim(),
+                smtp_host: hostVal,
                 smtp_port: 587,
                 smtp_user: document.getElementById("inputEmailSmtpUser").value.trim(),
                 smtp_pass: document.getElementById("inputEmailSmtpPass").value.trim()

@@ -188,13 +188,21 @@ def enviar_email(
         part = MIMEText(corpo_html, "html", "utf-8")
         msg.attach(part)
 
-        porta = int(smtp_port) if smtp_port else 587
-        host = smtp_host.strip() if smtp_host else "smtp.gmail.com"
+        porta = int(smtp_port) if (smtp_port and str(smtp_port).isdigit()) else 587
+        host = (smtp_host or "").strip()
+        if not host:
+            host = "smtp.gmail.com"
 
-        with smtplib.SMTP(host, porta, timeout=12) as server:
-            server.starttls()
-            server.login(smtp_user.strip(), smtp_pass.strip())
-            server.sendmail(smtp_user.strip(), destinatarios_lista, msg.as_string())
+        import socket
+        try:
+            with smtplib.SMTP(host, porta, timeout=12) as server:
+                server.starttls()
+                server.login(smtp_user.strip(), smtp_pass.strip())
+                server.sendmail(smtp_user.strip(), destinatarios_lista, msg.as_string())
+        except (socket.gaierror, socket.herror) as e:
+            msg_erro = f"Não foi possível resolver o endereço do servidor SMTP '{host}'. Verifique se digitou corretamente (ex: smtp.gmail.com) e se sua conexão com a internet está ativa."
+            logger.error(f"[EmailNotifier] {msg_erro} ({e})")
+            return False, msg_erro
 
         msg_sucesso = f"E-mail enviado com sucesso para {', '.join(destinatarios_lista)}!"
         logger.info(f"[EmailNotifier] {msg_sucesso}")
@@ -204,7 +212,7 @@ def enviar_email(
         logger.error(f"[EmailNotifier] {msg_erro} ({e})")
         return False, msg_erro
     except smtplib.SMTPConnectError as e:
-        msg_erro = f"Não foi possível conectar ao servidor SMTP ({smtp_host}:{smtp_port}). Verifique sua conexão e o endereço do servidor."
+        msg_erro = f"Não foi possível conectar ao servidor SMTP ({host}:{porta}). Verifique sua conexão e o endereço do servidor."
         logger.error(f"[EmailNotifier] {msg_erro} ({e})")
         return False, msg_erro
     except Exception as e:
