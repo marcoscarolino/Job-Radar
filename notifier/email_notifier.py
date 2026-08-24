@@ -49,13 +49,6 @@ def construir_digest_html(vagas: list[dict]) -> str:
 
             vaga_id = v.get("id") or ""
 
-            # Ícones vetoriais SVG (Thumbs Up, Thumbs Down, Arrow Up Right)
-            svg_thumbs_up = """<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#4b5338" viewBox="0 0 256 256" style="vertical-align: middle; display: inline-block;"><path d="M234 100.62A24 24 0 0 0 216 92h-56V56a32 32 0 0 0-32-32 8 8 0 0 0-7.16 4.42L82.26 104H40a16 16 0 0 0-16 16v96a16 16 0 0 0 16 16h144.29a24 24 0 0 0 23.36-18.42l21.33-85.33A24 24 0 0 0 234 100.62zM40 120h40v96H40zm167.36 61.76l-21.33 85.33A8 8 0 0 1 178.29 216H96V112.56l36.63-73.26A16 16 0 0 1 144 56v44a8 8 0 0 0 8 8h64a8 8 0 0 1 7.36 11.12z"/></svg>"""
-            
-            svg_thumbs_down = """<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#4b5338" viewBox="0 0 256 256" style="vertical-align: middle; display: inline-block;"><path d="M232 40a16 16 0 0 0-16-16H71.71a24 24 0 0 0-23.36 18.42l-21.33 85.33A24 24 0 0 0 49.64 163.38 24 24 0 0 0 68 172h56v36a32 32 0 0 0 32 32 8 8 0 0 0 7.16-4.42L201.74 160H216a16 16 0 0 0 16-16zm-72 179.44A16 16 0 0 1 144 208v-44a8 8 0 0 0-8-8H72a8 8 0 0 1-7.36-11.12l21.33-85.33A8 8 0 0 1 93.71 56H176v103.44zM216 144h-24V40h24z"/></svg>"""
-            
-            svg_arrow_link = """<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#4b5338" viewBox="0 0 256 256" style="vertical-align: middle; display: inline-block;"><path d="M200 64v104a8 8 0 0 1-16 0V83.31L77.66 189.66a8 8 0 0 1-11.32-11.32L172.69 72H96a8 8 0 0 1 0-16h104a8 8 0 0 1 8 8z"/></svg>"""
-
             items_html += f"""
             <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 14px; background-color: #f8f9f5; border: 1px solid #e1e5d5; border-radius: 14px; padding: 16px; box-sizing: border-box;">
                 <tr>
@@ -83,18 +76,18 @@ def construir_digest_html(vagas: list[dict]) -> str:
                     <td>
                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td align="left" style="font-size: 14px; font-weight: 400; color: #768456;">
+                                <td align="left" style="font-size: 14px; font-weight: 400; color: #768456; vertical-align: middle;">
                                     {divulgada_em}
                                 </td>
-                                <td align="right" style="vertical-align: middle;">
-                                    <a href="https://marcoscarolino.github.io/Job-Radar/index.html?job_id={vaga_id}&feedback=positivo&silent=1" target="_blank" style="display: inline-block; width: 28px; height: 28px; line-height: 28px; text-align: center; background-color: #f0f2ea; border-radius: 8px; text-decoration: none; margin-right: 4px; vertical-align: middle;" title="Gostei da vaga">
-                                        {svg_thumbs_up}
+                                <td align="right" style="vertical-align: middle; white-space: nowrap;">
+                                    <a href="https://marcoscarolino.github.io/Job-Radar/index.html?job_id={vaga_id}&feedback=positivo&silent=1" target="_blank" style="display: inline-block; width: 30px; height: 30px; line-height: 30px; text-align: center; background-color: #f0f2ea; border-radius: 8px; text-decoration: none; margin-right: 4px; vertical-align: middle; font-size: 14px;" title="Gostei da vaga">
+                                        👍
                                     </a>
-                                    <a href="https://marcoscarolino.github.io/Job-Radar/index.html?job_id={vaga_id}&feedback=negativo" target="_blank" style="display: inline-block; width: 28px; height: 28px; line-height: 28px; text-align: center; background-color: #f0f2ea; border-radius: 8px; text-decoration: none; margin-right: 6px; vertical-align: middle;" title="Não gostei">
-                                        {svg_thumbs_down}
+                                    <a href="https://marcoscarolino.github.io/Job-Radar/index.html?job_id={vaga_id}&feedback=negativo" target="_blank" style="display: inline-block; width: 30px; height: 30px; line-height: 30px; text-align: center; background-color: #f0f2ea; border-radius: 8px; text-decoration: none; margin-right: 8px; vertical-align: middle; font-size: 14px;" title="Não gostei">
+                                        👎
                                     </a>
-                                    <a href="{link}" target="_blank" style="display: inline-block; width: 28px; height: 28px; line-height: 28px; text-align: center; background-color: #f0f2ea; border-radius: 8px; text-decoration: none; vertical-align: middle;" title="Ver vaga">
-                                        {svg_arrow_link}
+                                    <a href="{link}" target="_blank" style="display: inline-block; padding: 6px 14px; background-color: #ecfccb; color: #365314; border: 1px solid #d9f99d; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; vertical-align: middle; line-height: 1;" title="Ver vaga">
+                                        Ver vaga &nearr;
                                     </a>
                                 </td>
                             </tr>

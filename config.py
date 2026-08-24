@@ -12,7 +12,7 @@ def obter_cargos_fortes() -> list[str]:
 
 def obter_cargos_ambiguos() -> list[str]:
     cfg = carregar_config()
-    return cfg.get("cargos_ambiguos", ["Coordenador de Projetos", "Scrum Master"])
+    return cfg.get("cargos_ambiguos", [])
 
 
 def obter_qualificadores_dados() -> list[str]:

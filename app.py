@@ -124,7 +124,7 @@ def update_config():
         pass
 
     sincronizar_configuracao_github()
-    return jsonify({"success": True, "config": config_salva, "message": "Configurações salvas, vagas legadas expurgadas e sincronizadas com o GitHub!"})
+    return jsonify({"success": True, "config": config_salva, "message": "Configurações salvas"})
 
 
 @app.route("/api/jobs", methods=["GET"])

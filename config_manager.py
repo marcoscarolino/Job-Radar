@@ -20,10 +20,7 @@ DEFAULT_CONFIG = {
         "Gerente de Projetos",
         "Project Manager",
     ],
-    "cargos_ambiguos": [
-        "Coordenador de Projetos",
-        "Scrum Master",
-    ],
+    "cargos_ambiguos": [],
     "ferramentas": [
         "pmp",
         "scrum",

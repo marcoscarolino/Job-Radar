@@ -96,3 +96,39 @@ def test_frequencia_email_salvar_e_carregar(tmp_path, monkeypatch):
     cfg = carregar_config()
     assert cfg["frequencia_email"] == "duas_vezes_ao_dia"
 
+
+def test_expurgar_vagas_incompativeis(tmp_path, monkeypatch):
+    test_db = tmp_path / "jobs.db"
+    test_json = tmp_path / "user_config.json"
+    test_out_json = tmp_path / "jobs.json"
+    monkeypatch.setattr("config.DB_PATH", str(test_db))
+    monkeypatch.setattr("database.database.DB_PATH", str(test_db))
+    monkeypatch.setattr("config_manager.CONFIG_PATH", test_json)
+
+    salvar_config({
+        "cargos_fortes": ["Product Designer"],
+        "cargos_ambiguos": [],
+        "cidades": ["São Paulo"],
+        "aceitar_remoto": True,
+    })
+
+    from database.database import iniciar_db, salvar_vaga, expurgar_vagas_incompativeis
+    iniciar_db()
+
+    vaga_valida = Job("Product Designer Pleno", "Empresa UX", "São Paulo", "https://link1.com", "gupy", modalidade="Remoto")
+    vaga_invalida = Job("Scrum Master Senior", "Empresa Agile", "São Paulo", "https://link2.com", "gupy", modalidade="Remoto")
+
+    salvar_vaga(vaga_valida)
+    salvar_vaga(vaga_invalida)
+
+    expurgar_vagas_incompativeis()
+
+    import sqlite3
+    conn = sqlite3.connect(str(test_db))
+    rows = conn.execute("SELECT titulo FROM vagas_vistas").fetchall()
+    conn.close()
+
+    titulos = [r[0] for r in rows]
+    assert "Product Designer Pleno" in titulos
+    assert "Scrum Master Senior" not in titulos
+

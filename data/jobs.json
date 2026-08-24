@@ -2,28 +2,16 @@
   "success": true,
   "vagas": [
     {
-      "id": "7578944fef9ba5b1c56e901f839ee161",
-      "titulo": "Project Manager Sênior - REMOTO",
-      "empresa": "#Sejaveriter",
-      "local": "Não informado",
-      "url": "https://verity.gupy.io/job/eyJqb2JJZCI6MTIxOTc2NTcsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
-      "fonte": "Gupy",
-      "criado_em": "2026-08-22 17:11:20",
+      "id": "b8bb7dcff423167c661e1bb75940bf1d",
+      "titulo": "Product Designer Pleno",
+      "empresa": "Empresa UX",
+      "local": "São Paulo",
+      "url": "https://link1.com",
+      "fonte": "gupy",
+      "criado_em": "2026-08-24 18:59:23",
       "modalidade": "Remoto",
-      "score": 9,
-      "publicado_em": "Publicada em: 20/08/2026"
-    },
-    {
-      "id": "9f4e0ed8bcb6a666bfbff8df679e05cf",
-      "titulo": "12185884 - GERENTE DE PROJETOS DE TI",
-      "empresa": "Quality Digital",
-      "local": "Não informado",
-      "url": "https://qualitydigital.gupy.io/job/eyJqb2JJZCI6MTIxODU4ODQsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
-      "fonte": "Gupy",
-      "criado_em": "2026-08-22 17:11:20",
-      "modalidade": "Remoto",
-      "score": 9,
-      "publicado_em": "Publicada em: 21/08/2026"
+      "score": 10,
+      "publicado_em": "Recente"
     }
   ]
 }

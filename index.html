@@ -204,11 +204,11 @@
             <div class="bg-white rounded-2xl p-5 space-y-3">
                 <div>
                     <h3 class="font-medium text-olive-800 text-lg">Cargos principais</h3>
-                    <p class="text-sm text-olive-600 font-normal">Ex: Gerente de Projetos, Project Manager</p>
+                    <p class="text-sm text-olive-600 font-normal">Ex: Product Design, UI/UX Designer, Designer de Produto</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputCargoForte')">
                     <span id="cargosFortesTagsList" class="flex flex-wrap gap-1.5"></span>
-                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-800 placeholder:text-olive-600 font-normal" id="inputCargoForte" placeholder="Digite e pressione Enter...">
+                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[140px] text-olive-800 placeholder:text-olive-600 font-normal" id="inputCargoForte" placeholder="Digite e aperte Enter ou vírgula...">
                 </div>
             </div>
 
@@ -216,11 +216,11 @@
             <div class="bg-white rounded-2xl p-5 space-y-3">
                 <div>
                     <h3 class="font-medium text-olive-800 text-lg">Stacks & certificações</h3>
-                    <p class="text-sm text-olive-600 font-normal">Ex: pmp, scrum, aws, python</p>
+                    <p class="text-sm text-olive-600 font-normal">Ex: figma, design system, sketch, adobe xd</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputFerramenta')">
                     <span id="ferramentasTagsList" class="flex flex-wrap gap-1.5"></span>
-                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-800 placeholder:text-olive-600 font-normal" id="inputFerramenta" placeholder="Digite e pressione Enter...">
+                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[140px] text-olive-800 placeholder:text-olive-600 font-normal" id="inputFerramenta" placeholder="Digite e aperte Enter ou vírgula...">
                 </div>
             </div>
 
@@ -256,11 +256,11 @@
             <div class="bg-white rounded-2xl p-5 space-y-3">
                 <div>
                     <h3 class="font-medium text-olive-800 text-lg">Cidades & regiões</h3>
-                    <p class="text-sm text-olive-600 font-normal">Ex: São Paulo, Recife</p>
+                    <p class="text-sm text-olive-600 font-normal">Ex: São Paulo, Brasília, Recife</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputCidade')">
                     <span id="cidadesTagsList" class="flex flex-wrap gap-1.5"></span>
-                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-800 placeholder:text-olive-600 font-normal" id="inputCidade" placeholder="Digite e pressione Enter...">
+                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[140px] text-olive-800 placeholder:text-olive-600 font-normal" id="inputCidade" placeholder="Digite e aperte Enter ou vírgula...">
                 </div>
             </div>
 
@@ -296,7 +296,7 @@
                 </div>
                 <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputEmpresaBloqueada')">
                     <span id="empresasBloqueadasTagsList" class="flex flex-wrap gap-1.5"></span>
-                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-800 placeholder:text-olive-600 font-normal" id="inputEmpresaBloqueada" placeholder="Digite a empresa e Enter...">
+                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[140px] text-olive-800 placeholder:text-olive-600 font-normal" id="inputEmpresaBloqueada" placeholder="Digite e aperte Enter ou vírgula...">
                 </div>
             </div>
 
@@ -308,7 +308,7 @@
                 </div>
                 <div class="flex flex-wrap items-center gap-2 bg-olive-50 border border-olive-200 rounded-xl p-2.5 min-h-[46px] cursor-text focus-within:border-lime-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-lime-400/20 transition-all" onclick="focarInput('inputTituloBloqueado')">
                     <span id="titulosBloqueadosTagsList" class="flex flex-wrap gap-1.5"></span>
-                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[120px] text-olive-800 placeholder:text-olive-600 font-normal" id="inputTituloBloqueado" placeholder="Digite o cargo e Enter...">
+                    <input type="text" class="bg-transparent text-sm border-none outline-none flex-1 min-w-[140px] text-olive-800 placeholder:text-olive-600 font-normal" id="inputTituloBloqueado" placeholder="Digite e aperte Enter ou vírgula...">
                 </div>
             </div>
 
@@ -398,7 +398,9 @@
 
         <!-- Botão Salvar Configurações no Desktop -->
         <div class="hidden md:flex items-center justify-end pt-2">
-            <button class="px-5 py-2.5 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl transition-colors border-0" onclick="salvarConfiguracoes()">Salvar configurações</button>
+            <button id="btnSalvarConfigDesktop" class="px-5 py-2.5 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl transition-all border-0 shadow-sm flex items-center gap-2 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed" onclick="salvarConfiguracoes()">
+                <span>Salvar configurações</span>
+            </button>
         </div>
     </div>
 </div>
@@ -413,15 +415,16 @@
         </button>
 
         <!-- Botão Salvar Configurações Mobile -->
-        <button id="btnSalvarConfigMobile" onclick="salvarConfiguracoes()" class="hidden w-full px-5 py-3 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl transition-all border-0 shadow-sm">
-            Salvar configurações
+        <button id="btnSalvarConfigMobile" onclick="salvarConfiguracoes()" class="hidden w-full px-5 py-3 bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-olive-950 font-semibold text-sm rounded-xl transition-all border-0 shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed">
+            <span>Salvar configurações</span>
         </button>
     </div>
 </div>
 
 <!-- Toast -->
-<div id="toast" class="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 bg-olive-950 text-white px-4 py-2 rounded-full font-semibold text-sm shadow-lg hidden z-50 transition-all">
-    Salvo com sucesso!
+<div id="toast" class="fixed bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 bg-olive-950 text-white px-5 py-3 rounded-2xl font-medium text-sm shadow-2xl hidden z-50 flex items-center gap-2.5 border border-olive-800 transition-all">
+    <i class="ph ph-check-circle text-lime-400 text-lg" id="toastIcon"></i>
+    <span id="toastText">Salvo com sucesso!</span>
 </div>
 
 <!-- Modal Instruções (Escurece a tela sem desfocar) -->
@@ -691,8 +694,8 @@
             modalidades_aceitas: { remoto: true, hibrido: true, presencial: true },
             preferencia_modalidade: "remoto",
             senioridades_alvo: ["Júnior", "Pleno", "Sênior", "Especialista/Liderança"],
-            cargos_fortes: ["product design", "product designer", "ux designer", "ui designer", "designer de produto"],
-            cargos_ambiguos: ["Coordenador de Projetos", "Scrum Master"],
+            cargos_fortes: ["Product Design", "Product Designer", "UX Designer", "UI Designer", "Designer de Produto"],
+            cargos_ambiguos: [],
             ferramentas: [],
             cidades: ["Brasil", "Brasília", "São Paulo"],
             scrapers_ativos: {
@@ -822,11 +825,15 @@
         if (!input) return;
 
         input.onkeydown = (e) => {
-            if (e.key === "Enter" || e.key === "," || e.keyCode === 13 || e.keyCode === 188) {
+            if (e.key === "Enter" || e.key === "," || e.key === ";" || e.keyCode === 13 || e.keyCode === 188) {
                 e.preventDefault();
                 actionFn();
-            }
-            if (e.key === "Backspace" && input.value === "") {
+            } else if (e.key === "Tab" || e.keyCode === 9) {
+                if (input.value.trim() !== "") {
+                    e.preventDefault();
+                    actionFn();
+                }
+            } else if (e.key === "Backspace" && input.value === "") {
                 if (inputId === "inputCargoForte" && state.cargos_fortes && state.cargos_fortes.length > 0) {
                     state.cargos_fortes.pop();
                     salvarEstadoEmLocalStorage();
@@ -856,7 +863,15 @@
         };
 
         input.oninput = () => {
-            if (input.value.includes(",")) actionFn();
+            if (input.value.includes(",") || input.value.includes(";") || input.value.includes("\n")) {
+                actionFn();
+            }
+        };
+
+        input.onpaste = () => {
+            setTimeout(() => {
+                if (input.value.trim() !== "") actionFn();
+            }, 20);
         };
     }
 
@@ -867,7 +882,7 @@
         if (!val) return;
 
         if (!state[stateKey]) state[stateKey] = [];
-        const partes = val.split(",").map(s => s.trim()).filter(s => s.length > 0);
+        const partes = val.split(/[,;\n\t]+/).map(s => s.trim()).filter(s => s.length > 0);
         let alterou = false;
 
         partes.forEach(item => {
@@ -903,7 +918,7 @@
     function removerFerramenta(index) { removerItemLista("ferramentas", index, renderFerramentas); }
     function renderFerramentas() { renderTagsLista("ferramentasTagsList", state.ferramentas || [], removerFerramenta); }
 
-    function adicionarCidade() { adicionarItemLista("cidades", "inputCidade", renderCidade); }
+    function adicionarCidade() { adicionarItemLista("cidades", "inputCidade", renderCidades); }
     function removerCidade(index) { removerItemLista("cidades", index, renderCidades); }
     function renderCidades() {
         renderTagsLista("cidadesTagsList", state.cidades || [], removerCidade);
@@ -932,7 +947,7 @@
             const txtNode = document.createTextNode(item + " ");
             const btnDelete = document.createElement("button");
             btnDelete.type = "button";
-            btnDelete.className = "text-olive-950 hover:text-rose-700 transition-colors ml-0.5 font-semibold border-0";
+            btnDelete.className = "text-olive-950 hover:text-rose-700 transition-colors ml-0.5 font-semibold border-0 cursor-pointer";
             btnDelete.innerHTML = "&times;";
             btnDelete.onclick = (e) => {
                 e.stopPropagation();
@@ -1019,20 +1034,45 @@
     }
 
     async function salvarConfiguracoes() {
-        capturarInputsPendentes();
-        lerCanaisDaTela();
-        salvarEstadoEmLocalStorage();
+        const btnDesktop = document.getElementById("btnSalvarConfigDesktop");
+        const btnMobile = document.getElementById("btnSalvarConfigMobile");
+
+        const setButtonsState = (conteudoHtml, disabled) => {
+            [btnDesktop, btnMobile].forEach(btn => {
+                if (btn) {
+                    btn.disabled = disabled;
+                    btn.innerHTML = conteudoHtml;
+                }
+            });
+        };
+
+        setButtonsState('<i class="ph ph-spinner animate-spin text-base"></i><span>Salvando...</span>', true);
 
         try {
+            capturarInputsPendentes();
+            lerCanaisDaTela();
+            salvarEstadoEmLocalStorage();
+
             const res = await fetch(API_BASE + "/api/config", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(state)
             });
             const data = await res.json();
-            showToast("Configurações salvas!");
+
+            setButtonsState('<i class="ph ph-check font-bold text-base"></i><span>Configurações salvas</span>', false);
+            showToast((data && data.message) || "Configurações salvas");
+            
+            // Recarrega o feed para exibir imediatamente apenas as vagas compatíveis com as novas regras
+            carregarVagas();
         } catch (err) {
-            showToast("Configurações salvas!");
+            setButtonsState('<i class="ph ph-check font-bold text-base"></i><span>Configurações salvas</span>', false);
+            showToast("Configurações salvas");
+            carregarVagas();
+        } finally {
+            setTimeout(() => {
+                setButtonsState('<span>Salvar configurações</span>', false);
+            }, 3000);
         }
     }
 
@@ -1564,11 +1604,23 @@
         await enviarFeedback(idVaga, "negativo", comentario);
     }
 
-    function showToast(msg) {
+    let toastTimeout = null;
+    function showToast(msg, iconClass = "ph-check-circle") {
         const toast = document.getElementById("toast");
-        toast.innerText = msg;
+        if (!toast) return;
+        const toastText = document.getElementById("toastText") || toast;
+        const toastIcon = document.getElementById("toastIcon");
+        if (toastIcon) {
+            toastIcon.className = `ph ${iconClass} text-lime-400 text-lg`;
+        }
+        if (toastText !== toast) {
+            toastText.innerText = msg;
+        } else {
+            toast.innerText = msg;
+        }
         toast.classList.remove("hidden");
-        setTimeout(() => toast.classList.add("hidden"), 3000);
+        if (toastTimeout) clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => toast.classList.add("hidden"), 3500);
     }
 </script>
 

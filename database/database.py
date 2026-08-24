@@ -424,8 +424,44 @@ def limpar_banco_vagas():
 
 
 def expurgar_vagas_incompativeis():
-    """Atualiza o feed de vagas com base nas regras ativas do usuário.
-    Mantém o histórico no SQLite para que vagas de empresas ou títulos desbloqueados voltem a aparecer instantaneamente."""
+    """Remove do SQLite vagas_vistas todas as vagas que não combinam com as regras ativas do usuário
+    e atualiza data/jobs.json."""
+    from perfis import obter_regras_perfil
+    from job import Job
+
+    regras = obter_regras_perfil("brasil")
+
+    with _conectar() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT id, titulo, empresa, local, link AS url, site AS fonte,
+                   modalidade, publicado_em
+            FROM vagas_vistas
+            """
+        )
+        colunas = [col[0] for col in cursor.description]
+        ids_para_remover = []
+        for row in cursor.fetchall():
+            d = dict(zip(colunas, row))
+            j = Job(
+                titulo=d.get("titulo") or "",
+                empresa=d.get("empresa") or "",
+                local=d.get("local") or "",
+                link=d.get("url") or "",
+                site=d.get("fonte") or "",
+                modalidade=d.get("modalidade") or "",
+                publicado_em=d.get("publicado_em") or "",
+            )
+            if not j.combina_com(regras):
+                ids_para_remover.append(d["id"])
+
+        if ids_para_remover:
+            cursor.executemany(
+                "DELETE FROM vagas_vistas WHERE id = ?",
+                [(i,) for i in ids_para_remover]
+            )
+
     exportar_jobs_json()
 
 

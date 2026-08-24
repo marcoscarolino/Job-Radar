@@ -213,7 +213,7 @@ def obter_regras_perfil(perfil_chave: str = "brasil") -> RegrasFiltro:
     mercados = MERCADOS_REMOTO_ACEITOS if linkedin_intl_ativo else ["Brasil"]
 
     cargos_fortes = usr_cfg.get("cargos_fortes", ["Gerente de Projetos", "Project Manager"])
-    cargos_ambiguos = usr_cfg.get("cargos_ambiguos", ["Coordenador de Projetos", "Scrum Master"])
+    cargos_ambiguos = usr_cfg.get("cargos_ambiguos", [])
     qualificadores = usr_cfg.get("qualificadores_dados", ["pmp", "scrum", "agile", "gestão", "projetos", "certificação", "curso"])
     ferramentas = usr_cfg.get("ferramentas", [])
     cidades_usr = usr_cfg.get("cidades", ["São Paulo", "Recife"])
@@ -244,12 +244,12 @@ def obter_termos_busca_perfil(perfil_chave: str = "brasil") -> list[str]:
 
     usr_cfg = carregar_config()
     cargos_fortes = usr_cfg.get("cargos_fortes", ["Gerente de Projetos", "Project Manager"])
-    cargos_ambiguos = usr_cfg.get("cargos_ambiguos", ["Coordenador de Projetos", "Scrum Master"])
+    cargos_ambiguos = usr_cfg.get("cargos_ambiguos", [])
     ferramentas = usr_cfg.get("ferramentas", [])
 
     termos = set(k.lower() for k in (cargos_fortes + cargos_ambiguos)) | set(f.lower() for f in ferramentas)
     res = sorted(termos)
-    return res if res else TERMOS_BUSCA
+    return res if res else [c.lower() for c in cargos_fortes]
 
 
 PERFIL_BR = Perfil(
