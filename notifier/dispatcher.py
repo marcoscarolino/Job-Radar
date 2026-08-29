@@ -14,6 +14,10 @@ def deve_enviar_email_agora(frequencia: str) -> bool:
     from database.database import obter_metadado
     ultimo_envio_str = obter_metadado("ultimo_envio_email_timestamp")
     if not ultimo_envio_str:
+        config = carregar_config()
+        ultimo_envio_str = config.get("ultimo_envio_email_timestamp")
+
+    if not ultimo_envio_str:
         return True
 
     try:
@@ -173,7 +177,10 @@ def processar_envio_email_pendentes(forcar: bool = False) -> bool:
     if ok:
         ids_enviados = [v["id"] for v in vagas_pendentes if "id" in v]
         marcar_email_enviado(ids_enviados)
-        definir_metadado("ultimo_envio_email_timestamp", datetime.now(timezone.utc).isoformat())
+        agora_iso = datetime.now(timezone.utc).isoformat()
+        definir_metadado("ultimo_envio_email_timestamp", agora_iso)
+        from config_manager import salvar_config
+        salvar_config({"ultimo_envio_email_timestamp": agora_iso})
         logger.info(f"[Dispatcher] E-mail consolidado com {len(vagas_para_enviar)} nova(s) vaga(s) enviado com sucesso!")
     else:
         logger.error(f"[Dispatcher] Erro ao enviar e-mail consolidado: {msg}")

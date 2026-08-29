@@ -40,7 +40,7 @@
   "aceitar_remoto": true,
   "canais_notificacao": {
     "email": {
-      "ativo": true,
+      "ativo": false,
       "destinatario": "contato.marcoscarolino@gmail.com, paloma.pessoa86@gmail.com",
       "smtp_host": "smtp.gmail.com",
       "smtp_port": 587,

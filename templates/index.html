@@ -693,11 +693,11 @@
             frequencia_email: "a_cada_3_horas",
             modalidades_aceitas: { remoto: true, hibrido: true, presencial: true },
             preferencia_modalidade: "remoto",
-            senioridades_alvo: ["Júnior", "Pleno", "Sênior", "Especialista/Liderança"],
-            cargos_fortes: ["Product Design", "Product Designer", "UX Designer", "UI Designer", "Designer de Produto"],
+            senioridades_alvo: ["Júnior", "Pleno", "Sênior"],
+            cargos_fortes: ["Gerente de Projetos", "Project Manager", "PMO"],
             cargos_ambiguos: [],
             ferramentas: [],
-            cidades: ["Brasil", "Brasília", "São Paulo"],
+            cidades: ["São Paulo", "Recife", "Brasília"],
             scrapers_ativos: {
                 linkedin: true,
                 gupy: true,
@@ -711,7 +711,7 @@
                 linkedin_intl: false
             },
             canais_notificacao: {
-                email: { ativo: true, destinatario: "", smtp_host: "smtp.gmail.com", smtp_port: 587, smtp_user: "", smtp_pass: "" }
+                email: { ativo: false, destinatario: "", smtp_host: "smtp.gmail.com", smtp_port: 587, smtp_user: "", smtp_pass: "" }
             }
         };
         lastConfigHash = JSON.stringify(state);
@@ -1109,13 +1109,14 @@
                 atualizarBotoesBuscar(false, false);
             }
         } catch (err) {
-            showToast("Buscando vagas recentes...");
-            setTimeout(async () => {
-                await carregarVagas();
-                buscaEmAndamento = false;
-                atualizarBotoesBuscar(false, false);
+            await carregarVagas();
+            buscaEmAndamento = false;
+            atualizarBotoesBuscar(false, false);
+            if (window.location.hostname.includes("github.io")) {
+                showToast("Vagas atualizadas do repositório! (Automação roda a cada 3h)");
+            } else {
                 showToast("Vagas atualizadas!");
-            }, 1500);
+            }
         }
     }
 

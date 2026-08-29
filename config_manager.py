@@ -41,6 +41,7 @@ DEFAULT_CONFIG = {
     "empresas_bloqueadas": [],
     "titulos_bloqueados": [],
     "aceitar_remoto": True,
+    "ultimo_envio_email_timestamp": None,
     "canais_notificacao": {
         "email": {
             "ativo": False,
@@ -60,7 +61,8 @@ DEFAULT_CONFIG = {
         "geekhunter": True,
         "trampos": True,
         "jobs99": True,
-        "weworkremotely": True,
+        "weworkremotely": False,
+        "linkedin_intl": False,
     },
 }
 

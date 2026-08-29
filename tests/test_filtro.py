@@ -270,3 +270,74 @@ def test_publicacao_antiga(nome, publicado_em, esperado):
         publicado_em=publicado_em,
     )
     assert job.publicacao_antiga == esperado
+
+
+def test_vagas_internacionais_bloqueadas_no_perfil_brasil():
+    """Garante que vagas de fontes internacionais ou escopos fora do Brasil sejam rejeitadas no perfil Brasil."""
+    from perfis import obter_regras_perfil
+    regras_br = obter_regras_perfil("brasil")
+
+    # 1. Vaga do WeWorkRemotely
+    vaga_wwr = Job(
+        titulo="Project Manager",
+        empresa="Global Corp",
+        local="San Francisco, CA",
+        link="https://weworkremotely.com/job/1",
+        site="We Work Remotely",
+        modalidade="Remoto",
+        escopo_indefinido=True,
+    )
+    assert not vaga_wwr.combina_com(regras_br), "Vaga de We Work Remotely não deve passar no perfil Brasil"
+
+    # 2. Vaga dos EUA no LinkedIn
+    vaga_eua = Job(
+        titulo="Project Manager",
+        empresa="US Tech",
+        local="New York, NY",
+        link="https://linkedin.com/jobs/view/999",
+        site="LinkedIn BR",
+        modalidade="Remoto",
+    )
+    assert not vaga_eua.combina_com(regras_br), "Vaga com localização dos EUA não deve passar no perfil Brasil"
+
+    # 3. Vaga brasileira legítima deve passar
+    vaga_br = Job(
+        titulo="Gerente de Projetos",
+        empresa="Empresa BR",
+        local="São Paulo, SP",
+        link="https://gupy.io/job/123",
+        site="Gupy",
+        modalidade="Remoto",
+    )
+    assert vaga_br.combina_com(regras_br), "Vaga brasileira legítima deve ser aprovada"
+
+
+def test_scrapers_internacionais_desativados_por_padrao():
+    """Garante que weworkremotely e linkedin_intl não estejam ativos por padrão no Brasil."""
+    from perfis import obter_scrapers_dinamicos
+    scrapers = obter_scrapers_dinamicos("brasil")
+    nomes = [s.classe.__name__ for s in scrapers]
+    assert "WeWorkRemotelyIntlScraper" not in nomes
+    assert "LinkedInIntlScraper" not in nomes
+
+
+def test_controle_de_frequencia_email():
+    """Testa se a função de frequência respeita os intervalos configurados."""
+    from datetime import datetime, timezone, timedelta
+    from notifier.dispatcher import deve_enviar_email_agora
+    from database.database import definir_metadado
+
+    agora = datetime.now(timezone.utc)
+    duas_horas_atras = (agora - timedelta(hours=2)).isoformat()
+    definir_metadado("ultimo_envio_email_timestamp", duas_horas_atras)
+
+    assert not deve_enviar_email_agora("uma_vez_ao_dia")
+    assert not deve_enviar_email_agora("duas_vezes_ao_dia")
+    assert deve_enviar_email_agora("a_cada_3_horas")
+
+    vinte_quatro_horas_atras = (agora - timedelta(hours=24)).isoformat()
+    definir_metadado("ultimo_envio_email_timestamp", vinte_quatro_horas_atras)
+
+    assert deve_enviar_email_agora("uma_vez_ao_dia")
+    assert deve_enviar_email_agora("duas_vezes_ao_dia")
+

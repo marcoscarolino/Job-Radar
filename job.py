@@ -1045,11 +1045,17 @@ class Job:
         escopos = self.escopo_remoto if bate_remoto else set()
 
         if bate_remoto and regras.mercados_remoto_aceitos is not None:
-            if escopos:
-                mercados_aceitos_norm = {_normalizar(m) for m in regras.mercados_remoto_aceitos}
+            mercados_aceitos_norm = {_normalizar(m) for m in regras.mercados_remoto_aceitos}
+            fontes_internacionais = ("we work remotely", "weworkremotely", "indeed intl", "linkedin intl", "linkedin internacional")
+            # Se a busca for exclusivamente para o Brasil e a fonte for internacional, descarta
+            if _normalizar(self.site) in fontes_internacionais and "brasil" in mercados_aceitos_norm and len(mercados_aceitos_norm) == 1:
+                bate_remoto = False
+            elif escopos:
                 escopos_norm = {_normalizar(e) for e in escopos}
                 if not (escopos_norm & mercados_aceitos_norm):
                     bate_remoto = False
+            elif self.escopo_indefinido and "brasil" in mercados_aceitos_norm and len(mercados_aceitos_norm) == 1:
+                bate_remoto = False
 
         idioma_bateu_titulo = regras.idiomas_exigidos is not None and any(
             _contem_termo(_normalizar(i), titulo_norm) for i in regras.idiomas_exigidos

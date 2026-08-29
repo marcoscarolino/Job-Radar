@@ -84,13 +84,13 @@ def obter_vagas_recientes(limit: int = 500) -> list[dict]:
 
 
 def sincronizar_configuracao_github():
-    """Faz commit e push de data/user_config.json para o GitHub para atualizar o GitHub Actions."""
+    """Faz commit e push de data/jobs.db, data/jobs.json e data/user_config.json para o GitHub para atualizar o GitHub Actions e Pages."""
     def _push():
         try:
             cwd = Path(__file__).parent
             subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=cwd, check=False)
-            subprocess.run(["git", "add", "data/user_config.json"], cwd=cwd, check=True)
-            subprocess.run(["git", "commit", "-m", "chore: atualizar configuracoes do usuario via interface"], cwd=cwd, check=False)
+            subprocess.run(["git", "add", "data/jobs.db", "data/jobs.json", "data/user_config.json"], cwd=cwd, check=True)
+            subprocess.run(["git", "commit", "-m", "chore: sincronizar banco e configuracoes via interface"], cwd=cwd, check=False)
             subprocess.run(["git", "push", "origin", "main"], cwd=cwd, check=False)
         except Exception:
             pass
@@ -203,6 +203,12 @@ def run_scraper():
                         LAST_RUN_LOGS.pop(0)
 
                 proc.wait()
+                try:
+                    from database.database import exportar_jobs_json
+                    exportar_jobs_json()
+                    sincronizar_configuracao_github()
+                except Exception:
+                    pass
             except Exception as e:
                 LAST_RUN_LOGS.append(f"Erro na execução: {e}")
 

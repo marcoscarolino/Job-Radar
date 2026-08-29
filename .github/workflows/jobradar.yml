@@ -42,11 +42,11 @@ jobs:
         run: |
           python main.py --perfil brasil --once
 
-      - name: Sincronizar data/jobs.json e configuracoes no repositorio
+      - name: Sincronizar banco de vagas e configuracoes no repositorio
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add data/jobs.json data/user_config.json || true
+          git add data/jobs.db data/jobs.json data/user_config.json || true
           if [ -n "$(git status --porcelain)" ]; then
             git commit -m "auto: atualizacao automatica de vagas via GitHub Actions" || true
             git pull --rebase origin main || true

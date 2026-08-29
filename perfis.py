@@ -171,8 +171,9 @@ def obter_scrapers_dinamicos(perfil_chave: str = "brasil") -> list[DefinicaoScra
             DefinicaoScraper(WeWorkRemotelyIntlScraper, FREQUENCIA_ALTA),
         ]
 
-    # Para o perfil BR: se linkedin_intl não estiver ativo, desativa busca remota internacional no LinkedIn BR
+    # Para o perfil BR: se linkedin_intl ou weworkremotely não estiverem ativos, desativa busca internacional
     linkedin_intl_ativo = scrapers_act.get("linkedin_intl", False)
+    weworkremotely_ativo = scrapers_act.get("weworkremotely", False)
     locations_remoto = LOCATIONS_LINKEDIN_REMOTO_APENAS if linkedin_intl_ativo else []
 
     scrapers_map = {
@@ -191,7 +192,7 @@ def obter_scrapers_dinamicos(perfil_chave: str = "brasil") -> list[DefinicaoScra
     scrapers_filtrados = [
         def_sc
         for chave, def_sc in scrapers_map.items()
-        if scrapers_act.get(chave, True)
+        if scrapers_act.get(chave, False if chave in ("weworkremotely", "linkedin_intl") else True)
     ]
 
     if not scrapers_filtrados:
@@ -208,9 +209,10 @@ def obter_regras_perfil(perfil_chave: str = "brasil") -> RegrasFiltro:
     usr_cfg = carregar_config()
     scrapers_act = usr_cfg.get("scrapers_ativos", {})
     linkedin_intl_ativo = scrapers_act.get("linkedin_intl", False)
+    weworkremotely_ativo = scrapers_act.get("weworkremotely", False)
 
     # Se as opções internacionais estiverem desativadas, só aceita o mercado "Brasil"
-    mercados = MERCADOS_REMOTO_ACEITOS if linkedin_intl_ativo else ["Brasil"]
+    mercados = MERCADOS_REMOTO_ACEITOS if (linkedin_intl_ativo or weworkremotely_ativo) else ["Brasil"]
 
     cargos_fortes = usr_cfg.get("cargos_fortes", ["Gerente de Projetos", "Project Manager"])
     cargos_ambiguos = usr_cfg.get("cargos_ambiguos", [])
