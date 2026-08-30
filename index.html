@@ -1029,7 +1029,11 @@
                 alert(data.message);
             }
         } catch (err) {
-            alert("Erro ao enviar teste: " + err);
+            if (window.location.hostname.includes("github.io")) {
+                alert("O teste de envio por e-mail necessita do servidor Python local ativo ('python app.py') ou das credenciais salvas no GitHub Secrets para a automação na nuvem.");
+            } else {
+                alert("Erro ao conectar ao servidor local para teste de e-mail.");
+            }
         }
     }
 
