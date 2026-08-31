@@ -2,6 +2,18 @@
   "success": true,
   "vagas": [
     {
+      "id": "4dde4d0c7e607e929bc660ff47dd7458",
+      "titulo": "PMO - Digital Transformation & AI Portfolio Management (Remote)",
+      "empresa": "Capgemini",
+      "local": "Dallas, TX",
+      "url": "https://www.linkedin.com/jobs/view/pmo-digital-transformation-ai-portfolio-management-remote-at-capgemini-4452850417",
+      "fonte": "LinkedIn BR",
+      "criado_em": "2026-08-31 20:37:14",
+      "modalidade": "",
+      "score": 5,
+      "publicado_em": "Recente"
+    },
+    {
       "id": "12297249f25d73837cfc50bc537ae3d2",
       "titulo": "EHV EPC Project Manager (Power Delivery)- Remote",
       "empresa": "WSP in the U.S.",
