@@ -2,6 +2,30 @@
   "success": true,
   "vagas": [
     {
+      "id": "b13ba6d7cc66fb83f9a6be5056d3f92c",
+      "titulo": "Project Manager (Remoto)",
+      "empresa": "Looqbox",
+      "local": "Não informado",
+      "url": "https://looqbox.gupy.io/job/eyJqb2JJZCI6MTI2Nzg3NTMsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
+      "fonte": "Gupy",
+      "criado_em": "2026-10-05 21:48:18",
+      "modalidade": "Remoto",
+      "score": 9,
+      "publicado_em": "Publicada em: 05/10/2026"
+    },
+    {
+      "id": "a6b77011e7e274f3c87f4e203eea79a3",
+      "titulo": "Gerente de Projetos Sênior",
+      "empresa": "DC-DinsmoreCompass",
+      "local": "Não informado",
+      "url": "https://dc.gupy.io/job/eyJqb2JJZCI6MTI1NTM5ODQsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=?jobBoardSource=gupy_portal",
+      "fonte": "Gupy",
+      "criado_em": "2026-10-05 21:48:18",
+      "modalidade": "Remoto",
+      "score": 9,
+      "publicado_em": "Publicada em: 22/09/2026"
+    },
+    {
       "id": "ef32b1720e3c3deb902cdb22b44cd590",
       "titulo": "PMO - Líder COE",
       "empresa": "Stefanini Group",
