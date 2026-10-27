@@ -2,6 +2,18 @@
   "success": true,
   "vagas": [
     {
+      "id": "3520b48b83d01a13928dad64a2972c58",
+      "titulo": "Project Manager (Remoto)",
+      "empresa": "Kyndryl",
+      "local": "Não informado",
+      "url": "https://www.geekhunter.com/pt/kyndryl/jobs/project-manager--remoto--1",
+      "fonte": "GeekHunter",
+      "criado_em": "2026-10-27 03:29:54",
+      "modalidade": "",
+      "score": 6,
+      "publicado_em": "Recente"
+    },
+    {
       "id": "290d47e81bae48c625ebed9aa0ce154f",
       "titulo": "Especialista PMO I (Plataforma Cloud)",
       "empresa": "Grupo Boticário",
